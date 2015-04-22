@@ -1,9 +1,9 @@
 'use strict';
 
 var Joi = require('joi'),
-  Boom = require('boom'),
-  Rule = require('../model/rule').Rule,
-  mongoose = require('mongoose');
+    Boom = require('boom'),
+    Rule = require('../model/rule').Rule,
+    mongoose = require('mongoose');
 
 
 exports.getAll = {
@@ -92,7 +92,12 @@ exports.removeAll = {
 };
 
 var updateHelper = function(requestData, originalData) {       
-    for(var req in requestData) 
-        if(requestData[req] === " ") originalData[req] = " ";
-        else originalData[req] = requestData[req];       
+  for(var req in requestData){
+    if(requestData[req] === " "){
+      originalData[req] = " ";
+    }
+    else{
+      originalData[req] = requestData[req];
+    }
+  }       
 }

@@ -33,7 +33,7 @@ var RuleSchema = new Schema({
     */
     status: {
         type: String,
-        enum: [live, active, paused, inactive, unfinished]
+        enum: ['live', 'active', 'paused', 'inactive', 'unfinished']
     },
 
     /**
