@@ -1,7 +1,7 @@
 Rule Engine
 ========================
 
-The purpose of this app is to show a new way to work with Hapi.js, Mongodb, Mongoose, Angular.js.
+The purpose of this app is to make a rule engine for rule editor, expression editor and action editor.
 
 
 ### Install an app
