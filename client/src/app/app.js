@@ -7,8 +7,8 @@ var app = angular
 		growlProvider.globalTimeToLive(5000);
 	    $routeProvider
 				.when('/',
-					 {templateUrl: 'app/user.html'},
-					 {controller: 'appCtrl.js'}
+					 {templateUrl: 'app/rule/rule.html'},
+					 {controller: 'ruleCtrl.js'}
 					)
 				.otherwise({redirectTo: '/'});
 	});

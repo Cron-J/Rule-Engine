@@ -4,33 +4,37 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<title>Cronj IT Technologies Pvt. Ltd.</title>
-	<link rel="stylesheet" href="less/css/bootstrap.css">
+	<title>JCatalog Rule Engine</title>
+	<link rel="stylesheet" href="less/css/bootstrap.min.css">
 	<link rel="stylesheet" href="less/css/custom.css">
 	<link rel="stylesheet" href="less/css/growl.css">
-	<style>
-      body {
-        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
-      }
-    </style>
-	<link href="less/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="less/css/sb-admin-2.css">
+
+    <!-- Custom Fonts -->
+    <link  rel="stylesheet" type="text/css" href="less/css/font-awesome.min.css">
+    <link rel="shortcut icon" type="image/x-icon" href="http://www.jcatalog.com/WeceemFiles/en/Image/favicon.ico">
 </head>
-<body>
-	<div growl></div>
-	<div class="navbar navbar-inverse navbar-fixed-top">
-		<div class="navbar-inner">
-			<div class="container">
-				<a class="brand" href="http://www.cronj.com/">Cronj IT Technologies Pvt. Ltd.</a>
-			</div>
-		</div>
-	</div>
+<body ng-controller="mainCtrl">
+	<div ng-include="'app/partials/header.html'"></div>
 
 	<div data-ng-view class="container"></div>
 	<script src="bower_components/angular/angular.js"></script>
 	<script src="bower_components/angular-route/angular-route.js"></script>
 	<script src="bower_components/angular-resource/angular-resource.js"></script>
 	<script src="less/js/growl.js"></script>
+
+	 <!-- jQuery -->
+	<script src="less/js/jquery.min.js"></script>
+
+	<!-- Bootstrap Core JavaScript -->
+	<script src="less/js/bootstrap.min.js"></script>
 	<script src="app/app.js"></script>
-	<script src="app/userCtrl.js"></script>
+	<script src="app/rule/ruleCtrl.js"></script>
+	<script src="common/controller/mainCtrl.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="less/js/sb-admin-2.js"></script>
 </body>
 </html>

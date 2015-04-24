@@ -1,0 +1,10 @@
+<div class="row" data-ng-controller="ruleCtrl">
+    <div ng-show="! changeView.ruleHomeShow">
+      		<div class="row col-sm-offset-9">
+				<div class="form-button-group">
+					<button class="btn btn-primary"  ng-click="add_new_rule()">Add New Rule</button>
+				</div>
+			</div>
+    </div>
+    <div ng-if="changeView.ruleHomeShow" ng-include="'app/rule/editor.html'" >
+</div>
