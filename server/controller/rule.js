@@ -30,6 +30,7 @@ exports.getOne = {
 
 exports.create = {
   handler: function (request, reply) {
+    request.payload.condition = JSON.stringify(request.payload.condition);
     Rule.createRule(request.payload, function (err, result) {
       if (!err) {
         return reply(result).created('/result/' + result._id); // HTTP 201

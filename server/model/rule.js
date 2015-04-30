@@ -14,11 +14,11 @@ var RuleSchema = new Schema({
     /** 
       ID. It can only contain string, is required and unique field which is indexed.
     */
-    id: {
-        type: String,
-        unique: true,
-        required: true
-    },
+    // id: {
+    //     type: String,
+    //     unique: true,
+    //     required: true
+    // },
 
     /** 
       description. It can only contain string, is required and unique field which is indexed.
@@ -34,6 +34,13 @@ var RuleSchema = new Schema({
     status: {
         type: String,
         enum: ['live', 'active', 'paused', 'inactive', 'unfinished']
+    },
+
+    /** 
+      condition. It can only contain object.
+    */
+    condition: {
+        type: String
     },
 
     /**
