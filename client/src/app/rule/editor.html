@@ -1,67 +1,28 @@
-<div class="row" data-ng-controller="ruleCtrl">
-    <div id="wrapper">
-
-        <!-- Navigation -->
-        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <h3>Rule Engine</h3>
-            </div>
-            <!-- /.navbar-header -->
-
-           <!--  <ul class="nav navbar-top-links navbar-right">
-                <li class="dropdown">
-                    
-                </li>
-                
-                <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">      
-                    </a>
-                </li>
-               
-               
-                <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                    </a>
-                    <ul class="dropdown-menu dropdown-user">
-                       
-                    </ul>
-                   
-                </li>
-              
-            </ul> -->
-            <!-- /.navbar-top-links -->
-
-            <div class="navbar-default sidebar" role="navigation">
-                <div class="sidebar-nav navbar-collapse">
-                    <ul class="nav" id="side-menu">    
-                        <li>  	
-                            <a ng-click="rule_editor_page()">Rule Editor</a>
-                        </li>
-                        <li>
-                            <a ng-click="expression_editor_page()">Expression Editor</a>
-                        </li>
-                        <li>
-                            <a ng-click="action_editor_page()">Action Editor</a>
-                        </li>
-                    </ul>
-                </div>
-                <!-- /.sidebar-collapse -->
-            </div>
-            <!-- /.navbar-static-side -->
-        </nav>
-
-        <div id="page-wrapper">
-            <div ng-show="changeView.expressionEditPage">
-                <h1>Expression Editor</h1>
+<div data-ng-controller="ruleCtrl">
+    <nav class="navbar navbar-default sidebar" role="navigation">
+        <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-sidebar-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>      
+        </div>
+        <div class="collapse navbar-collapse" id="bs-sidebar-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li class="active"><a ng-click="rule_editor_page()">Rule Editor</a></li>          
+            <li><a ng-click="expression_editor_page()">Expression Editor</a></li>        
+            <li><a ng-click="action_editor_page()">Action Editor</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div ng-show="changeView.expressionEditPage">
+                <h3>Expression Editor</h3>
                 <form class="form-horizontal" name="conditionForm" novalidate>
                     <div class="row">
-                        <div class="col-sm-3 col-sm-offset-1">
+                        <div class="col-sm-3">
                             <select class="form-control" ng-model="condition.key" ng-options = "s.field as s.field for s in staticValues">
                                 <option value="">choose one</option>
                             </select>
@@ -88,20 +49,4 @@
                     </div>
                 </form>                
             </div>
-        	<!-- <h1 ng-show="changeView.ruleEditPage">Rule Editor</h1>
-            <div ng-show="changeView.expressionEditPage">
-			     <h1>Expression Editor</h1>
-                 <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown"> All    
-                    </a>
-                </li>
-            </div>
-			<h1 ng-show="changeView.actionEditPage">Action Editor</h1>  -->             
-        </div>
-	       
-        <!-- /#page-wrapper -->
-
-    </div>
-    <!-- /#wrapper -->
-
 </div>
