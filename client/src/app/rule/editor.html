@@ -30,6 +30,12 @@
         <form class="form-horizontal" name="conditionForm" novalidate>
             <div class="row">
                 <div class="col-sm-2">
+                    <select class="form-control" ng-init="condition.collectionName = 'product'" ng-model="condition.collectionName" disabled>
+                        <option value="">choose one</option>
+                        <option value="product">product</option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
                     <select class="form-control" ng-model="condition.key" ng-options = "s.field as s.field for s in staticValues" ng-click="checkType(condition.key)" required>
                         <option value="">choose one</option>
                     </select>
