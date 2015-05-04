@@ -1,5 +1,5 @@
 <div data-ng-controller="ruleCtrl">
-    <nav class="navbar navbar-default sidebar" role="navigation">
+  <!--   <nav class="navbar navbar-default sidebar" role="navigation">
         <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-sidebar-navbar-collapse-1">
@@ -9,51 +9,58 @@
             <span class="icon-bar"></span>
           </button>      
         </div>
-        <div class="collapse navbar-collapse" id="bs-sidebar-navbar-collapse-1">
+         <div class="collapse navbar-collapse" id="bs-sidebar-navbar-collapse-1">
           <ul class="nav navbar-nav">
-            <li><a ng-click="rule_editor_page()">Rule Editor</a></li>          
-            <li><a ng-click="expression_editor_page()">Expression Editor</a></li>        
-            <li><a ng-click="action_editor_page()">Action Editor</a></li>
+            <li class="hoverptr"><a ng-click="rule_editor_page()">Rule Editor</a></li>          
+            <li class="hoverptr"><a ng-click="expression_editor_page()">Expression Editor</a></li>        
+            <li class="hoverptr"><a ng-click="action_editor_page()">Action Editor</a></li>
           </ul>
         </div>
       </div>
-    </nav>
+    </nav> -->
     
-    <div ng-show="changeView.ruleEditPage">
+   <!--  <div ng-show="changeView.ruleEditPage">
         <h3>Rule Editor</h3>
     </div>
     <div ng-show="changeView.actionEditPage">
         <h3>Action Editor</h3>
     </div>
-    <div ng-show="changeView.expressionEditPage" class="margin">
+    <div ng-show="changeView.expressionEditPage"> -->
         <h3>Expression Editor</h3>
         <form class="form-horizontal" name="conditionForm" novalidate>
             <div class="row">
-                <div class="col-sm-3">
-                    <select class="form-control" ng-model="condition.key" ng-options = "s.field as s.field for s in staticValues">
+                <div class="col-sm-2">
+                    <select class="form-control" ng-model="condition.key" ng-options = "s.field as s.field for s in staticValues" ng-click="checkType(condition.key)" required>
                         <option value="">choose one</option>
                     </select>
                 </div>
-                <div class="col-sm-3">
-                    <select class="form-control" ng-model="condition.operator">
+                 <div class="col-sm-2" ng-show="arrayObject">
+                    <select class="form-control" ng-model="condition.arrayObject" ng-options = "s.field as s.field for s in arrayValue">
                         <option value="">choose one</option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <select class="form-control" ng-model="condition.operator" required>
+                        <option value="">choose one</option>
+                        <option value="type">type</option>
+                        <option value="exists">exists</option>
                         <option value="equal">equal</option>
                         <option value="not_equal">not equal</option>
-                        <option value="in_array">in</option>
-                        <option value="not_in_array">not in</option>
-                        <option value="less_than">less</option>
-                        <option value="less_than_or_equal">less or equal</option>
-                        <option value="greater_than">greater</option>
-                        <option value="greater_than_or_equal">greater or equal</option>
+                        <option value="in_array">in array</option>
+                        <option value="not_in_array">not in array</option>
+                        <option value="less_than">less than</option>
+                        <option value="less_than_or_equal">less than or equal</option>
+                        <option value="greater_than">greater than</option>
+                        <option value="greater_than_or_equal">greater than or equal</option>
                     </select>
                 </div>
-                <div class="col-sm-3">
-                    <input type="text" class="form-control" ng-model="condition.value">
+                <div class="col-sm-2">
+                    <input type="text" class="form-control" ng-model="condition.value" required>
                 </div>
                 <div class="col-sm-1">
                     <button class="btn btn-primary" ng-click="submit(condition)">save</button>
                 </div>
             </div>
         </form>                
-    </div>
+    <!-- </div> -->
 </div>

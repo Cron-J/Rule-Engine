@@ -34,26 +34,55 @@ app.controller('ruleCtrl', [ '$scope', '$http','$location', 'growl', 'rule',
 					}).error (function(error) {
 				});
 		}
+		$scope.staticJson();
+		$scope.checkType = function(keyvalue) {
+			if(keyvalue){
+				for(var key in $scope.staticValues){
+					if($scope.staticValues[key]['field'] === keyvalue){
+						if($scope.staticValues[key]['values']){
+							$scope.arrayObject = true;
+							$scope.arrayValue = $scope.staticValues[key]['values'];
+							break;
+						}
+						else{
+							$scope.arrayObject = false;
+							$scope.condition.arrayObject = undefined;
+						}
+					}
+				}
+			}
+		}
 
 		$scope.submit = function(conditions) {
-			conditions.operator = $scope.operatorToMongodbMapping(conditions.operator);
-			$scope.condition.operator = $scope.MongodbToOperatorMapping(conditions.operator);
-			var object1 = {};
-			object1[conditions.operator] = conditions.value;
-			var object2 = {};
-			object2[conditions.key] = object1;
-			var object3 = {};
-			object3['condition'] = object2;
-			rule.save({url:'rule'}, object3).$promise.then(function(data){
-				if(data.statusCode != 403) {
-					growl.success('rule created succesfully');	
+			if($scope.conditionForm.$valid) {
+				conditions.operator = $scope.operatorToMongodbMapping(conditions.operator);
+				var object1 = {};
+				object1[conditions.operator] = conditions.value;
+				var object2 = {};
+				if(conditions.arrayObject) {
+					object2[conditions.key+"."+conditions.arrayObject] = object1;
 				}
-				else {
-					growl.error(data.message);	
+				else { 
+					object2[conditions.key] = object1;
 				}
-			}).catch(function(error){
-				growl.error('Oops! Something went wrong');
-			});
+				var object3 = {};
+				object3['condition'] = object2;
+				$scope.condition.operator = $scope.MongodbToOperatorMapping(conditions.operator);
+				console.log(object3);
+				rule.save({url:'rule'}, object3).$promise.then(function(data){
+					if(data.statusCode != 403) {
+						growl.success('rule created succesfully');	
+					}
+					else {
+						growl.error(data.message);	
+					}
+				}).catch(function(error){
+					growl.error('oops! something went wrong');
+				});
+			}
+			else {
+				growl.error('please enter valid section');
+			}
 		}
 
 		$scope.operatorToMongodbMapping = function(operator) {
@@ -75,6 +104,10 @@ app.controller('ruleCtrl', [ '$scope', '$http','$location', 'growl', 'rule',
 						return "$gt";
 					case "greater_than_or_equal":
 						return "$gte";
+					case "exists":
+						return "$exists";
+					case "type":
+						return "$type";
 				}
 			}
 		}
@@ -97,6 +130,10 @@ app.controller('ruleCtrl', [ '$scope', '$http','$location', 'growl', 'rule',
 						return "greater_than";
 					case "$gte":
 						return "greater_than_or_equal";
+					case "$exists":
+						return "exists";
+					case "$type":
+						return "type";
 				}
 			}
 		}

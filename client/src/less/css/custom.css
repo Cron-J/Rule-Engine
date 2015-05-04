@@ -12,3 +12,7 @@
 #list {
 	margin-top: 15px;
 }
+.hoverptr:hover{
+   cursor: pointer;
+   background: #f3f3f3;
+ }
