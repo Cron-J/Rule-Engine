@@ -7,21 +7,43 @@ app.controller('ruleCtrl', [ '$scope', '$http','$location', 'growl', 'rule',
 		$scope.add_new_rule = function() {
 			$scope.changeView.ruleHomeShow = true;
 		}
+		$scope.rows = [];
+		$scope.addRule = function() {
+			$scope.rows.push({
+				collectionName: '',
+				key: '',
+				operator: '',
+				value: '',
+				subRowCondition: '',
+				subRows: [],
+	        });
+		}
 
-		$scope.rule_editor_page = function() {
+		$scope.deleteRow = function(rowNumber){
+			$scope.rows.splice(rowNumber, 1);
+		}
+
+		$scope.addSubRule = function() {
+			$scope.conditions = [];
+			$scope.conditions.push({
+				allAny: ''
+			});
+		}
+
+		$scope.ruleEditorPage = function() {
 			$scope.changeView.ruleEditPage = true;
 			$scope.changeView.expressionEditPage = false;
 			$scope.changeView.actionEditPage = false;
 		}
 
-		$scope.expression_editor_page = function() {
+		$scope.expressionEditorPage = function() {
 			$scope.changeView.ruleEditPage = false;
 			$scope.changeView.expressionEditPage = true;
 			$scope.changeView.actionEditPage = false;
 			$scope.staticJson();
 		}
 
-		$scope.action_editor_page = function() {
+		$scope.actionEditorPage = function() {
 			$scope.changeView.ruleEditPage = false;
 			$scope.changeView.expressionEditPage = false;
 			$scope.changeView.actionEditPage = true;

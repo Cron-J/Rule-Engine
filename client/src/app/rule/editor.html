@@ -11,9 +11,9 @@
         </div>
          <div class="collapse navbar-collapse" id="bs-sidebar-navbar-collapse-1">
           <ul class="nav navbar-nav">
-            <li class="hoverptr"><a ng-click="rule_editor_page()">Rule Editor</a></li>          
-            <li class="hoverptr"><a ng-click="expression_editor_page()">Expression Editor</a></li>        
-            <li class="hoverptr"><a ng-click="action_editor_page()">Action Editor</a></li>
+            <li class="hoverptr"><a ng-click="ruleEditorPage()">Rule Editor</a></li>          
+            <li class="hoverptr"><a ng-click="expressionEditorPage()">Expression Editor</a></li>        
+            <li class="hoverptr"><a ng-click="actionEditorPage()">Action Editor</a></li>
           </ul>
         </div>
       </div>
@@ -27,46 +27,84 @@
     </div>
     <div ng-show="changeView.expressionEditPage"> -->
         <h3>Expression Editor</h3>
+
         <form class="form-horizontal" name="conditionForm" novalidate>
             <div class="row">
-                <div class="col-sm-2">
-                    <select class="form-control" ng-init="condition.collectionName = 'product'" ng-model="condition.collectionName" disabled>
-                        <option value="">choose one</option>
-                        <option value="product">product</option>
-                    </select>
+                <div class="col-sm-3">
+                    <p><select ng-init="condition.allAny = 'all'" ng-model="condition.allAny" required>
+                        <option value="all">All</option>
+                        <option value="any">Any</option>
+                    </select> of the conditions are true</p>
                 </div>
                 <div class="col-sm-2">
-                    <select class="form-control" ng-model="condition.key" ng-options = "s.field as s.field for s in staticValues" ng-click="checkType(condition.key)" required>
-                        <option value="">choose one</option>
-                    </select>
-                </div>
-                 <div class="col-sm-2" ng-show="arrayObject">
-                    <select class="form-control" ng-model="condition.arrayObject" ng-options = "s.field as s.field for s in arrayValue">
-                        <option value="">choose one</option>
-                    </select>
+                    <a class="hoverptr" ng-click="addRule()">Add Rule</a>
                 </div>
                 <div class="col-sm-2">
-                    <select class="form-control" ng-model="condition.operator" required>
-                        <option value="">choose one</option>
-                        <option value="type">type</option>
-                        <option value="exists">exists</option>
-                        <option value="equal">equal</option>
-                        <option value="not_equal">not equal</option>
-                        <option value="in_array">in array</option>
-                        <option value="not_in_array">not in array</option>
-                        <option value="less_than">less than</option>
-                        <option value="less_than_or_equal">less than or equal</option>
-                        <option value="greater_than">greater than</option>
-                        <option value="greater_than_or_equal">greater than or equal</option>
-                    </select>
-                </div>
-                <div class="col-sm-2">
-                    <input type="text" class="form-control" ng-model="condition.value" required>
-                </div>
-                <div class="col-sm-1">
-                    <button class="btn btn-primary" ng-click="submit(condition)">save</button>
+                    <a class="hoverptr" ng-click="addSubRule()">Add Sub-Rule</a>
                 </div>
             </div>
+          
+            <div ng-repeat="condition in rows">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <select class="form-control" ng-init="condition.collectionName = 'product'" ng-model="condition.collectionName" disabled>
+                            <option value="">choose one</option>
+                            <option value="product">product</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-2">
+                        <select class="form-control" ng-model="condition.key" ng-options = "s.field as s.field for s in staticValues" ng-click="checkType(condition.key)" required>
+                            <option value="">choose one</option>
+                        </select>
+                    </div>
+                     <div class="col-sm-2" ng-show="arrayObject">
+                        <select class="form-control" ng-model="condition.arrayObject" ng-options = "s.field as s.field for s in arrayValue">
+                            <option value="">choose one</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-2">
+                        <select class="form-control" ng-model="condition.operator" required>
+                            <option value="">choose one</option>
+                            <option value="type">type</option>
+                            <option value="exists">exists</option>
+                            <option value="equal">equal</option>
+                            <option value="not_equal">not equal</option>
+                            <option value="in_array">in array</option>
+                            <option value="not_in_array">not in array</option>
+                            <option value="less_than">less than</option>
+                            <option value="less_than_or_equal">less than or equal</option>
+                            <option value="greater_than">greater than</option>
+                            <option value="greater_than_or_equal">greater than or equal</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" ng-model="condition.value" required>
+                    </div>
+                    <div class="col-sm-1">
+                        <button ng-click="deleteRow(rows.indexOf(condition))"><span class="glyphicon glyphicon-trash" ng-model="condition.delete" aria-hidden="true"></span></button>
+                    </div>
+                </div>
+            <br>
+            </div>
+            <div ng-repeat="c in conditions">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <p><select ng-init="c.allAny = 'all'" ng-model="c.allAny" required>
+                            <option value="all">All</option>
+                            <option value="any">Any</option>
+                        </select> of the conditions are true</p>
+                    </div>
+                    <div class="col-sm-2">
+                        <a class="hoverptr" ng-click="addRule()">Add Rule</a>
+                    </div>
+                    <div class="col-sm-2">
+                        <a class="hoverptr" ng-click="addSubRule()">Add Sub-Rule</a>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="col-sm-1">
+                <button class="btn btn-primary" ng-click="submit(condition)">save</button>
+            </div> -->
         </form>                
     <!-- </div> -->
 </div>
