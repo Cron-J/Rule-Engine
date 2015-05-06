@@ -12,6 +12,8 @@ app.controller('ruleCtrl', [ '$scope', '$http','$location', 'growl', 'rule',
 			$scope.rows.push({
 				collectionName: '',
 				key: '',
+				arrayObject: '',
+				objectArray: '',
 				operator: '',
 				value: '',
 				subRowCondition: '',
@@ -22,12 +24,22 @@ app.controller('ruleCtrl', [ '$scope', '$http','$location', 'growl', 'rule',
 		$scope.deleteRow = function(rowNumber){
 			$scope.rows.splice(rowNumber, 1);
 		}
-
-		$scope.addSubRule = function() {
-			$scope.conditions = [];
+		$scope.conditions = [];
+		$scope.addSubRule = function() {	
 			$scope.conditions.push({
 				allAny: ''
 			});
+			// $scope.rows[$scope.rows.length].condition = true;
+			// $scope.rows[$scope.rows.length].subRows.push({
+			// 	collectionName: '',
+			// 	key: '',
+			// 	arrayObject: '',
+			// 	objectArray: '',
+			// 	operator: '',
+			// 	value: '',
+			// 	subRowCondition: '',
+			// 	subRows: [],
+	  //       });
 		}
 
 		$scope.ruleEditorPage = function() {
@@ -57,18 +69,18 @@ app.controller('ruleCtrl', [ '$scope', '$http','$location', 'growl', 'rule',
 				});
 		}
 		$scope.staticJson();
-		$scope.checkType = function(keyvalue) {
+		$scope.checkType = function(keyvalue, index) {
 			if(keyvalue){
 				for(var key in $scope.staticValues){
 					if($scope.staticValues[key]['field'] === keyvalue){
 						if($scope.staticValues[key]['values']){
-							$scope.arrayObject = true;
+							$scope.rows[index].arrayObject = true;
 							$scope.arrayValue = $scope.staticValues[key]['values'];
 							break;
 						}
 						else{
-							$scope.arrayObject = false;
-							$scope.condition.arrayObject = undefined;
+							$scope.rows[index].arrayObject = false;
+							$scope.rows[index].arrayObject = undefined;
 						}
 					}
 				}
