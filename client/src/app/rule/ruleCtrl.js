@@ -7,8 +7,9 @@ app.controller('ruleCtrl', [ '$scope', '$http','$location', 'growl', 'rule',
 		$scope.add_new_rule = function() {
 			$scope.changeView.ruleHomeShow = true;
 		}
+
 		$scope.rows = [];
-		$scope.addRule = function() {
+		$scope.addExpression = function() {
 			$scope.rows.push({
 				collectionName: '',
 				key: '',
@@ -16,32 +17,37 @@ app.controller('ruleCtrl', [ '$scope', '$http','$location', 'growl', 'rule',
 				objectArray: '',
 				operator: '',
 				value: '',
-				subRowCondition: '',
-				subRows: [],
+				condition: '',
+				rows: []
 	        });
 		}
 
-		$scope.deleteRow = function(rowNumber){
+		$scope.deleteRow = function(rowNumber) {
 			$scope.rows.splice(rowNumber, 1);
 		}
 		$scope.conditions = [];
-		$scope.addSubRule = function() {	
-			$scope.conditions.push({
-				allAny: ''
+		$scope.addSubExpression = function() {	
+			$scope.rows[$scope.rows.length-1].rows.push({
+				condition: '',
+				conditionValue: true
 			});
-			// $scope.rows[$scope.rows.length].condition = true;
-			// $scope.rows[$scope.rows.length].subRows.push({
-			// 	collectionName: '',
-			// 	key: '',
-			// 	arrayObject: '',
-			// 	objectArray: '',
-			// 	operator: '',
-			// 	value: '',
-			// 	subRowCondition: '',
-			// 	subRows: [],
-	  //       });
 		}
 
+		$scope.addExpressionOfSub = function(rowIndex) {
+			$scope.rows[rowIndex].rows.push({
+				collectionName: '',
+				key: '',
+				arrayObject: '',
+				objectArray: '',
+				operator: '',
+				value: '',
+				condition: '',
+				rows: []
+			});
+		}
+		$scope.deleteSubExpression = function(rowIndex, subRowIndex) {
+			$scope.rows[rowIndex].rows.splice(subRowIndex, 1);
+		}
 		$scope.ruleEditorPage = function() {
 			$scope.changeView.ruleEditPage = true;
 			$scope.changeView.expressionEditPage = false;
