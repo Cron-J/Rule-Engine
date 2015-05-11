@@ -1,3 +1,31 @@
+<script type="text/ng-template"  id="app/rule/commonCondition.html">
+    <div class="row">
+        <div class="col-sm-5">
+            <p> <font size="+2">If</font> &nbsp; <select ng-init="row.condition = 'all'" ng-model="row.condition" required>
+                <option value="all">All</option>
+                <option value="any">Any</option>
+            </select> of the conditions are true</p>
+        </div>
+        <div class="col-sm-2">
+            <a class="hoverptr" ng-click="addExpression(row)">Add Expression</a>
+        </div>
+        <div class="col-sm-2">
+            <a class="hoverptr" ng-click="addSubExpression(row)">Add Sub-Expression</a>
+        </div>
+    </div>
+    <div>
+        <div class="row">
+            <div ng-repeat="row in row.rows" ng-include="'app/rule/commonCondition.html'"></div>
+        </div>
+    </div>
+</script>
+
+<div ng-controller="ruleCtrl">
+    <div class="row">
+        <div ng-repeat="row in rows" ng-include="'app/rule/commonCondition.html'"></div>
+    </div>
+</div>
+
 <div data-ng-controller="ruleCtrl">
   <!--   <nav class="navbar navbar-default sidebar" role="navigation">
         <div class="container-fluid">
@@ -26,7 +54,7 @@
         <h3>Action Editor</h3>
     </div>
     <div ng-show="changeView.expressionEditPage"> -->
-        <h3>Expression Editor</h3>
+       <!--  <h3>Expression Editor</h3>
 
         <form class="form-horizontal" name="conditionForm" novalidate>
             <div class="row">
@@ -103,7 +131,7 @@
                             <a class="hoverptr" ng-click="deleteSubExpression(rows.indexOf(row), row.subRows.indexOf(subRow))">Remove Sub-Expression</a>
                         </div>
                     </div>
-                </div>
+                </div> -->
             <br>
             </div>
                 <br>

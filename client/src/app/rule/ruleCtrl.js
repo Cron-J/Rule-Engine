@@ -8,7 +8,17 @@ app.controller('ruleCtrl', [ '$scope', '$http','$location', 'growl', 'rule',
 			$scope.changeView.ruleHomeShow = true;
 		}
 
-		$scope.rows = [];
+		$scope.rows = [{
+				collectionName: '',
+				key: '',
+				arrayObject: '',
+				objectArray: '',
+				operator: '',
+				value: '',
+				condition: '',
+				rows: []
+	        }];
+
 		$scope.addExpression = function() {
 			$scope.rows.push({
 				collectionName: '',
@@ -26,11 +36,13 @@ app.controller('ruleCtrl', [ '$scope', '$http','$location', 'growl', 'rule',
 			$scope.rows.splice(rowNumber, 1);
 		}
 		$scope.conditions = [];
-		$scope.addSubExpression = function() {	
-			$scope.rows[$scope.rows.length-1].rows.push({
-				condition: '',
-				conditionValue: true
-			});
+		$scope.addSubExpression = function(row) {	
+			row.rows.push({condition: '', rows: []})
+			console.log($scope.rows);
+			// $scope.rows[$scope.rows.length-1].rows.push({
+			// 	condition: '',
+			// 	conditionValue: true
+			// });
 		}
 
 		$scope.addExpressionOfSub = function(rowIndex) {
