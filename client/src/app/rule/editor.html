@@ -14,18 +14,15 @@
         </div>
     </div>
 
-   
     <div class="row">
         <div ng-repeat="row in row.rows.values" ng-include="'app/rule/commonConditionValue.html'"></div>
-    </div>
-
-    
+    </div>    
 </script>
 
 <div ng-controller="ruleCtrl">
     <div class="row">
         <h2>&nbsp;If</h2>
-        <div ng-repeat="row in rows.values" ng-include="'app/rule/commonCondition.html'"></div>
+        <div ng-show="row in rows.values" ng-include="'app/rule/commonCondition.html'"></div>
     </div>
 </div>
 
