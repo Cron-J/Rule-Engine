@@ -15,13 +15,16 @@ app.controller('ruleCtrl', [ '$scope', '$http','$location', 'growl', 'rule',
 										objectArray: '',
 										operator: '',
 										value: '',
-										rows: {}
+										rows: {	condition: '',
+												values: []
+										}
 									}]
         				}
 	        			
 
 
 		$scope.addExpression = function(data) {
+			console.log(data);
 			data.push({
 				collectionName: '',
 				key: '',
@@ -29,23 +32,35 @@ app.controller('ruleCtrl', [ '$scope', '$http','$location', 'growl', 'rule',
 				objectArray: '',
 				operator: '',
 				value: '',
-				rows: {}
-	        });
-	        console.log(data);
+				rows: {
+					condition: '',
+					values: []
+				}
+	        });   
 		}
 
 		$scope.deleteRow = function(rowNumber) {
 			$scope.rows.splice(rowNumber, 1);
 		}
 		$scope.conditions = [];
-		$scope.addSubExpression = function(row) {
-		console.log(row);	
-			row.rows['condition'] = '';
-			row.rows['values'] = [];
-			// $scope.rows[$scope.rows.length-1].rows.push({
-			// 	condition: '',
-			// 	conditionValue: true
-			// });
+		$scope.addSubExpression = function(data) {	
+			// row.rows['condition'] = '';
+			// row.rows['values'] = [];
+			console.log(data);
+			data.push({
+				collectionName: '',
+				key: '',
+				arrayObject: '',
+				objectArray: '',
+				operator: '',
+				value: '',
+				rows: {
+					condition: '',
+					values: []
+				}
+	        });
+	        
+	        console.log($scope.rows);
 		}
 
 		$scope.addExpressionOfSub = function(rowIndex) {
