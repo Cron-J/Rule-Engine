@@ -12,8 +12,7 @@
         <div class="col-sm-2">
             <a class="hoverptr" ng-click="addSubExpression(data)">Add Sub-Expression</a>
         </div>
-    </div>
-  
+    </div>  
     
     <div class="row">
         <div ng-repeat="data in data.rows" ng-include="'app/rule/commonCondition.html'"></div>
@@ -22,12 +21,12 @@
         <div ng-repeat="data in data.rows" ng-include="'app/rule/commonConditionValue.html'"></div>
     </div>
 
-    
 </script>
 
 <div ng-controller="ruleCtrl">
     <div class="row">
         <h2>&nbsp;If</h2>
+
         <div ng-repeat="data in tree" ng-include="'app/rule/commonCondition.html'"></div>
     </div>
 </div>
