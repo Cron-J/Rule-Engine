@@ -17,7 +17,6 @@ app.controller('ruleCtrl', [ '$scope', '$http','$location', 'growl', 'rule',
 		$scope.addExpression = function(data) {
 			console.log(data);
 			data.rows.push({
-				textBox: true,
 				collectionName: '',
 				key: '',
 				arrayObject: '',
