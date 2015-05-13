@@ -11,8 +11,6 @@ app.controller('ruleCtrl', [ '$scope', '$http','$location', 'growl', 'rule',
 		$scope.tree =	[{	conditions: [],
 							rows: []
         				}]
-	        			
-
 
 		$scope.addExpression = function(data) {
 			console.log(data);
@@ -27,48 +25,18 @@ app.controller('ruleCtrl', [ '$scope', '$http','$location', 'growl', 'rule',
 	        });   
 	        console.log($scope.tree);
 		}
-
+		$scope.addSubExpression = function(data) {
+			console.log(data);
+			data.rows.push({conditions: [], rows: []});
+	        console.log($scope.tree);
+		}
 		$scope.deleteRow = function(rowNumber) {
 			$scope.rows.splice(rowNumber, 1);
 		}
 		$scope.conditions = [];
-		$scope.addSubExpression = function(data) {
-			console.log(data);
-			data.rows.push({conditions: [], rows: []});
-			// data.condition = 'all';	
-			// row.rows['condition'] = '';
-			// row.rows['values'] = [];
-			// console.log(data.condition);
-			// data.push({
-			// 	collectionName: '',
-			// 	key: '',
-			// 	arrayObject: '',
-			// 	objectArray: '',
-			// 	operator: '',
-			// 	value: '',
-			// 	rows: {
-			// 		condition: '',
-			// 		values: []
-			// 	}
-	  //       });
-	        
-	        console.log($scope.tree);
-		}
-
-		$scope.addExpressionOfSub = function(rowIndex) {
-			$scope.rows[rowIndex].rows.push({
-				collectionName: '',
-				key: '',
-				arrayObject: '',
-				objectArray: '',
-				operator: '',
-				value: '',
-				condition: '',
-				rows: []
-			});
-		}
-		$scope.deleteSubExpression = function(rowIndex, subRowIndex) {
-			$scope.rows[rowIndex].rows.splice(subRowIndex, 1);
+		
+		$scope.deleteSubExpression = function(data) {
+			data.rows = [];
 		}
 		$scope.ruleEditorPage = function() {
 			$scope.changeView.ruleEditPage = true;
