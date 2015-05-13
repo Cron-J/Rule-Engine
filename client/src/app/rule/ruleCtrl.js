@@ -8,59 +8,51 @@ app.controller('ruleCtrl', [ '$scope', '$http','$location', 'growl', 'rule',
 			$scope.changeView.ruleHomeShow = true;
 		}
 
-		$scope.rows =	{	condition: '',
-							values: [{	collectionName: '',
-										key: '',
-										arrayObject: '',
-										objectArray: '',
-										operator: '',
-										value: '',
-										rows: {	condition: '',
-												values: []
-										}
-									}]
-        				}
+		$scope.tree =	[{	conditions: [],
+							rows: []
+        				}]
 	        			
 
 
 		$scope.addExpression = function(data) {
 			console.log(data);
-			data.push({
+			data.rows.push({
 				collectionName: '',
 				key: '',
 				arrayObject: '',
 				objectArray: '',
 				operator: '',
 				value: '',
-				rows: {
-					condition: '',
-					values: []
-				}
+				rows: []
 	        });   
+	        console.log($scope.tree);
 		}
 
 		$scope.deleteRow = function(rowNumber) {
 			$scope.rows.splice(rowNumber, 1);
 		}
 		$scope.conditions = [];
-		$scope.addSubExpression = function(data) {	
+		$scope.addSubExpression = function(data) {
+			console.log(data);
+			data.rows.push({conditions: [], rows: []});
+			// data.condition = 'all';	
 			// row.rows['condition'] = '';
 			// row.rows['values'] = [];
-			console.log(data);
-			data.push({
-				collectionName: '',
-				key: '',
-				arrayObject: '',
-				objectArray: '',
-				operator: '',
-				value: '',
-				rows: {
-					condition: '',
-					values: []
-				}
-	        });
+			// console.log(data.condition);
+			// data.push({
+			// 	collectionName: '',
+			// 	key: '',
+			// 	arrayObject: '',
+			// 	objectArray: '',
+			// 	operator: '',
+			// 	value: '',
+			// 	rows: {
+			// 		condition: '',
+			// 		values: []
+			// 	}
+	  //       });
 	        
-	        console.log($scope.rows);
+	        console.log($scope.tree);
 		}
 
 		$scope.addExpressionOfSub = function(rowIndex) {
