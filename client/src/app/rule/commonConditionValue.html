@@ -1,40 +1,71 @@
- <div class="row">
-        <div class="col-sm-2 col-sm-offset-1">
+
+<div ng-controller="ruleCtrl">
+<div class="form-inline" style="margin-bottom:10px;">
+    <div class="form-group mb-left">
+        <select class="form-control" ng-init="data.collectionName = 'product'" ng-model="data.collectionName" disabled>
+                <option value="">choose one</option>
+                <option value="product">product</option>
+        </select>
+    </div>
+    <div class="form-group mb-left">
+        <select class="form-control" ng-model="data.key" ng-options = "s.field as s.field for s in staticValues" ng-change="checkType(data.key, data.indexOf(data))" required>
+                <option value="">choose one</option>
+        </select>
+    </div>
+    <div class="form-group mb-left" ng-show="arrayObject">
+        <select class="form-control" ng-model="data.objectArray" ng-options = "s.field as s.field for s in arrayValue">
+                <option value="">choose one</option>
+        </select>
+    </div>
+    <div class="form-group mb-left">
+        <select class="form-control" ng-model="data.operator" ng-options="s as s.name for s in fields"  required>
+        </select>
+    </div>
+    <div class="form-group mb-left" ng-if="data.operator.name =='equalTo' || data.operator.name =='notEqualTo' || data.operator.name =='greaterThan' || data.operator.name =='exists'">
+        <input type="text" class="form-control" ng-model="data.value"  required>
+    </div>
+    <div class="form-group mb-left" ng-if="data.operator.name =='equalTo'">
+        <select class="form-control" ng-model="data.objectArray" ng-options = "s.field as s.field for s in arrayValue" >
+                <option value="">choose one</option>
+        </select>
+    </div>
+    <div class="form-group mb-left">
+        <button ng-click="deleteRow(indexOf(data))"><span class="glyphicon glyphicon-trash" ng-model="data.delete" aria-hidden="true"></span></button>
+    </div>
+
+</div>
+    <!-- <div class="col-sm-2 col-sm-offset-1">
             <select class="form-control" ng-init="data.collectionName = 'product'" ng-model="data.collectionName" disabled>
                 <option value="">choose one</option>
                 <option value="product">product</option>
             </select>
         </div>
         <div class="col-sm-2">
-            <select class="form-control" ng-model="data.key" ng-options = "s.field as s.field for s in staticValues" ng-click="checkType(data.key, data.indexOf(data))" required>
+            <select class="form-control" ng-model="data.key" ng-options = "s.field as s.field for s in staticValues" ng-change="checkType(data.key, data.indexOf(data))" required>
                 <option value="">choose one</option>
             </select>
         </div>
-         <div class="col-sm-2" ng-show="row.arrayObject">
+         <div class="col-sm-2" ng-show="arrayObject">
             <select class="form-control" ng-model="data.objectArray" ng-options = "s.field as s.field for s in arrayValue">
                 <option value="">choose one</option>
             </select>
         </div>
         <div class="col-sm-2">
-            <select class="form-control" ng-model="data.operator" required>
-                <option value="">choose one</option>
-                <option value="type">type</option>
-                <option value="exists">exists</option>
-                <option value="equal">equal</option>
-                <option value="not_equal">not equal</option>
-                <option value="in_array">in array</option>
-                <option value="not_in_array">not in array</option>
-                <option value="less_than">less than</option>
-                <option value="less_than_or_equal">less than or equal</option>
-                <option value="greater_than">greater than</option>
-                <option value="greater_than_or_equal">greater than or equal</option>
+            <select class="form-control" ng-model="data.operator" ng-options="s as s.name for s in fields"  required>
             </select>
         </div>
-        <div class="col-sm-2">
-            <input type="text" class="form-control" ng-model="data.value" required>
+        <div class="col-sm-2" ng-if="data.operator.name =='equalTo' || data.operator.name =='notEqualTo' || data.operator.name =='greaterThan' || data.operator.name =='exists'">
+             <input type="text" class="form-control" ng-model="data.value"  required>
+        </div>
+        <div class="col-sm-2" ng-if="data.operator.name =='equalTo'">
+             <select class="form-control" ng-model="data.objectArray" ng-options = "s.field as s.field for s in arrayValue" >
+                <option value="">choose one</option>
+            </select>
         </div>
         <div class="col-sm-1">
             <button ng-click="deleteRow(indexOf(data))"><span class="glyphicon glyphicon-trash" ng-model="data.delete" aria-hidden="true"></span></button>
         </div>
 </div>
-<br>
+<br> -->
+</div>
+        

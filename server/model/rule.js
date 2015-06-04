@@ -39,9 +39,9 @@ var RuleSchema = new Schema({
     /** 
       condition. It can only contain object.
     */
-    condition: {
-        type: String
-    },
+    condition: [],
+
+    rows: []
 
     /**
       Need to be discusses about other fields.
@@ -62,7 +62,7 @@ RuleSchema.statics.findRule = function (callback) {
   @param callback: callback of this form.
 */
 RuleSchema.statics.findOneRule = function (id, callback) {
-    this.findOne({'id': id}, callback);
+    this.findOne({_id: id}, callback);
 };
 
 /**
@@ -72,6 +72,7 @@ RuleSchema.statics.findOneRule = function (id, callback) {
 */
 RuleSchema.statics.createRule = function (data, callback) {
     var rule = new this(data);
+    console.log('rule',rule);
     rule.save(callback);
 };
 

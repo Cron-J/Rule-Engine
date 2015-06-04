@@ -32,6 +32,7 @@ exports.create = {
   handler: function (request, reply) {
     request.payload.condition = JSON.stringify(request.payload.condition);
     Rule.createRule(request.payload, function (err, result) {
+      console.log('result',result);
       if (!err) {
         return reply(result).created('/result/' + result._id); // HTTP 201
       }
@@ -45,10 +46,13 @@ exports.create = {
 
 exports.update = {
   handler: function (request, reply) {
+    console.log('request',request.payload);
     Rule.findOneRule(request.params.id, function (err, result) {
+      console.log('result',result);
       if (!err) {
-        updateHelper(request.payload, ruleData);
-        Rule.updateRule(ruleData, function (err, saveData) {
+        updateHelper(request.payload, result);
+        Rule.updateRule(result, function (err, saveData) {
+          console.log('saveData',saveData);
           if (!err) {
             return reply(saveData); // HTTP 201
           }
@@ -98,6 +102,7 @@ var updateHelper = function(requestData, originalData) {
       originalData[req] = " ";
     }
     else{
+      console.log('originalData',originalData);
       originalData[req] = requestData[req];
     }
   }       

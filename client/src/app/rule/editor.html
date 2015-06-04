@@ -32,10 +32,12 @@
     <div class="row left">
         <div ng-repeat="data in tree" ng-include="'app/rule/commonCondition.html'"></div>
     </div>
-    <div class="row">
-        <div class="col-sm-1 col-sm-offset-10" ng-show="tree[0].rows.length > 0">
-            <button class="btn btn-primary" ng-click="submit(condition)">save</button>
+   <div class="row">
+        <div class="col-sm-12 " ng-show="tree[0].rows.length > 0">
+              <button class="btn btn-primary pull-right" ng-click="submit(tree)">Save</button>
         </div>
+        
+        
     </div>
 
     <div class="row">

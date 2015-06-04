@@ -1,0 +1,9 @@
+<div ng-controller="ruleCtrl" ng-init="editRule()">
+<div ng-show="! changeView.ruleUpdateShow">
+	<select class="form-control" ng-model="data" ng-options = "s._id as s._id for s in allData" ng-change="getRule(data)" required>
+         <option value="">choose one</option>
+    </select>
+</div>
+	
+     <div ng-if="changeView.ruleUpdateShow" ng-include="'app/rule/updaterule.html'"></div>
+</div>
