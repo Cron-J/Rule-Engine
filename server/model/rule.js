@@ -12,15 +12,6 @@ var mongoose = require('mongoose'),
 var RuleSchema = new Schema({
 
     /** 
-      ID. It can only contain string, is required and unique field which is indexed.
-    */
-    // id: {
-    //     type: String,
-    //     unique: true,
-    //     required: true
-    // },
-
-    /** 
       description. It can only contain string, is required and unique field which is indexed.
     */
     description: {

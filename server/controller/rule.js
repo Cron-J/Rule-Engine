@@ -30,7 +30,7 @@ exports.getOne = {
 
 exports.create = {
   handler: function (request, reply) {
-    request.payload.condition = JSON.stringify(request.payload.condition);
+    request.payload.condition = eval(request.payload.condition);
     Rule.createRule(request.payload, function (err, result) {
       console.log('result',result);
       if (!err) {

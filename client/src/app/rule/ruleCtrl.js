@@ -45,8 +45,19 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 rows: []
             });
         }
-        $scope.deleteRow = function(rowNumber) {
-            $scope.rows.splice(rowNumber, 1);
+        $scope.deleteRow = function(index) {
+             rule.delet({
+                url: 'rule'
+            }).$promise.then(function(data) {
+                if (data.statusCode != 403) {
+                   $scope.tree.splice(index);
+                    growl.success('rule deleted succesfully');
+                } else {
+                    growl.error(data.message);
+                }
+            }).catch(function(error) {
+                growl.error('oops! something went wrong');
+            });
         }
         $scope.conditions = [];
 
@@ -96,33 +107,6 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 }
             }
         }
-         var allProductInfo = [];
-        function mappingInfo(){
-            // traverse($scope.lines);
-            if($scope.lines.length>0){
-                traverse($scope.lines)
-            }
-            else if($scope.lines.length === 0){
-                console.log('obj is empty');
-            }
-            console.log('$scope.rowsArray',$scope.rowsArray)
-            for(var i=0;i<$scope.rowsArray.length; i++){
-                var operatorObj={};
-                 // var operatorInstance = new Operator($scope.lines[i].operator.name,$scope.lines[i].operator.label,$scope.lines[i].operator.fieldType);
-                 // var f= new $scope.lines[i]['operator']['name']();
-                 // var operator = operatorInstance.ToJSExpression();
-                 //operatorInstance[]
-                var operator = $scope.operatorToJSExpression($scope.rowsArray[i].operator.name);
-                operatorObj[operator] = $scope.rowsArray[i].value;
-                var productKeyObj ={};
-                productKeyObj[$scope.rowsArray[i].key] = operatorObj;
-                var productObj = {};
-                productObj[$scope.rowsArray[i].collectionName] = productKeyObj;
-                allProductInfo.push(productObj);
-            }
-           return allProductInfo;
-        } 
-
         $scope.submit = function(conditions) {
             
         	 $scope.condition={};
@@ -135,9 +119,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
         		}
         		
         	}
-           var d = mappingInfo();
             var data ={
-                condition:d,
                 rows:$scope.lines
             };
 
@@ -146,6 +128,10 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
             }, data).$promise.then(function(data) {
                 if (data.statusCode != 403) {
                     $scope.ruleId = data._id;
+                    var s= convertJSONTOJSEXPRESSION(data);
+                    var t = JSON.stringify(s);
+                    console.log('s',s);
+                      console.log('t',t);
                     growl.success('rule created succesfully');
                 } else {
                     growl.error(data.message);
@@ -190,7 +176,6 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
             $scope.lines = data.rows;
             var d = mappingInfo();
             var Updateddata ={
-                condition:d,
                 rows:$scope.lines
             };
             rule.update({
@@ -206,6 +191,78 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
             });
         }
        
+        
+        function initializeConditions() {
+            $scope.fields = [{
+                label:"exists",
+                name: "exists",
+                fieldType: "none",
+                JS:"exists"
+            }, {
+                label:"empty",
+                name: "empty",
+                fieldType: "none",
+                JS:'none',
+            }, {
+                label:"equalTo",
+                name: "equalTo",
+                fieldType: "select",
+                JS:"==="
+            }, {
+                label:"notEqualTo",
+                name: "notEqualTo",
+                fieldType: "text",
+                JS:"!=="
+            }, {
+                label:"greaterThan",
+                name: "greaterThan",
+                fieldType: "text",
+                JS:">"
+            }, {
+                label:"greaterThanEqual",
+                name: "greaterThanEqual",
+                fieldType: "text",
+                JS:"=>"
+            }, {
+                label:"lessThan",
+                name: "lessThan",
+                fieldType: "text",
+                JS:"<"
+            }, {
+                label:"lessThanEqual",
+                name: "lessThanEqual",
+                fieldType: "text",
+                JS:"<="
+            }]
+
+        }
+         var allProductInfo = [];
+        function convertJSONTOJSEXPRESSION(productInfo) {
+                 if(productInfo.rows.length>0){
+                traverse(productInfo.rows)
+            }
+            else if($scope.lines.length === 0){
+                console.log('obj is empty');
+            }  
+            for(var i=0;i<$scope.rowsArray.length; i++){
+                recursive($scope.rowsArray[i].key,$scope.rowsArray[i].operator.JS,$scope.rowsArray[i].value);
+                // function recursive(){
+                //     if($scope.rowsArray[i].key +' ' + $scope.rowsArray[i].operator.JS +' '+ $scope.rowsArray[i].value  )
+                //         return true;
+                // }
+                
+                // var operatorObj={};
+                // var operator = $scope.rowsArray[i].operator.JS;
+                // operatorObj[operator] = $scope.rowsArray[i].value;
+                // var productKeyObj ={};
+                // productKeyObj[$scope.rowsArray[i].key] = operatorObj;
+                // var productObj = {};
+                // productObj[$scope.rowsArray[i].collectionName] = productKeyObj;
+                // allProductInfo.push(productObj);
+            }
+            //return allProductInfo;
+        }
+
         function traverse(obj) {
             if (!obj) return;
             var i = 0;
@@ -224,164 +281,11 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 $scope.rowsArray.push(obj);
             }
         }
-        function initializeConditions() {
-            $scope.fields = [{
-                label:"exists",
-                name: "exists",
-                fieldType: "none"
-            }, {
-                label:"empty",
-                name: "empty",
-                fieldType: "none"
-            }, {
-                label:"equalTo",
-                name: "equalTo",
-                fieldType: "select"
-            }, {
-                label:"notEqualTo",
-                name: "notEqualTo",
-                fieldType: "text"
-            }, {
-                label:"greaterThan",
-                name: "greaterThan",
-                fieldType: "text"
-            }, {
-                label:"greaterThanEqual",
-                name: "greaterThanEqual",
-                fieldType: "text"
-            }, {
-                label:"lessThan",
-                name: "lessThan",
-                fieldType: "text"
-            }, {
-                label:"lessThanEqual",
-                name: "lessThanEqual",
-                fieldType: "text"
-            }]
-
-        }
-  
-        // function OperatorClass(name,label,fieldType){
-        //     this.name = name;
-        //     this.label = label;
-        //     this.fieldType = fieldType;
-        //     this.ToJSExpression = function(){
-        //         return this[name];
-        //     }
-        // }
-
-        // class Operator {
-        //     constructor(name,label,fieldType){
-        //         this.name = name;
-        //         this.label = label;
-        //         this.fieldType = fieldType;
-        //     }
-        //       ToJSExpression () {
-        //          return '(' + this.name + ', ' + this.fieldType + ')';
-        //       }
-        // }
-
-        // class greaterThan extends Operator {
-        //     ToJSExpression(name,fieldType) {
-        //     return this.name + ">" + this.fieldType;
-        //   }
-        // }
-        // class lessThan extends Operator {
-        //   //   ToJSExpression(name,fieldType) {
-        //   //   return this.name + ">" + this.fieldType;
-        //   // }
-        // }
-        // class equalTo extends Operator {
-        //   //   ToJSExpression(name,fieldType) {
-        //   //   return this.name + ">" + this.fieldType;
-        //   // }
-        // }
-        // class notEqualTo extends Operator {
-        //   //   ToJSExpression(name,fieldType) {
-        //   //   return this.name + ">" + this.fieldType;
-        //   // }
-        // }
-
-        // // OperatorClass.prototype = {
-        // //     present: function() {
-        // //       return !!actual;
-        // //     },
-        // //     blank: function() {
-        // //       return !actual;
-        // //     },
-        // //     equalTo: function() {
-        // //       return "===";
-        // //     },
-        // //     empty: function() {
-        // //       return $empty;
-        // //     },
-        // //     notEqualTo: function() {
-        // //       return "!==";
-        // //     },
-        // //     greaterThan: function() {
-        // //       return  ">";
-        // //     },
-        // //     greaterThanEqual: function() {
-        // //       return  ">=";
-        // //     },
-        // //     lessThan: function() {
-        // //       return "<";
-        // //     },
-        // //     lessThanEqual: function() {
-        // //       return "<=";
-        // //     }
-        // // };
-
-
-
-            $scope.operatorToJSExpression = function(operator) {
-            	if(operator){
-            		switch(operator){
-            			case "equalTo":
-            				return "===";
-            			case "notEqualTo":
-            				return "!==";
-            			case "lessThan":
-            				return "<";
-            			case "lessThanEqual":
-            				return "<=";
-            			case "greaterThan":
-            				return ">";
-            			case "greaterThanEqual":
-            				return ">=";
-            			case "empty":
-            				return "^$";
-            			case "exists":
-            				return "exists";
-            		}
-            	}
-            }
-            // $scope.MongodbToOperatorMapping = function(operator) {
-            // 	if(operator){
-            // 		switch(operator){
-            // 			case "$eq":
-            // 				return "equal";
-            // 			case "$nq":
-            // 				return "not_equal";
-            // 			case "$in":
-            // 				return "in_array";
-            // 			case "$nin":
-            // 				return "not_in_array";
-            // 			case "$lt":
-            // 				return "less_than";
-            // 			case "$lte":
-            // 				return "less_than_or_equal";
-            // 			case "$gt":
-            // 				return "greater_than";
-            // 			case "$gte":
-            // 				return "greater_than_or_equal";
-            // 			case "$exists":
-            // 				return "exists";
-            // 			// case "$type":
-            // 			// 	return "type";
-            // 		}
-            // 	}
-            // }
+   function recursive(key,operator,value){
+                    if(key +' ' + operator +' '+value  )
+                        return true;
+                }
+        
 
         _scope.init();
     }

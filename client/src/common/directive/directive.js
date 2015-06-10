@@ -21,6 +21,7 @@ app.directive('myRows', function ($compile,$parse) {
 	  '</div>'+
 	  '<div class="form-group mb-left">'+
 	    '<select class="form-control" ng-model="data.operator.name" ng-options="s.name as s.name for s in fields"  required>'+
+      '<option value="">choose operator</option>'+
          '</select>'+
 	  '</div>'+
 	  '<div class="form-group mb-left" ng-if="data.operator.name ==\'equalTo\' || data.operator.name ==\'notEqualTo\' || data.operator.name ==\'greaterThan\' || data.operator.name ==\'exists\'">'+
@@ -31,9 +32,9 @@ app.directive('myRows', function ($compile,$parse) {
                 '<option value="">choose one</option>'+
           '</select>'+
 	  '</div>'+
-	  '<div class="form-group mb-left">'+
-            '<button ng-click="deleteRow(indexOf(data))"><span class="glyphicon glyphicon-trash" ng-model="data.delete" aria-hidden="true"></span></button>'+
-        '</div>'+
+	  // '<div class="form-group mb-left">'+
+   //          '<button ng-click="deleteRow(data)"></button>'+
+   //    '</div>'+
 
     '</div>';
            
