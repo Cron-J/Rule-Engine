@@ -27,16 +27,10 @@ var RuleSchema = new Schema({
         enum: ['live', 'active', 'paused', 'inactive', 'unfinished']
     },
 
-    /** 
-      condition. It can only contain object.
-    */
-    condition: [],
+    expressions: String
 
-    rows: []
-
-    /**
-      Need to be discusses about other fields.
-    */
+    //jsonExpression: String
+    //jsExpression: String
 });
 
 /**
