@@ -16,8 +16,8 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
             this.conditions = [new condition()],
             this.subconditions = []
         }
-        $scope.expressions = myExpression;
-        // $scope.expressions = [new subcondition()];
+        // $scope.expressions = myExpression;
+        $scope.expressions = [new subcondition()];
         $scope.addExpression = function(data) {
             data.conditions.push(new condition());
         }
@@ -36,32 +36,18 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
         $scope.add_new_rule = function() {
             $scope.changeView.ruleHomeShow = true;
             $scope.changeView.ruleUpdateShow = false;
+            $scope.showButton = false;
             $scope.changeView.ruleEditShow = false;
         }
         $scope.editRule1 = function() {
             $scope.changeView.ruleEditShow = true;
             $scope.changeView.ruleUpdateShow = false;
+            $scope.changeView.ruleHomeShow =true;
+            $scope.showButton = true;
+            $scope.showDetails=true;
             $scope.staticJson();
             $scope.checkType();
 
-        }
-        $scope.ruleEditorPage = function() {
-            $scope.changeView.ruleEditPage = true;
-            $scope.changeView.expressionEditPage = false;
-            $scope.changeView.actionEditPage = false;
-        }
-
-        $scope.expressionEditorPage = function() {
-            $scope.changeView.ruleEditPage = false;
-            $scope.changeView.expressionEditPage = true;
-            $scope.changeView.actionEditPage = false;
-            $scope.staticJson();
-        }
-
-        $scope.actionEditorPage = function() {
-            $scope.changeView.ruleEditPage = false;
-            $scope.changeView.expressionEditPage = false;
-            $scope.changeView.actionEditPage = true;
         }
 
         $scope.staticJson = function() {
@@ -91,8 +77,9 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
         $scope.submit = function(conditions) {
             var data = {
                 description: "Rule number " + Math.floor((Math.random() * 200)),//rule selection
-                expressions : angular.toJson($scope.expressions),
-                status: 'live'
+                jsonExpression : angular.toJson($scope.expressions),
+                status: 'live',
+                jsExpression:toJSExpression($scope.expressions)
             }
 
             rule.save({
@@ -100,7 +87,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
             }, data).$promise.then(function(data) {
                 if (data.statusCode != 403) {
                     $scope.ruleId = data._id;
-                    toJSExpression(JSON.parse(data.expressions));
+                    //toJSExpression(angular.fromJson(data.jsonExpression));
                     growl.success('rule created succesfully');
                 } else {
                     growl.error(data.message);
@@ -111,7 +98,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
         }
 
 
-        $scope.editRule = function() {
+        $scope.editRule = function() { //get all rule
             rule.get({
                 url: 'rule'
             }).$promise.then(function(data) {
@@ -124,15 +111,15 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 growl.error('oops! something went wrong');
             });
         }
-
-        $scope.getRule = function(id) {
+        var dataID;
+        $scope.getRule = function(id) { //getrule by id
+            dataID = id;
             rule.getbyId({
                 url: 'rule',
-                id: id
+                id: dataID
             }).$promise.then(function(data) {
                 if (data.statusCode != 403) {
-                    $scope.getRuleData = data;
-                    $scope.changeView.ruleUpdateShow = true;
+                    $scope.expressions = JSON.parse(data.jsonExpression);
                     growl.success('Get the rule By Id');
                 } else {
                     growl.error(data.message);
@@ -142,15 +129,14 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
             });
         }
 
-        $scope.updateRule = function(data) {
-            $scope.lines = data.rows;
-            var d = mappingInfo();
+        $scope.updateRule = function() {
             var Updateddata = {
-                rows: $scope.lines
+                jsonExpression : angular.toJson($scope.expressions), //rule update
+                jsExpression:toJSExpression($scope.expressions)
             };
             rule.update({
                 url: 'rule',
-                id: data._id
+                id: dataID
             }, Updateddata).$promise.then(function(data) {
                 if (data.statusCode != 403) {
                     growl.success('rule updated succesfully');
@@ -187,12 +173,12 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
 
 
         function toJSExpression(expressions) {
-            var printTree = "function productMatchedExpression(product){"
+            var printTree = "function productMatchedExpression(object){"
             printTree += 'return ' + '(' + seprate(expressions[0]) + ');';
 
             printTree += "}";
             console.log(printTree);
-            eval(printTree);
+            return printTree;
         }
         function initializeConditions() {
             $scope.fields = {
@@ -247,6 +233,30 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                     name: "lessThanEqual",
                     fieldType: "text",
                     JS: "<="
+                },
+                endswith: {
+                    label: "ends with",
+                    name: "endswith",
+                    fieldType: "text",
+                    JS: ""
+                },
+                startswith: {
+                    label: "starts with",
+                    name: "startswith",
+                    fieldType: "text",
+                    JS: ""
+                },
+                contains: {
+                    label: "contains",
+                    name: "contains",
+                    fieldType: "text",
+                    JS: ""
+                },
+                isnotEmpty: {
+                    label: "isnot Empty",
+                    name: "isnotEmpty",
+                    fieldType: "text",
+                    JS: ""
                 }
             }
 

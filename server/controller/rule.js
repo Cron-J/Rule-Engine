@@ -9,6 +9,7 @@ var Joi = require('joi'),
 exports.getAll = {
   handler: function (request, reply) {
     Rule.findRule(function (err, result) {
+      console.log(result,result);
       if (!err) {
         return reply(result);
       }
@@ -32,7 +33,6 @@ exports.create = {
   handler: function (request, reply) {
     request.payload.condition = eval(request.payload.condition);
     Rule.createRule(request.payload, function (err, result) {
-      console.log('result',result);
       if (!err) {
         return reply(result).created('/result/' + result._id); // HTTP 201
       }

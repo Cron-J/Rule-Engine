@@ -1,11 +1,12 @@
 <script type="text/ng-template" id="subcondtion">
     <div class="row left">
-        <div class="row"> 
+        <div class="row">
             <div class="col-sm-5" style="margin-left: -11px;">
-                <p><select ng-model="subcondition.allany" required>
-                    <option value="all">All</option>
-                    <option value="any">Any</option>
-                </select> of the conditions are true</p>
+                <p>
+                    <select ng-model="subcondition.allany" required>
+                        <option value="all">All</option>
+                        <option value="any">Any</option>
+                    </select> of the conditions are true</p>
             </div>
             <div class="col-sm-2">
                 <a class="hoverptr" ng-click="addExpression(subcondition)">Add Expression</a>
@@ -17,29 +18,34 @@
                 <a class="hoverptr" ng-click="deleteSubExpression(subcondition, $parent)">Remove Sub-Expression</a>
             </div>
 
-        </div>  
-        
+        </div>
+
         <div class="row left">
             <div ng-repeat="condition in subcondition.conditions">
                 <div class="form-inline" style="margin-bottom:10px;">
                     <div class="form-group mb-left">
                         <select class="form-control" disabled>
-                                <option value="">choose one</option>
-                                <option value="product" selected>product</option>
+                            <option value="">choose one</option>
+                            <option value="product" selected>product</option>
                         </select>
                     </div>
                     <div class="form-group mb-left">
-                        <select class="form-control" ng-model="condition.key" ng-options = "s.field as s.field for s in staticValues" ng-change="checkType(condition.key, condition.indexOf(condition))" required>
-                                <option value="">choose one</option>
+                        <select class="form-control" ng-model="condition.key" ng-options="s.field as s.field for s in staticValues" ng-change="checkType(condition.key, condition.indexOf(condition))" required>
+                            <option value="">choose one</option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-left" ng-show="arrayObject">
+                        <select class="form-control" ng-model="data.objectArray" ng-options="s.field as s.field for s in arrayValue">
+                            <option value="">choose one</option>
                         </select>
                     </div>
                     <div class="form-group mb-left">
-                        <select class="form-control" ng-model="condition.operator" ng-options="field.name as field.label for (name, field) in fields"  required>
-                        <option value="">choose operator</option>
+                        <select class="form-control" ng-model="condition.operator" ng-options="field.name as field.label for (name, field) in fields" required>
+                            <option value="">choose operator</option>
                         </select>
                     </div>
                     <div class="form-group mb-left" ng-if="condition.operator.name =='equalTo' || condition.operator.name =='notEqualTo' || condition.operator.name =='greaterThan' || condition.operator.name =='exists'">
-                        <input type="text" class="form-control" ng-model="condition.value"  required>
+                        <input type="text" class="form-control" ng-model="condition.value" required>
                     </div>
                     <div class="form-group mb-left">
                         <button ng-click="deleteExpression(condition, $parent.subcondition.conditions)"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
@@ -54,31 +60,44 @@
     </div>
 </script>
 
-<div ng-controller="ruleCtrl">
-    <div class="row">
-        <h2>If</h2>
+<div ng-controller="ruleCtrl" ng-init="editRule()">
+    <div ng-show="showrow">
+        <select class="form-control" ng-model="data" ng-options="s._id as s.description for s in allData" ng-change="getRule(data,showrow=false)" required>
+            <option value="">Select Rule</option>
+        </select>
     </div>
-    <div class="row left">
-        <div ng-repeat="subcondition in expressions" ng-include="'subcondtion'" ng-init="parent = expressions"></div>
-    </div>
-   <div class="row">
-        <div class="col-sm-12">
-              <button class="btn btn-primary pull-right" ng-click="submit()">Save</button>
+    <div ng-hide="showrow">
+        <div class="row">
+            <h2>If</h2>
+        </div>
+        <div class="row left">
+            <div ng-repeat="subcondition in expressions" ng-include="'subcondtion'" ng-init="parent = expressions"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <button ng-hide="showButton" class="btn btn-primary pull-right" ng-click="submit()">Save</button>
+            </div>
+            <div>
+                <button ng-show="showButton" class="btn btn-primary pull-right" ng-click="updateRule()">Update Rule</button>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <h2>Then Action</h2>
+        </div>
+        <div class="row left">
+            <li>First Action</li>
+        </div>
+        <div class="row left">
+            <li>Second Action</li>
+        </div>
+        <div class="row left">
+            <li>Third Action</li>
         </div>
     </div>
 
-    <div class="row">
-        <h2>Then Action</h2>
-    </div>
-    <div class="row left">
-            <li>First Action</li>
-    </div>
-    <div class="row left">
-            <li>Second Action</li>
-    </div>
-    <div class="row left">
-            <li>Third Action</li>
-    </div>
-    </div>
-    
+</div>
+
 </div>

@@ -22,12 +22,17 @@ var RuleSchema = new Schema({
     /** 
       status. It can only contain string, status value can be live/active; paused/inactive; unfinished.
     */
+
+    name:String,
+
     status: {
         type: String,
         enum: ['live', 'active', 'paused', 'inactive', 'unfinished']
     },
 
-    expressions: String
+    jsonExpression: String,
+
+    jsExpression: String
 
     //jsonExpression: String
     //jsExpression: String
@@ -57,7 +62,6 @@ RuleSchema.statics.findOneRule = function (id, callback) {
 */
 RuleSchema.statics.createRule = function (data, callback) {
     var rule = new this(data);
-    console.log('rule',rule);
     rule.save(callback);
 };
 
