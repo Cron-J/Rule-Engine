@@ -6,15 +6,18 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
         $scope.changeView.expressionEditPage = false;
         $scope.changeView.actionEditPage = false;
         var _scope = {};
-        function condition(){
+        $scope.arrayValue ={};
+
+        function condition() {
             this.key = '',
-            this.operator = '',
-            this.value = ''
+                this.operator = '',
+                this.value = ''
         }
-        function subcondition(){
+
+        function subcondition() {
             this.allany = 'all',
-            this.conditions = [new condition()],
-            this.subconditions = []
+                this.conditions = [new condition()],
+                this.subconditions = []
         }
         // $scope.expressions = myExpression;
         $scope.expressions = [new subcondition()];
@@ -31,6 +34,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
             parent.splice(parent.indexOf(data), 1);
         }
         _scope.init = function() {
+             $scope.staticJson();
             initializeConditions();
         }
         $scope.add_new_rule = function() {
@@ -42,9 +46,9 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
         $scope.editRule1 = function() {
             $scope.changeView.ruleEditShow = true;
             $scope.changeView.ruleUpdateShow = false;
-            $scope.changeView.ruleHomeShow =true;
+            $scope.changeView.ruleHomeShow = true;
             $scope.showButton = true;
-            $scope.showDetails=true;
+            $scope.showDetails = true;
             $scope.staticJson();
             $scope.checkType();
 
@@ -57,14 +61,14 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                     $scope.staticValues = data.attributes;
                 }).error(function(error) {});
         }
-        $scope.staticJson();
+       
         $scope.checkType = function(keyvalue) {
             if (keyvalue) {
                 for (var key in $scope.staticValues) {
                     if ($scope.staticValues[key]['field'] === keyvalue) {
                         if ($scope.staticValues[key]['values']) {
                             $scope.arrayObject = true;
-                            $scope.arrayValue = $scope.staticValues[key]['values'];
+                            $scope.arrayValue[keyvalue] = $scope.staticValues[key]['values'];
                             break;
                         } else {
                             $scope.arrayObject = false;
@@ -74,12 +78,21 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 }
             }
         }
-        $scope.submit = function(conditions) {
+        $scope.submit = function() {
+            // var objectA;
+            //  for(var i=0; i<$scope.expressions[0].conditions.length; i++){
+            //     if($scope.expressions[0].conditions[i].objectArray){
+            //         var subdoc = $scope.expressions[0].conditions[i].objectArray;
+            //         $scope.expressions[0].conditions[i].key = $scope.expressions[0].conditions[i].key+'.'+subdoc;
+            //         delete $scope.expressions[0].conditions[i].objectArray;                    
+            //     }
+
+            //  }
             var data = {
-                description: "Rule number " + Math.floor((Math.random() * 200)),//rule selection
-                jsonExpression : angular.toJson($scope.expressions),
+                description: "Rule number " + Math.floor((Math.random() * 200)), //rule selection
+                jsonExpression: angular.toJson($scope.expressions),
                 status: 'live',
-                jsExpression:toJSExpression($scope.expressions)
+                jsExpression: toJSExpression($scope.expressions)
             }
 
             rule.save({
@@ -131,8 +144,8 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
 
         $scope.updateRule = function() {
             var Updateddata = {
-                jsonExpression : angular.toJson($scope.expressions), //rule update
-                jsExpression:toJSExpression($scope.expressions)
+                jsonExpression: angular.toJson($scope.expressions), //rule update
+                jsExpression: toJSExpression($scope.expressions)
             };
             rule.update({
                 url: 'rule',
@@ -147,26 +160,27 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 growl.error('oops! something went wrong');
             });
         }
+
         function seprate(subcondition) {
             var printTrees = '';
             var andor = subcondition.allany == "all" ? " && " : " || "
-            for(var i in subcondition.conditions){
+            for (var i in subcondition.conditions) {
                 var condition = subcondition.conditions[i];
-                if(!$scope.fields[condition.operator])
+                if (!$scope.fields[condition.operator])
                     console.log("Nahi Mila", condition)
                 printTrees +=
-                        '(' +
-                        'product.' + condition.key + ' ' +
-                        $scope.fields[condition.operator].JS + ' ' +
-                        '"' + condition.value + '"' + ' ' + //if DateTime then new Date, if string then
-                        ')' + andor;
+                    '(' +
+                    'product.' + condition.key + ' ' +
+                    $scope.fields[condition.operator].JS + ' ' +
+                    '"' + condition.value + '"' + ' ' + //if DateTime then new Date, if string then
+                    ')' + andor;
             }
-            for(var i in subcondition.subconditions){
+            for (var i in subcondition.subconditions) {
                 var subcondition = subcondition.subconditions[i];
-               printTrees += '(' + seprate(subcondition) + ')' + andor;
+                printTrees += '(' + seprate(subcondition) + ')' + andor;
             }
             //trim the last andor
-            if(printTrees.length > 4)
+            if (printTrees.length > 4)
                 printTrees = printTrees.substr(0, printTrees.length - 4);
             return printTrees;
         }
@@ -180,6 +194,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
             console.log(printTree);
             return printTree;
         }
+
         function initializeConditions() {
             $scope.fields = {
                 exists: {
@@ -193,7 +208,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                     name: "empty",
                     fieldType: "none",
                     JS: 'none',
-                    
+
                 },
                 equalTo: {
                     label: "equal to",
@@ -224,9 +239,9 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                     name: "lessThan",
                     fieldType: "text",
                     JS: "<"
-                    // ,toJSExpression: function(keystring, valuestring){
-                    //     return keystring + "<" + valuestring
-                    // }
+                        // ,toJSExpression: function(keystring, valuestring){
+                        //     return keystring + "<" + valuestring
+                        // }
                 },
                 lessThanEqual: {
                     label: "less than equal",
@@ -237,13 +252,13 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 endswith: {
                     label: "ends with",
                     name: "endswith",
-                    fieldType: "text",
+                    fieldType: "date",
                     JS: ""
                 },
                 startswith: {
                     label: "starts with",
                     name: "startswith",
-                    fieldType: "text",
+                    fieldType: "date",
                     JS: ""
                 },
                 contains: {
@@ -261,6 +276,17 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
             }
 
         }
+        $scope.open = function($event) {
+            $event.preventDefault();
+            $event.stopPropagation();
+
+            $scope.opened = true;
+        };
+
+        $scope.dateOptions = {
+            formatYear: 'yy',
+            startingDay: 1
+        };
         _scope.init();
     }
 ])
