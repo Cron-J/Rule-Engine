@@ -2,14 +2,11 @@
 var evaluatedFunction;
 app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
     function($scope, $http, $location, growl, rule) {
-        $scope.changeView.ruleEditPage = true;
-        $scope.changeView.expressionEditPage = false;
-        $scope.changeView.actionEditPage = false;
         var _scope = {};
-        $scope.arrayValue ={};
+        $scope.arrayValue = {};
 
         function condition() {
-            this.key = '',
+            this.keys = '',
                 this.operator = '',
                 this.value = ''
         }
@@ -34,24 +31,18 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
             parent.splice(parent.indexOf(data), 1);
         }
         _scope.init = function() {
-             $scope.staticJson();
+            $scope.staticJson();
             initializeConditions();
         }
         $scope.add_new_rule = function() {
             $scope.changeView.ruleHomeShow = true;
-            $scope.changeView.ruleUpdateShow = false;
             $scope.showButton = false;
-            $scope.changeView.ruleEditShow = false;
+            // $scope.changeView.ruleEditShow = false;
         }
         $scope.editRule1 = function() {
-            $scope.changeView.ruleEditShow = true;
-            $scope.changeView.ruleUpdateShow = false;
             $scope.changeView.ruleHomeShow = true;
             $scope.showButton = true;
             $scope.showDetails = true;
-            $scope.staticJson();
-            $scope.checkType();
-
         }
 
         $scope.staticJson = function() {
@@ -61,7 +52,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                     $scope.staticValues = data.attributes;
                 }).error(function(error) {});
         }
-       
+
         $scope.checkType = function(keyvalue) {
             if (keyvalue) {
                 for (var key in $scope.staticValues) {
@@ -78,16 +69,25 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 }
             }
         }
-        $scope.submit = function() {
-            // var objectA;
-            //  for(var i=0; i<$scope.expressions[0].conditions.length; i++){
-            //     if($scope.expressions[0].conditions[i].objectArray){
-            //         var subdoc = $scope.expressions[0].conditions[i].objectArray;
-            //         $scope.expressions[0].conditions[i].key = $scope.expressions[0].conditions[i].key+'.'+subdoc;
-            //         delete $scope.expressions[0].conditions[i].objectArray;                    
-            //     }
 
-            //  }
+        function recursiveFunction(subcondition) {
+            for (var i in subcondition.conditions) {
+                if (subcondition.conditions[i].objectArray) {
+                    var subdoc = subcondition.conditions[i].objectArray;
+                    subcondition.conditions[i].keys = subcondition.conditions[i].key + '.' + subdoc;
+                }
+            }
+            for (var i in subcondition.subconditions) {
+                 if(subcondition.subconditions[i].subconditions.length>0){
+                    recursiveFunction(subcondition.subconditions[i])
+                }
+                if(subcondition.subconditions[i].conditions.length>0){
+                    recursiveFunction(subcondition.subconditions[i])
+                }
+            }
+        }
+        $scope.submit = function() {
+            recursiveFunction($scope.expressions[0]);
             var data = {
                 description: "Rule number " + Math.floor((Math.random() * 200)), //rule selection
                 jsonExpression: angular.toJson($scope.expressions),
@@ -133,6 +133,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
             }).$promise.then(function(data) {
                 if (data.statusCode != 403) {
                     $scope.expressions = JSON.parse(data.jsonExpression);
+                    getrecursiveEditRule($scope.expressions[0]);
                     growl.success('Get the rule By Id');
                 } else {
                     growl.error(data.message);
@@ -140,6 +141,24 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
             }).catch(function(error) {
                 growl.error('oops! something went wrong');
             });
+        }
+
+        function getrecursiveEditRule(subcondition) {
+            for (var i in subcondition.conditions) {
+                if (subcondition.conditions[i].key) {
+                    $scope.checkType(subcondition.conditions[i].key);
+
+                }
+            }
+            for (var i in subcondition.subconditions) {
+                if(subcondition.subconditions[i].subconditions.length>0){
+                    getrecursiveEditRule(subcondition.subconditions[i])
+                }
+                if(subcondition.subconditions[i].conditions.length>0){
+                    getrecursiveEditRule(subcondition.subconditions[i])
+                }
+                
+            }
         }
 
         $scope.updateRule = function() {
@@ -161,19 +180,55 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
             });
         }
 
+        // function seprate(subcondition) {
+        //     var printTrees = '';
+        //     var andor = subcondition.allany == "all" ? " && " : " || "
+        //     for (var i in subcondition.conditions) {
+        //         var condition = subcondition.conditions[i];
+        //         if(condition.keys)
+        //         printTrees +=
+        //             '(' +
+        //             'product.' + condition.keys + ' ' +
+        //             $scope.fields[condition.operator].JS + ' ' +
+        //             '"' + condition.value + '"' + ' ' + //if DateTime then new Date, if string then
+        //             ')' + andor;
+        //         else{
+        //             printTrees +=
+        //             '(' +
+        //             'product.' + condition.key + ' ' +
+        //             $scope.fields[condition.operator].JS + ' ' +
+        //             '"' + condition.value + '"' + ' ' + //if DateTime then new Date, if string then
+        //             ')' + andor;
+        //         }
+        //     }
+        //     for (var i in subcondition.subconditions) {
+        //         var subcondition = subcondition.subconditions[i];
+        //         printTrees += '(' + seprate(subcondition) + ')' + andor;
+        //     }
+        //     //trim the last andor
+        //     if (printTrees.length > 4)
+        //         printTrees = printTrees.substr(0, printTrees.length - 4);
+        //     return printTrees;
+        // }
+
         function seprate(subcondition) {
             var printTrees = '';
             var andor = subcondition.allany == "all" ? " && " : " || "
             for (var i in subcondition.conditions) {
                 var condition = subcondition.conditions[i];
-                if (!$scope.fields[condition.operator])
-                    console.log("Nahi Mila", condition)
+                if(condition.keys)
                 printTrees +=
                     '(' +
-                    'product.' + condition.key + ' ' +
-                    $scope.fields[condition.operator].JS + ' ' +
-                    '"' + condition.value + '"' + ' ' + //if DateTime then new Date, if string then
+                    'product.' + 
+                   $scope.fields[condition.operator].toJSExpression(condition.keys,condition.value) + ' ' + //if DateTime then new Date, if string then
                     ')' + andor;
+                else{
+                     printTrees +=
+                    '(' +
+                    'product.' + 
+                   $scope.fields[condition.operator].toJSExpression(condition.key,condition.value) + ' ' + //if DateTime then new Date, if string then
+                    ')' + andor;
+                }
             }
             for (var i in subcondition.subconditions) {
                 var subcondition = subcondition.subconditions[i];
@@ -194,99 +249,136 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
             console.log(printTree);
             return printTree;
         }
-
+        $scope.aggregatorFunction = function(){
+            $scope.getaggregatorFields = {
+                all:"all",
+                any:"any"
+            }
+        }
         function initializeConditions() {
             $scope.fields = {
                 exists: {
                     label: "exists",
                     name: "exists",
                     fieldType: "none",
-                    JS: ""
+                    //JS:"",
+                    toJSExpression: function(keystring, valuestring){
+                            return keystring + "" + valuestring
+                        }
                 },
                 empty: {
                     label: "empty",
                     name: "empty",
                     fieldType: "none",
-                    JS: 'none',
+                    //JS:"",
+                    toJSExpression: function(keystring, valuestring){
+                            return keystring + "none" + valuestring
+                        }
 
                 },
                 equalTo: {
                     label: "equal to",
                     name: "equalTo",
-                    fieldType: "select",
-                    JS: "==="
+                    fieldType: "text",
+                    //JS:"===",
+                    toJSExpression: function(keystring, valuestring){
+                            return keystring + "===" + valuestring
+                        }
                 },
                 notEqualTo: {
                     label: "not equal to",
                     name: "notEqualTo",
                     fieldType: "text",
-                    JS: "!=="
+                    //JS:"!==",
+                    toJSExpression: function(keystring, valuestring){
+                            return keystring + "!==" + valuestring
+                        }
                 },
                 greaterThan: {
                     label: "greater than",
                     name: "greaterThan",
-                    fieldType: "text",
-                    JS: ">"
+                    fieldType: "number",
+                    //JS:">",
+                    toJSExpression: function(keystring, valuestring){
+                            return keystring + ">" + valuestring
+                        }
                 },
                 greaterThanEqual: {
                     label: "greater than equal",
                     name: "greaterThanEqual",
-                    fieldType: "text",
-                    JS: "=>"
+                    fieldType: "number",
+                    //JS:"=>",
+                    toJSExpression: function(keystring, valuestring){
+                            return keystring + "=>" + valuestring
+                    }
                 },
                 lessThan: {
                     label: "less than",
                     name: "lessThan",
-                    fieldType: "text",
-                    JS: "<"
-                        // ,toJSExpression: function(keystring, valuestring){
-                        //     return keystring + "<" + valuestring
-                        // }
+                    fieldType: "number",
+                    // JS: "<",
+                    toJSExpression: function(keystring, valuestring){
+                            return keystring + "<" + valuestring
+                    }
                 },
                 lessThanEqual: {
                     label: "less than equal",
                     name: "lessThanEqual",
-                    fieldType: "text",
-                    JS: "<="
+                    fieldType: "number",
+                    //JS:"<=",
+                    toJSExpression: function(keystring, valuestring){
+                            return keystring + "<=" + valuestring
+                    }
                 },
                 endswith: {
                     label: "ends with",
                     name: "endswith",
                     fieldType: "date",
-                    JS: ""
+                    //JS:"",
+                    toJSExpression: function(keystring, valuestring){
+                            return keystring + "" + valuestring
+                    }
                 },
                 startswith: {
                     label: "starts with",
                     name: "startswith",
                     fieldType: "date",
-                    JS: ""
+                    toJSExpression: function(keystring, valuestring){
+                            return keystring + "" + valuestring
+                    }
                 },
                 contains: {
                     label: "contains",
                     name: "contains",
                     fieldType: "text",
-                    JS: ""
+                    //JS:"",
+                    toJSExpression: function(keystring, valuestring){
+                            return keystring + "" + valuestring
+                    }
                 },
                 isnotEmpty: {
                     label: "isnot Empty",
                     name: "isnotEmpty",
                     fieldType: "text",
-                    JS: ""
+                    //JS:"",
+                    toJSExpression: function(keystring, valuestring){
+                            return keystring + "" + valuestring
+                    }
                 }
             }
 
         }
-        $scope.open = function($event) {
-            $event.preventDefault();
-            $event.stopPropagation();
+        // $scope.open = function($event) {
+        //     $event.preventDefault();
+        //     $event.stopPropagation();
 
-            $scope.opened = true;
-        };
+        //     $scope.opened = true;
+        // };
 
-        $scope.dateOptions = {
-            formatYear: 'yy',
-            startingDay: 1
-        };
+        // $scope.dateOptions = {
+        //     formatYear: 'yy',
+        //     startingDay: 1
+        // };
         _scope.init();
     }
 ])

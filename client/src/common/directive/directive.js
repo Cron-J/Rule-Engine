@@ -24,11 +24,16 @@ app.directive('customFields', function($compile) {
                             $compile(cont)(scope);
                             el.append(cont);                       
                             break;
+                            case 'number':
+                            cont.append('<input type="number" class="form-control" ng-pattern="/^[0-9]{1,7}$/" ng-model="condition.value"/>');
+                            $compile(cont)(scope);
+                            el.append(cont);
+                            break;
+
                         }
                     }
                     
                 });
-                console.log('should i not have a div containing login controlled by loginController at this point?');
             }
         };
 });

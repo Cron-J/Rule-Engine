@@ -29,12 +29,17 @@
                             <option value="product" selected>product</option>
                         </select>
                     </div>
-                    <div class="form-group mb-left">
-                        <select class="form-control" ng-model="condition.key" ng-options="s.field as s.field for s in staticValues" ng-change="checkType(condition.key, condition.indexOf(condition))" required>
+                    <div class="form-group mb-left" ng-show="arrayValue[condition.key]">
+                        <select class="form-control" ng-model="data" ng-options="name for (name, value) in getaggregatorFields "  required>
                             <option value="">choose one</option>
                         </select>
                     </div>
-                    <div class="form-group mb-left" ng-show="arrayObject">
+                    <div class="form-group mb-left">
+                        <select class="form-control" ng-model="condition.key" ng-options="s.field as s.field for s in staticValues" ng-change="checkType(condition.key, condition.indexOf(condition));aggregatorFunction()" required>
+                            <option value="">choose one</option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-left" ng-show="arrayValue[condition.key]">
                         <select class="form-control" ng-model="condition.objectArray" ng-options="s.field as s.field for s in arrayValue[condition.key]">
                             <option value="">choose one</option>
                         </select>
@@ -59,10 +64,13 @@
 </script>
 
 <div ng-controller="ruleCtrl" ng-init="editRule()">
-    <div ng-show="showrow">
-        <select class="form-control" ng-model="data" ng-options="s._id as s.description for s in allData" ng-change="getRule(data,showrow=false)" required>
+    <div class="row" ng-show="showrow">
+    <div class="col-xs-4">
+         <select  class="form-control" ng-model="data" ng-options="s._id as s.description for s in allData" ng-change="getRule(data,showrow=false)" required>
             <option value="">Select Rule</option>
         </select>
+    </div>
+       
     </div>
     <div ng-hide="showrow">
         <div class="row">
