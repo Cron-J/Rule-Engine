@@ -1,7 +1,7 @@
 <script type="text/ng-template" id="subcondtion">
     <div class="row left">
         <div class="row">
-            <div class="col-sm-5" style="margin-left: -11px;">
+            <div class="col-sm-3" style="margin-left: -11px;">
                 <p>
                     <select ng-model="subcondition.allany" required>
                         <option value="all">All</option>
@@ -45,7 +45,7 @@
                         </select>
                     </div>
                     <div class="form-group mb-left">
-                        <select class="form-control" ng-model="condition.operator" ng-options="field.name as field.label for (name, field) in fields"   required>
+                        <select class="form-control" ng-model="condition.operator" ng-options="field.name as field.label for (name, field) in fields | instanceFilter : condition.key:staticValues:condition.objectArray:arrayValue[condition.key]"   required>
                             <option value="">choose operator</option>
                         </select>
                     </div>
@@ -66,13 +66,18 @@
 <div ng-controller="ruleCtrl" ng-init="editRule()">
     <div class="row" ng-show="showrow">
     <div class="col-xs-4">
-         <select  class="form-control" ng-model="data" ng-options="s._id as s.description for s in allData" ng-change="getRule(data,showrow=false)" required>
+         <select  class="form-control" ng-model="data" ng-options="s._id as s.name for s in allData" ng-change="getRule(data,showrow=false)" required>
             <option value="">Select Rule</option>
         </select>
     </div>
        
     </div>
     <div ng-hide="showrow">
+        <div class="row">
+            <div class="col-sm-3">
+                <input type="text" class="form-control" placeholder="Rule Name" ng-model="ruleName">
+            </div>
+        </div>
         <div class="row">
             <h2>If</h2>
         </div>

@@ -48,7 +48,6 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
         $scope.staticJson = function() {
             $http.get('http://modulus-linkup-45480.onmodulus.net/getProductSchema')
                 .success(function(data) {
-                    console.log('data', data);
                     $scope.staticValues = data.attributes;
                 }).error(function(error) {});
         }
@@ -89,6 +88,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
         $scope.submit = function() {
             recursiveFunction($scope.expressions[0]);
             var data = {
+                name :$scope.ruleName,
                 description: "Rule number " + Math.floor((Math.random() * 200)), //rule selection
                 jsonExpression: angular.toJson($scope.expressions),
                 status: 'live',
@@ -132,6 +132,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 id: dataID
             }).$promise.then(function(data) {
                 if (data.statusCode != 403) {
+                    $scope.ruleName=data.name;
                     $scope.expressions = JSON.parse(data.jsonExpression);
                     getrecursiveEditRule($scope.expressions[0]);
                     growl.success('Get the rule By Id');
@@ -211,7 +212,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
         //     return printTrees;
         // }
 
-        function seprate(subcondition) {
+        function separate(subcondition) {
             var printTrees = '';
             var andor = subcondition.allany == "all" ? " && " : " || "
             for (var i in subcondition.conditions) {
@@ -232,7 +233,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
             }
             for (var i in subcondition.subconditions) {
                 var subcondition = subcondition.subconditions[i];
-                printTrees += '(' + seprate(subcondition) + ')' + andor;
+                printTrees += '(' + separate(subcondition) + ')' + andor;
             }
             //trim the last andor
             if (printTrees.length > 4)
@@ -243,7 +244,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
 
         function toJSExpression(expressions) {
             var printTree = "function productMatchedExpression(object){"
-            printTree += 'return ' + '(' + seprate(expressions[0]) + ');';
+            printTree += 'return ' + '(' + separate(expressions[0]) + ');';
 
             printTree += "}";
             console.log(printTree);
@@ -368,17 +369,6 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
             }
 
         }
-        // $scope.open = function($event) {
-        //     $event.preventDefault();
-        //     $event.stopPropagation();
-
-        //     $scope.opened = true;
-        // };
-
-        // $scope.dateOptions = {
-        //     formatYear: 'yy',
-        //     startingDay: 1
-        // };
         _scope.init();
     }
 ])
