@@ -6,7 +6,8 @@ app.filter('instanceFilter', function () {
   	function equivalentInstance (ins){
   		var equiInstanceObj = {
   			'String' :'text',
-  			'Number' :'number' 
+  			'Number' :'number',
+        'undefined':'none' 
   		}
 
   		return equiInstanceObj[ins]

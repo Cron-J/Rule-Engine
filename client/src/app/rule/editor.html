@@ -30,7 +30,7 @@
                         </select>
                     </div>
                     <div class="form-group mb-left" ng-show="arrayValue[condition.key]">
-                        <select class="form-control" ng-model="data" ng-options="name for (name, value) in getaggregatorFields "  required>
+                        <select class="form-control" ng-model="data" ng-options="name for (name, value) in getaggregatorFields " required>
                             <option value="">choose one</option>
                         </select>
                     </div>
@@ -45,7 +45,7 @@
                         </select>
                     </div>
                     <div class="form-group mb-left">
-                        <select class="form-control" ng-model="condition.operator" ng-options="field.name as field.label for (name, field) in fields | instanceFilter : condition.key:staticValues:condition.objectArray:arrayValue[condition.key]"   required>
+                        <select class="form-control" ng-model="condition.operator" ng-options="field.name as field.label for (name, field) in fields | instanceFilter : condition.key:staticValues:condition.objectArray:arrayValue[condition.key]" required>
                             <option value="">choose operator</option>
                         </select>
                     </div>
@@ -64,15 +64,17 @@
 </script>
 
 <div ng-controller="ruleCtrl" ng-init="editRule()">
-    <div class="row" ng-show="showrow">
-    <div class="col-xs-4">
-         <select  class="form-control" ng-model="data" ng-options="s._id as s.name for s in allData" ng-change="getRule(data,showrow=false)" required>
-            <option value="">Select Rule</option>
-        </select>
+    <div class="row" ng-show="showrow" ng-hide="show">
+        <div class="col-xs-4">
+            <select class="form-control" ng-model="data" ng-options="s._id as s.name for s in allData" ng-change="getRule(data,showrow=false)" required>
+                <option value="">Select Rule</option>
+            </select>
+        </div>
+        <div class="col-xs-4">
+            <button class="btn btn-primary" ng-click="add_new_rule(subcondtion)">Add New Rule</button>
+        </div>
     </div>
-       
-    </div>
-    <div ng-hide="showrow">
+    <div ng-hide="showrow &&!show" >
         <div class="row">
             <div class="col-sm-3">
                 <input type="text" class="form-control" placeholder="Rule Name" ng-model="ruleName">
@@ -111,4 +113,3 @@
 
 </div>
 
-</div>

@@ -37,6 +37,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
         $scope.add_new_rule = function() {
             $scope.changeView.ruleHomeShow = true;
             $scope.showButton = false;
+            $scope.show=true;
             // $scope.changeView.ruleEditShow = false;
         }
         $scope.editRule1 = function() {
@@ -211,6 +212,11 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
         //         printTrees = printTrees.substr(0, printTrees.length - 4);
         //     return printTrees;
         // }
+        
+
+        function testJSExpression(objectInfo){
+
+        }
 
         function separate(subcondition) {
             var printTrees = '';
@@ -220,13 +226,13 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 if(condition.keys)
                 printTrees +=
                     '(' +
-                    'product.' + 
+                    'object.' + 
                    $scope.fields[condition.operator].toJSExpression(condition.keys,condition.value) + ' ' + //if DateTime then new Date, if string then
                     ')' + andor;
                 else{
                      printTrees +=
                     '(' +
-                    'product.' + 
+                    'object.' + 
                    $scope.fields[condition.operator].toJSExpression(condition.key,condition.value) + ' ' + //if DateTime then new Date, if string then
                     ')' + andor;
                 }
@@ -253,7 +259,10 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
         $scope.aggregatorFunction = function(){
             $scope.getaggregatorFields = {
                 all:"all",
-                any:"any"
+                atleast1:"at least 1",
+                exactly3:"exactly 3",
+                morethanone: "more than one",
+                exactlyone:"exactly one"
             }
         }
         function initializeConditions() {
@@ -264,7 +273,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                     fieldType: "none",
                     //JS:"",
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + "" + valuestring
+                            return keystring + "" + valuestring  
                         }
                 },
                 empty: {
@@ -273,7 +282,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                     fieldType: "none",
                     //JS:"",
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + "none" + valuestring
+                            return keystring + " \"" + valuestring +"\""
                         }
 
                 },
@@ -283,7 +292,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                     fieldType: "text",
                     //JS:"===",
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + "===" + valuestring
+                            return keystring + "===\"" + valuestring +"\""
                         }
                 },
                 notEqualTo: {
@@ -292,7 +301,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                     fieldType: "text",
                     //JS:"!==",
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + "!==" + valuestring
+                            return keystring + "!==\"" + valuestring +"\""
                         }
                 },
                 greaterThan: {
@@ -301,7 +310,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                     fieldType: "number",
                     //JS:">",
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + ">" + valuestring
+                            return keystring + ">\"" + valuestring +"\""
                         }
                 },
                 greaterThanEqual: {
@@ -310,7 +319,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                     fieldType: "number",
                     //JS:"=>",
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + "=>" + valuestring
+                            return keystring + "=>\"" + valuestring +"\""
                     }
                 },
                 lessThan: {
@@ -319,7 +328,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                     fieldType: "number",
                     // JS: "<",
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + "<" + valuestring
+                            return keystring + "<\"" + valuestring +"\""
                     }
                 },
                 lessThanEqual: {
@@ -328,7 +337,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                     fieldType: "number",
                     //JS:"<=",
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + "<=" + valuestring
+                            return keystring + "<=\"" + valuestring +"\""
                     }
                 },
                 endswith: {
@@ -337,7 +346,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                     fieldType: "date",
                     //JS:"",
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + "" + valuestring
+                            return keystring + "\"" + valuestring +"\""
                     }
                 },
                 startswith: {
@@ -345,7 +354,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                     name: "startswith",
                     fieldType: "date",
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + "" + valuestring
+                            return keystring + "\"" + valuestring +"\""
                     }
                 },
                 contains: {
@@ -354,7 +363,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                     fieldType: "text",
                     //JS:"",
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + "" + valuestring
+                            return keystring + "in\"" + valuestring +"\""
                     }
                 },
                 isnotEmpty: {
@@ -363,7 +372,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                     fieldType: "text",
                     //JS:"",
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + "" + valuestring
+                            return keystring + "\"" + valuestring +"\""
                     }
                 }
             }

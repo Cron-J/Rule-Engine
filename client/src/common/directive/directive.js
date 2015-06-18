@@ -25,7 +25,7 @@ app.directive('customFields', function($compile) {
                             el.append(cont);                       
                             break;
                             case 'number':
-                            cont.append('<input type="number" class="form-control" ng-pattern="/^[0-9]{1,7}$/" ng-model="condition.value"/>');
+                            cont.append('<input type="text" class="form-control" numbers-only="numbers-only" ng-model="condition.value"/>');
                             $compile(cont)(scope);
                             el.append(cont);
                             break;
@@ -36,4 +36,21 @@ app.directive('customFields', function($compile) {
                 });
             }
         };
+})
+app.directive('numbersOnly', function(){
+   return {
+     require: 'ngModel',
+     link: function(scope, element, attrs, modelCtrl) {
+       modelCtrl.$parsers.push(function (inputValue) {
+           if (inputValue == undefined) return '' 
+           var transformedInput = inputValue.replace(/[^0-9]/g, ''); 
+           if (transformedInput!=inputValue) {
+              modelCtrl.$setViewValue(transformedInput);
+              modelCtrl.$render();
+           }         
+
+           return transformedInput;         
+       });
+     }
+   };
 });
