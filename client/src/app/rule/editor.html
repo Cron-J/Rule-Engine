@@ -29,20 +29,23 @@
                             <option value="product" selected>product</option>
                         </select>
                     </div>
-                    <div class="form-group mb-left" ng-show="arrayValue[condition.key]">
-                        <select class="form-control" ng-model="data" ng-options="name for (name, value) in getaggregatorFields " required>
-                            <option value="">choose one</option>
-                        </select>
-                    </div>
                     <div class="form-group mb-left">
-                        <select class="form-control" ng-model="condition.key" ng-options="s.field as s.field for s in staticValues" ng-change="checkType(condition.key, condition.indexOf(condition));aggregatorFunction()" required>
+                        <select class="form-control" ng-model="condition.key" ng-options="s.field as s.field for s in staticValues" ng-change="checkType(condition.key, condition.indexOf(condition));" required>
                             <option value="">choose one</option>
                         </select>
                     </div>
                     <div class="form-group mb-left" ng-show="arrayValue[condition.key]">
-                        <select class="form-control" ng-model="condition.objectArray" ng-options="s.field as s.field for s in arrayValue[condition.key]">
+                        <select class="form-control" ng-model="condition.objectArray" ng-options="s.field as s.field for s in arrayValue[condition.key]" ng-change="aggregatorFunction()" required>
                             <option value="">choose one</option>
                         </select>
+                    </div>
+                    <div class="form-group mb-left" ng-show="condition.objectArray">
+                        <select class="form-control" ng-model="data" ng-options="name for (name, value) in getaggregatorFields" ng-change="showSelectedValue=true" required>
+                            <option value="">choose one</option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-left" ng-show="showSelectedValue && arrayValue[condition.key] ">
+                        <button class="btn dropdown-toggle add_item">{{data}}({{condition.key}}.{{condition.objectArray}})</button>
                     </div>
                     <div class="form-group mb-left">
                         <select class="form-control" ng-model="condition.operator" ng-options="field.name as field.label for (name, field) in fields | instanceFilter : condition.key:staticValues:condition.objectArray:arrayValue[condition.key]" required>
@@ -75,41 +78,44 @@
         </div>
     </div>
     <div ng-hide="showrow &&!show" >
-        <div class="row">
-            <div class="col-sm-3">
-                <input type="text" class="form-control" placeholder="Rule Name" ng-model="ruleName">
+        <form name="rule_form" novalidate>
+            <div class="row">
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" name="Rule_Name" placeholder="Rule Name" ng-model="ruleName" required>
+                    <div class="error" ng-show="rule_form.$submitted || rule_form.Rule_Name.$touched">
+                       <div ng-show="rule_form.Rule_Name.$error.required">Required Field</div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <h2>If</h2>
-        </div>
-        <div class="row left">
-            <div ng-repeat="subcondition in expressions" ng-include="'subcondtion'" ng-init="parent = expressions"></div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-12">
-                <button ng-hide="showButton" class="btn btn-primary pull-right" ng-click="submit()">Save</button>
+            <div class="row">
+                <h2>If</h2>
             </div>
-            <div>
-                <button ng-show="showButton" class="btn btn-primary pull-right" ng-click="updateRule()">Update Rule</button>
+            <div class="row left">
+                <div ng-repeat="subcondition in expressions" ng-include="'subcondtion'" ng-init="parent = expressions"></div>
             </div>
 
-        </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <button ng-hide="showButton" class="btn btn-primary pull-right" ng-click="submit()">Save</button>
+                </div>
+                <div>
+                    <button ng-show="showButton" class="btn btn-primary pull-right" ng-click="updateRule()">Update Rule</button>
+                </div>
 
-        <div class="row">
-            <h2>Then Action</h2>
-        </div>
-        <div class="row left">
-            <li>First Action</li>
-        </div>
-        <div class="row left">
-            <li>Second Action</li>
-        </div>
-        <div class="row left">
-            <li>Third Action</li>
-        </div>
+            </div>
+
+            <div class="row">
+                <h2>Then Action</h2>
+            </div>
+            <div class="row left">
+                <li>First Action</li>
+            </div>
+            <div class="row left">
+                <li>Second Action</li>
+            </div>
+            <div class="row left">
+                <li>Third Action</li>
+            </div>
+        </form>    
     </div>
-
-</div>
 

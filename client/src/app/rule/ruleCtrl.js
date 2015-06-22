@@ -6,13 +6,13 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
         $scope.arrayValue = {};
 
         function condition() {
-            this.keys = '',
+                this.keys = '',
                 this.operator = '',
                 this.value = ''
         }
 
         function subcondition() {
-            this.allany = 'all',
+                this.allany = 'all',
                 this.conditions = [new condition()],
                 this.subconditions = []
         }
@@ -265,12 +265,13 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 exactlyone:"exactly one"
             }
         }
+
         function initializeConditions() {
             $scope.fields = {
                 exists: {
                     label: "exists",
                     name: "exists",
-                    fieldType: "none",
+                    fieldType: ["none"],
                     //JS:"",
                     toJSExpression: function(keystring, valuestring){
                             return keystring + "" + valuestring  
@@ -279,7 +280,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 empty: {
                     label: "empty",
                     name: "empty",
-                    fieldType: "none",
+                    fieldType: ["none"],
                     //JS:"",
                     toJSExpression: function(keystring, valuestring){
                             return keystring + " \"" + valuestring +"\""
@@ -289,7 +290,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 equalTo: {
                     label: "equal to",
                     name: "equalTo",
-                    fieldType: "text",
+                    fieldType: ["text","number"],
                     //JS:"===",
                     toJSExpression: function(keystring, valuestring){
                             return keystring + "===\"" + valuestring +"\""
@@ -298,7 +299,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 notEqualTo: {
                     label: "not equal to",
                     name: "notEqualTo",
-                    fieldType: "text",
+                    fieldType: ["text","number"],
                     //JS:"!==",
                     toJSExpression: function(keystring, valuestring){
                             return keystring + "!==\"" + valuestring +"\""
@@ -307,7 +308,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 greaterThan: {
                     label: "greater than",
                     name: "greaterThan",
-                    fieldType: "number",
+                    fieldType: ["number"],
                     //JS:">",
                     toJSExpression: function(keystring, valuestring){
                             return keystring + ">\"" + valuestring +"\""
@@ -316,7 +317,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 greaterThanEqual: {
                     label: "greater than equal",
                     name: "greaterThanEqual",
-                    fieldType: "number",
+                    fieldType: ["number"],
                     //JS:"=>",
                     toJSExpression: function(keystring, valuestring){
                             return keystring + "=>\"" + valuestring +"\""
@@ -325,7 +326,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 lessThan: {
                     label: "less than",
                     name: "lessThan",
-                    fieldType: "number",
+                    fieldType: ["number"],
                     // JS: "<",
                     toJSExpression: function(keystring, valuestring){
                             return keystring + "<\"" + valuestring +"\""
@@ -334,7 +335,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 lessThanEqual: {
                     label: "less than equal",
                     name: "lessThanEqual",
-                    fieldType: "number",
+                    fieldType: ["number"],
                     //JS:"<=",
                     toJSExpression: function(keystring, valuestring){
                             return keystring + "<=\"" + valuestring +"\""
@@ -343,7 +344,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 endswith: {
                     label: "ends with",
                     name: "endswith",
-                    fieldType: "date",
+                    fieldType: ["date"],
                     //JS:"",
                     toJSExpression: function(keystring, valuestring){
                             return keystring + "\"" + valuestring +"\""
@@ -352,7 +353,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 startswith: {
                     label: "starts with",
                     name: "startswith",
-                    fieldType: "date",
+                    fieldType: ["date"],
                     toJSExpression: function(keystring, valuestring){
                             return keystring + "\"" + valuestring +"\""
                     }
@@ -360,7 +361,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 contains: {
                     label: "contains",
                     name: "contains",
-                    fieldType: "text",
+                    fieldType: ["text"],
                     //JS:"",
                     toJSExpression: function(keystring, valuestring){
                             return keystring + "in\"" + valuestring +"\""
@@ -369,7 +370,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 isnotEmpty: {
                     label: "isnot Empty",
                     name: "isnotEmpty",
-                    fieldType: "text",
+                    fieldType: ["text"],
                     //JS:"",
                     toJSExpression: function(keystring, valuestring){
                             return keystring + "\"" + valuestring +"\""

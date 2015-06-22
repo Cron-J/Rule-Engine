@@ -1,46 +1,49 @@
-app.filter('instanceFilter', function () {
-  return function (Objs, categoryValue,categoryObj,subCategoryValue,subCategoryObj) {
-  	var filteredObj = {};
-    var category;
-    var subCategory;
-  	function equivalentInstance (ins){
-  		var equiInstanceObj = {
-  			'String' :'text',
-  			'Number' :'number',
-        'undefined':'none' 
-  		}
+app.filter('instanceFilter', function() {
+    return function(Objs, categoryValue, categoryObj, subCategoryValue, subCategoryObj) {
+        var filteredObj = {};
+        var category;
+        var subCategory;
 
-  		return equiInstanceObj[ins]
-  	}
-      for(var i=0;i<categoryObj.length;i++){
-        if(!categoryObj.values){
-            if(categoryValue==categoryObj[i].field){
-             category = categoryObj[i];
-          }
+        function equivalentInstance(ins) {
+            var equiInstanceObj = {
+                'String': 'text',
+                'Number': 'number',
+                'undefined': 'none'
+            }
+
+            return equiInstanceObj[ins]
         }
-        
-      }
-      if(subCategoryObj){
-        for(var i =0;i<subCategoryObj.length;i++){
-        if(subCategoryValue==subCategoryObj[i].field){
-           subCategory = subCategoryObj[i];
+        for (var i = 0; i < categoryObj.length; i++) {
+            if (!categoryObj.values) {
+                if (categoryValue == categoryObj[i].field) {
+                    category = categoryObj[i];
+                }
+            }
+
         }
-      }
-      }
-      
-      if(categoryValue!==undefined || subCategoryValue!==undefined ){
-        for (var k in  Objs){
-        if(subCategoryObj!==undefined && subCategoryValue!==undefined){
-            if(Objs[k].fieldType == equivalentInstance(subCategory.instance))
-            filteredObj[k] = Objs[k];
+        if (subCategoryObj) {
+            for (var i = 0; i < subCategoryObj.length; i++) {
+                if (subCategoryValue == subCategoryObj[i].field) {
+                    subCategory = subCategoryObj[i];
+                }
+            }
         }
-           if(!categoryObj.values && Objs[k].fieldType == equivalentInstance(category.instance)){
-            filteredObj[k] = Objs[k];
-           }
+
+        if (categoryValue !== undefined || subCategoryValue !== undefined) {
+            for (var k in Objs) {
+                for (var i = 0; i < Objs[k].fieldType.length; i++) {
+                    if (subCategoryObj !== undefined && subCategoryValue !== undefined) {
+                        if (Objs[k].fieldType[i] == equivalentInstance(subCategory.instance))
+                            filteredObj[k] = Objs[k];
+                    }
+
+                    if (!categoryObj.values && Objs[k].fieldType[i] == equivalentInstance(category.instance)) {
+                        filteredObj[k] = Objs[k];
+                    }
+                }
+            }
         }
-      }
-  		
+
         return filteredObj;
-  }
+    }
 });
-
