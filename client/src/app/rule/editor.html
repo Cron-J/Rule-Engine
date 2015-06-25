@@ -23,32 +23,14 @@
         <div class="row left">
             <div ng-repeat="condition in subcondition.conditions">
                 <div class="form-inline" style="margin-bottom:10px;">
-                    <div class="form-group mb-left">
-                        <select class="form-control" disabled>
-                            <option value="">choose one</option>
-                            <option value="product" selected>product</option>
-                        </select>
+                    <div class="form-group" ng-repeat="key in condition.keys">
+                             <select class="form-control" ng-show="key.aggregator" ng-model="key.aggregator" ng-options="field.name as field.label for (name, field) in aggregators"></select>
+                            <select class="form-control" ng-model="key.field" ng-options="s.field as s.field for s in subSchema($parent.condition,$index)"  ng-change="onFieldChange($parent.condition,$index)" required>
+                                <option value="">choose one</option>
+                            </select>
                     </div>
                     <div class="form-group mb-left">
-                        <select class="form-control" ng-model="condition.key" ng-options="s.field as s.field for s in staticValues" ng-change="checkType(condition.key, condition.indexOf(condition));" required>
-                            <option value="">choose one</option>
-                        </select>
-                    </div>
-                    <div class="form-group mb-left" ng-show="arrayValue[condition.key]">
-                        <select class="form-control" ng-model="condition.objectArray" ng-options="s.field as s.field for s in arrayValue[condition.key]" ng-change="aggregatorFunction()" required>
-                            <option value="">choose one</option>
-                        </select>
-                    </div>
-                    <div class="form-group mb-left" ng-show="condition.objectArray">
-                        <select class="form-control" ng-model="data" ng-options="name for (name, value) in getaggregatorFields" ng-change="showSelectedValue=true" required>
-                            <option value="">choose one</option>
-                        </select>
-                    </div>
-                    <div class="form-group mb-left" ng-show="showSelectedValue && arrayValue[condition.key] ">
-                        <button class="btn dropdown-toggle add_item">{{data}}({{condition.key}}.{{condition.objectArray}})</button>
-                    </div>
-                    <div class="form-group mb-left">
-                        <select class="form-control" ng-model="condition.operator" ng-options="field.name as field.label for (name, field) in fields | instanceFilter : condition.key:staticValues:condition.objectArray:arrayValue[condition.key]" required>
+                        <select class="form-control" ng-model="condition.operator" ng-options="field.name as field.label for (name, field) in fields" required>
                             <option value="">choose operator</option>
                         </select>
                     </div>

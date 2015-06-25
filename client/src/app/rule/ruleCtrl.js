@@ -2,11 +2,16 @@
 var evaluatedFunction;
 app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
     function($scope, $http, $location, growl, rule) {
+
         var _scope = {};
         $scope.arrayValue = {};
+        function key(field){
+            this.field = field,
+            this.aggregator = undefined
+        }
 
         function condition() {
-                this.keys = '',
+                this.keys =[new key()],
                 this.operator = '',
                 this.value = ''
         }
@@ -17,7 +22,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 this.subconditions = []
         }
         // $scope.expressions = myExpression;
-        $scope.expressions = [new subcondition()];
+        $scope.expressions = [];
         $scope.addExpression = function(data) {
             data.conditions.push(new condition());
         }
@@ -47,34 +52,58 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
         }
 
         $scope.staticJson = function() {
-            $http.get('http://modulus-linkup-45480.onmodulus.net/getProductSchema')
+            $http.get('app/rule/staticJson.json')
                 .success(function(data) {
-                    $scope.staticValues = data.attributes;
+                    $scope.schema = data;
+                    $scope.expressions = [new subcondition()];
                 }).error(function(error) {});
         }
 
-        $scope.checkType = function(keyvalue) {
-            if (keyvalue) {
-                for (var key in $scope.staticValues) {
-                    if ($scope.staticValues[key]['field'] === keyvalue) {
-                        if ($scope.staticValues[key]['values']) {
-                            $scope.arrayObject = true;
-                            $scope.arrayValue[keyvalue] = $scope.staticValues[key]['values'];
-                            break;
-                        } else {
-                            $scope.arrayObject = false;
-                            $scope.arrayObject = undefined;
-                        }
-                    }
-                }
+        function getAttribute(field,attributes){
+            for(var i = 0; i < attributes.length; i++){
+                if(field === attributes[i].field)
+                    return attributes[i];
             }
         }
+
+        $scope.subSchema = function(condition, index){
+            var keys = condition.keys;
+            var subschema = $scope.schema;
+            if(index ==0)
+                return subschema;
+            for(var i = 0; i < keys.length && i < index; i++){
+                subschema = getAttribute(keys[i].field,subschema).attributes;
+            }
+            return subschema;
+        }
+
+        $scope.onFieldChange = function(condition,index){
+            var keys  = condition.keys;
+            keys.splice(index+1, keys.length);
+            var subschema = $scope.subSchema(condition, index+1);
+            if(subschema){
+                if(index !=0){
+                    keys[index].aggregator = $scope.aggregators.all.name;
+                }
+                
+               
+                keys.push(new key());
+            }
+            else{
+                 keys[index].aggregator = undefined;
+            }
+        }
+        
 
         function recursiveFunction(subcondition) {
             for (var i in subcondition.conditions) {
                 if (subcondition.conditions[i].objectArray) {
                     var subdoc = subcondition.conditions[i].objectArray;
-                    subcondition.conditions[i].keys = subcondition.conditions[i].key + '.' + subdoc;
+                    var aggregatorOperator = subcondition.conditions[i].aggregator;
+                    subcondition.conditions[i].keys.push({propertyId:subcondition.conditions[i].keys[0] + '.' + subdoc,aggregatorOperator:aggregatorOperator});
+                }
+                else{
+                    subcondition.conditions[i].keys.push({propertyId: subcondition.conditions[i].keys[0],aggregatorOperator:aggregatorOperator})
                 }
             }
             for (var i in subcondition.subconditions) {
@@ -147,8 +176,8 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
 
         function getrecursiveEditRule(subcondition) {
             for (var i in subcondition.conditions) {
-                if (subcondition.conditions[i].key) {
-                    $scope.checkType(subcondition.conditions[i].key);
+                if (subcondition.conditions[i].keys) {
+                    $scope.checkType(subcondition.conditions[i].keys[0]);
 
                 }
             }
@@ -227,15 +256,15 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 printTrees +=
                     '(' +
                     'object.' + 
-                   $scope.fields[condition.operator].toJSExpression(condition.keys,condition.value) + ' ' + //if DateTime then new Date, if string then
+                   $scope.fields[condition.operator].toJSExpression(condition.keys[1].propertyId,condition.value) + ' ' + //if DateTime then new Date, if string then
                     ')' + andor;
-                else{
-                     printTrees +=
-                    '(' +
-                    'object.' + 
-                   $scope.fields[condition.operator].toJSExpression(condition.key,condition.value) + ' ' + //if DateTime then new Date, if string then
-                    ')' + andor;
-                }
+                // else{
+                //      printTrees +=
+                //     '(' +
+                //     'object.' + 
+                //    $scope.fields[condition.operator].toJSExpression(condition.keys[0],condition.value) + ' ' + //if DateTime then new Date, if string then
+                //     ')' + andor;
+                // }
             }
             for (var i in subcondition.subconditions) {
                 var subcondition = subcondition.subconditions[i];
@@ -256,15 +285,38 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
             console.log(printTree);
             return printTree;
         }
-        $scope.aggregatorFunction = function(){
-            $scope.getaggregatorFields = {
-                all:"all",
-                atleast1:"at least 1",
-                exactly3:"exactly 3",
-                morethanone: "more than one",
-                exactlyone:"exactly one"
+       
+            $scope.aggregators = {
+                all: {
+                    label: "all",
+                    name: "all",
+                    toJSExpression: function(keystring, valuestring){
+                            return keystring + "" + valuestring  
+                        }
+                },
+                 any: {
+                    label: "any",
+                    name: "any",
+                    toJSExpression: function(keystring, valuestring){
+                            return keystring + "" + valuestring  
+                        }
+                },
+                atleast1: {
+                    label: "atleast 1",
+                    name: "atleast1",
+                    toJSExpression: function(keystring, valuestring){
+                            return keystring + "" + valuestring  
+                        }
+                },
+                exactly1: {
+                    label: "exactly 1",
+                    name: "exactly1",
+                    toJSExpression: function(keystring, valuestring){
+                            return keystring + "" + valuestring  
+                        }
+                }
+
             }
-        }
 
         function initializeConditions() {
             $scope.fields = {
