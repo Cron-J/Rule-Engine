@@ -1,7 +1,7 @@
 'use strict'
 var evaluatedFunction;
-app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
-    function($scope, $http, $location, growl, rule) {
+app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule','$routeParams',
+    function($scope, $http, $location, growl, rule,$routeParams) {
 
         var _scope = {};
         $scope.arrayValue = {};
@@ -93,30 +93,9 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                  keys[index].aggregator = undefined;
             }
         }
-        
 
-        function recursiveFunction(subcondition) {
-            for (var i in subcondition.conditions) {
-                if (subcondition.conditions[i].objectArray) {
-                    var subdoc = subcondition.conditions[i].objectArray;
-                    var aggregatorOperator = subcondition.conditions[i].aggregator;
-                    subcondition.conditions[i].keys.push({propertyId:subcondition.conditions[i].keys[0] + '.' + subdoc,aggregatorOperator:aggregatorOperator});
-                }
-                else{
-                    subcondition.conditions[i].keys.push({propertyId: subcondition.conditions[i].keys[0],aggregatorOperator:aggregatorOperator})
-                }
-            }
-            for (var i in subcondition.subconditions) {
-                 if(subcondition.subconditions[i].subconditions.length>0){
-                    recursiveFunction(subcondition.subconditions[i])
-                }
-                if(subcondition.subconditions[i].conditions.length>0){
-                    recursiveFunction(subcondition.subconditions[i])
-                }
-            }
-        }
         $scope.submit = function() {
-            recursiveFunction($scope.expressions[0]);
+            //recursiveFunction($scope.expressions[0]);
             var data = {
                 name :$scope.ruleName,
                 description: "Rule number " + Math.floor((Math.random() * 200)), //rule selection
@@ -164,7 +143,6 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 if (data.statusCode != 403) {
                     $scope.ruleName=data.name;
                     $scope.expressions = JSON.parse(data.jsonExpression);
-                    getrecursiveEditRule($scope.expressions[0]);
                     growl.success('Get the rule By Id');
                 } else {
                     growl.error(data.message);
@@ -172,24 +150,6 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
             }).catch(function(error) {
                 growl.error('oops! something went wrong');
             });
-        }
-
-        function getrecursiveEditRule(subcondition) {
-            for (var i in subcondition.conditions) {
-                if (subcondition.conditions[i].keys) {
-                    $scope.checkType(subcondition.conditions[i].keys[0]);
-
-                }
-            }
-            for (var i in subcondition.subconditions) {
-                if(subcondition.subconditions[i].subconditions.length>0){
-                    getrecursiveEditRule(subcondition.subconditions[i])
-                }
-                if(subcondition.subconditions[i].conditions.length>0){
-                    getrecursiveEditRule(subcondition.subconditions[i])
-                }
-                
-            }
         }
 
         $scope.updateRule = function() {
@@ -243,8 +203,18 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
         // }
         
 
-        function testJSExpression(objectInfo){
 
+        function checkCondition(condition){
+            var printTrees1 ='';
+             for(var j=0; j<condition.keys.length; j++){
+                  if(j  == condition.keys.length-1)
+                   printTrees1 +=  condition.keys[j].field ;
+                 else printTrees1 +=  condition.keys[j].field + '.';
+                   
+             }
+             var finalExp= '('+$scope.operators[condition.operator].toJSExpression(printTrees1,condition.value) + ' ' + //if DateTime then new Date, if string then
+                    ')'
+                return finalExp;
         }
 
         function separate(subcondition) {
@@ -252,19 +222,9 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
             var andor = subcondition.allany == "all" ? " && " : " || "
             for (var i in subcondition.conditions) {
                 var condition = subcondition.conditions[i];
-                if(condition.keys)
-                printTrees +=
-                    '(' +
-                    'object.' + 
-                   $scope.fields[condition.operator].toJSExpression(condition.keys[1].propertyId,condition.value) + ' ' + //if DateTime then new Date, if string then
-                    ')' + andor;
-                // else{
-                //      printTrees +=
-                //     '(' +
-                //     'object.' + 
-                //    $scope.fields[condition.operator].toJSExpression(condition.keys[0],condition.value) + ' ' + //if DateTime then new Date, if string then
-                //     ')' + andor;
-                // }
+                var getJSExpression = checkCondition(condition);
+                printTrees += getJSExpression + andor;
+               
             }
             for (var i in subcondition.subconditions) {
                 var subcondition = subcondition.subconditions[i];
@@ -278,7 +238,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
 
 
         function toJSExpression(expressions) {
-            var printTree = "function productMatchedExpression(object){"
+            var printTree = "function productMatchedExpression(product){"
             printTree += 'return ' + '(' + separate(expressions[0]) + ');';
 
             printTree += "}";
@@ -291,39 +251,40 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                     label: "all",
                     name: "all",
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + "" + valuestring  
+                            return keystring + " all " + valuestring  
                         }
                 },
                  any: {
                     label: "any",
                     name: "any",
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + "" + valuestring  
+                            return keystring + "any" + valuestring  
                         }
                 },
                 atleast1: {
                     label: "atleast 1",
                     name: "atleast1",
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + "" + valuestring  
+                            return keystring + "atleast1" + valuestring  
                         }
                 },
                 exactly1: {
                     label: "exactly 1",
                     name: "exactly1",
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + "" + valuestring  
+                            return keystring + "exactly1" + valuestring  
                         }
                 }
 
             }
 
         function initializeConditions() {
-            $scope.fields = {
+            $scope.operators = {
                 exists: {
                     label: "exists",
                     name: "exists",
-                    fieldType: ["none"],
+                    rhInputType: "checkbox",
+                    lhDataType: ["String","Number","Date","Boolean"],
                     //JS:"",
                     toJSExpression: function(keystring, valuestring){
                             return keystring + "" + valuestring  
@@ -332,7 +293,8 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 empty: {
                     label: "empty",
                     name: "empty",
-                    fieldType: ["none"],
+                    rhInputType: "checkbox",
+                    lhDataType: ["String","Number","Date","Boolean"],
                     //JS:"",
                     toJSExpression: function(keystring, valuestring){
                             return keystring + " \"" + valuestring +"\""
@@ -342,7 +304,8 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 equalTo: {
                     label: "equal to",
                     name: "equalTo",
-                    fieldType: ["text","number"],
+                    rhInputType: "data",
+                    lhDataType: ["String","Number","Date","Boolean"],
                     //JS:"===",
                     toJSExpression: function(keystring, valuestring){
                             return keystring + "===\"" + valuestring +"\""
@@ -351,7 +314,8 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 notEqualTo: {
                     label: "not equal to",
                     name: "notEqualTo",
-                    fieldType: ["text","number"],
+                    rhInputType: "data",
+                    lhDataType: ["String","Number","Date","Boolean"],
                     //JS:"!==",
                     toJSExpression: function(keystring, valuestring){
                             return keystring + "!==\"" + valuestring +"\""
@@ -360,7 +324,8 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 greaterThan: {
                     label: "greater than",
                     name: "greaterThan",
-                    fieldType: ["number"],
+                    rhInputType: "number",
+                    lhDataType: ["Number","Date"],
                     //JS:">",
                     toJSExpression: function(keystring, valuestring){
                             return keystring + ">\"" + valuestring +"\""
@@ -369,8 +334,8 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 greaterThanEqual: {
                     label: "greater than equal",
                     name: "greaterThanEqual",
-                    fieldType: ["number"],
-                    //JS:"=>",
+                    rhInputType: "number",
+                    lhDataType: ["Number","Date"],
                     toJSExpression: function(keystring, valuestring){
                             return keystring + "=>\"" + valuestring +"\""
                     }
@@ -378,8 +343,8 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 lessThan: {
                     label: "less than",
                     name: "lessThan",
-                    fieldType: ["number"],
-                    // JS: "<",
+                    rhInputType: "data",
+                    lhDataType: ["Number","Date"],
                     toJSExpression: function(keystring, valuestring){
                             return keystring + "<\"" + valuestring +"\""
                     }
@@ -387,8 +352,8 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 lessThanEqual: {
                     label: "less than equal",
                     name: "lessThanEqual",
-                    fieldType: ["number"],
-                    //JS:"<=",
+                    rhInputType: "data",
+                    lhDataType: ["Number","Date"],
                     toJSExpression: function(keystring, valuestring){
                             return keystring + "<=\"" + valuestring +"\""
                     }
@@ -396,16 +361,17 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 endswith: {
                     label: "ends with",
                     name: "endswith",
-                    fieldType: ["date"],
-                    //JS:"",
+                    rhInputType: "data",
+                    lhDataType: ["String"],
                     toJSExpression: function(keystring, valuestring){
                             return keystring + "\"" + valuestring +"\""
                     }
                 },
-                startswith: {
-                    label: "starts with",
-                    name: "startswith",
-                    fieldType: ["date"],
+                beginswith: {
+                    label: "begins with",
+                    name: "beginswith",
+                    rhInputType: "data",
+                    lhDataType: ["String"],
                     toJSExpression: function(keystring, valuestring){
                             return keystring + "\"" + valuestring +"\""
                     }
@@ -413,19 +379,10 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule',
                 contains: {
                     label: "contains",
                     name: "contains",
-                    fieldType: ["text"],
-                    //JS:"",
+                    rhInputType: "data",
+                    lhDataType: ["String"],
                     toJSExpression: function(keystring, valuestring){
                             return keystring + "in\"" + valuestring +"\""
-                    }
-                },
-                isnotEmpty: {
-                    label: "isnot Empty",
-                    name: "isnotEmpty",
-                    fieldType: ["text"],
-                    //JS:"",
-                    toJSExpression: function(keystring, valuestring){
-                            return keystring + "\"" + valuestring +"\""
                     }
                 }
             }

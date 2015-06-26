@@ -82,15 +82,18 @@
         },
         {
             "field": "isForSales",
-            "index": null
+            "index": null,
+            "instance": "Boolean"
         },
         {
             "field": "isSpecialOffer",
-            "index": null
+            "index": null,
+            "instance": "Boolean"
         },
         {
             "field": "isStocked",
-            "index": null
+            "index": null,
+            "instance": "Boolean"
         },
         {
             "field": "isPunchout",
@@ -102,11 +105,13 @@
         },
         {
             "field": "validFrom",
-            "index": null
+            "index": null,
+            "instance": "Date"
         },
         {
             "field": "validTo",
-            "index": null
+            "index": null,
+             "instance": "Date"
         },
         {
             "field": "classificationGroupAssociations",

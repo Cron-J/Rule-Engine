@@ -29,8 +29,8 @@
                                 <option value="">choose one</option>
                             </select>
                     </div>
-                    <div class="form-group mb-left">
-                        <select class="form-control" ng-model="condition.operator" ng-options="field.name as field.label for (name, field) in fields" required>
+                    <div class="form-group mb-left" ng-show="condition.keys[condition.keys.length-1].field">
+                        <select class="form-control" ng-model="condition.operator" ng-options="operator.name as operator.label for (name, operator) in operators| operatorsFilter:condition.keys[condition.keys.length-1]:schema" required>
                             <option value="">choose operator</option>
                         </select>
                     </div>

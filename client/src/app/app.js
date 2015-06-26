@@ -9,6 +9,10 @@ var app = angular
 				.when('/',
 					 {templateUrl: 'app/rule/rule.html'},
 					 {controller: 'ruleCtrl.js'}
+					).
+				when('/edit/:id',
+					 {templateUrl: 'app/rule/rule.html'},
+					 {controller: 'ruleCtrl.js'}
 					)
 				.otherwise({redirectTo: '/'});
 	});

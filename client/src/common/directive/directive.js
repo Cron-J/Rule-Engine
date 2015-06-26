@@ -9,13 +9,13 @@ app.directive('customFields', function($compile) {
                     el.empty();
                     if(scope.condition.operator!==''){
                       //for(var i=0;i<scope.fields[scope.condition.operator].fieldType.length;i++){
-                        switch(scope.fields[scope.condition.operator].fieldType[0]) {
-                            case 'text':
+                        switch(scope.operators[scope.condition.operator].rhInputType) {
+                            case 'data':
                             cont.append('<input type="text" class="form-control" ng-model="condition.value"/>');
                             $compile(cont)(scope);
                             el.append(cont);
                             break;
-                            case 'none':
+                            case 'checkbox':
                             cont.append('<input type="checkbox" ng-model="condition.value">');
                             $compile(cont)(scope);
                             el.append(cont);                       
@@ -26,7 +26,7 @@ app.directive('customFields', function($compile) {
                             el.append(cont);                       
                             break;
                             case 'number':
-                            cont.append('<input type="text" class="form-control" numbers-only="numbers-only" ng-model="condition.value"/>');
+                            cont.append('<input type="number" class="form-control"  ng-model="condition.value"/>');
                             $compile(cont)(scope);
                             el.append(cont);
                             break;
