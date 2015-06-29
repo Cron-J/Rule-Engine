@@ -1,27 +1,27 @@
 'use strict'
 var evaluatedFunction;
-app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule','$routeParams',
-    function($scope, $http, $location, growl, rule,$routeParams) {
+app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$routeParams','StaticDataService',
+    function($scope, $http, $location, growl, rule, $routeParams,StaticDataService) {
 
         var _scope = {};
-        $scope.arrayValue = {};
-        function key(field){
+
+        function key(field) {
             this.field = field,
-            this.aggregator = undefined
+                this.aggregator = undefined
         }
 
         function condition() {
-                this.keys =[new key()],
+            this.keys = [new key()],
                 this.operator = '',
                 this.value = ''
         }
 
         function subcondition() {
                 this.allany = 'all',
-                this.conditions = [new condition()],
-                this.subconditions = []
-        }
-        // $scope.expressions = myExpression;
+                    this.conditions = [new condition()],
+                    this.subconditions = []
+            }
+            // $scope.expressions = myExpression;
         $scope.expressions = [];
         $scope.addExpression = function(data) {
             data.conditions.push(new condition());
@@ -37,16 +37,18 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule','$ro
         }
         _scope.init = function() {
             $scope.staticJson();
-            initializeConditions();
-            if($routeParams.id){
+            StaticDataService.Operators;
+            if ($routeParams.id) {
                 $scope.getRule($routeParams.id);
             }
         }
+        $scope.operators = StaticDataService.Operators;
+        $scope.aggregators = StaticDataService.Aggregators;
         $scope.getRouteId = $routeParams.id;
         $scope.add_new_rule = function() {
             $scope.changeView.ruleHomeShow = true;
             $scope.showButton = false;
-            $scope.show=true;
+            $scope.show = true;
             // $scope.changeView.ruleEditShow = false;
         }
         $scope.editRule1 = function() {
@@ -63,45 +65,44 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule','$ro
                 }).error(function(error) {});
         }
 
-        function getAttribute(field,attributes){
-            for(var i = 0; i < attributes.length; i++){
-                if(field === attributes[i].field)
+        function getAttribute(field, attributes) {
+            for (var i = 0; i < attributes.length; i++) {
+                if (field === attributes[i].field)
                     return attributes[i];
             }
         }
 
-        $scope.subSchema = function(condition, index){
+        $scope.subSchema = function(condition, index) {
             var keys = condition.keys;
             var subschema = $scope.schema;
-            if(index ==0)
+            if (index == 0)
                 return subschema;
-            for(var i = 0; i < keys.length && i < index; i++){
-                subschema = getAttribute(keys[i].field,subschema).attributes;
+            for (var i = 0; i < keys.length && i < index; i++) {
+                subschema = getAttribute(keys[i].field, subschema).attributes;
             }
             return subschema;
         }
 
-        $scope.onFieldChange = function(condition,index){
-            var keys  = condition.keys;
-            keys.splice(index+1, keys.length);
-            var subschema = $scope.subSchema(condition, index+1);
-            if(subschema){
-                if(index !=0){
+        $scope.onFieldChange = function(condition, index) {
+            var keys = condition.keys;
+            keys.splice(index + 1, keys.length);
+            var subschema = $scope.subSchema(condition, index + 1);
+            if (subschema) {
+                if (index != 0) {
                     keys[index].aggregator = $scope.aggregators.all.name;
                 }
-                
-               
+
+
                 keys.push(new key());
-            }
-            else{
-                 keys[index].aggregator = undefined;
+            } else {
+                keys[index].aggregator = undefined;
             }
         }
 
         $scope.submit = function() {
             //recursiveFunction($scope.expressions[0]);
             var data = {
-                name :$scope.ruleName,
+                name: $scope.ruleName,
                 description: "Rule number " + Math.floor((Math.random() * 200)), //rule selection
                 jsonExpression: angular.toJson($scope.expressions),
                 status: 'live',
@@ -145,7 +146,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule','$ro
                 id: dataID
             }).$promise.then(function(data) {
                 if (data.statusCode != 403) {
-                    $scope.ruleName=data.name;
+                    $scope.ruleName = data.name;
                     $scope.expressions = JSON.parse(data.jsonExpression);
                     $location.path('/edit/' + id);
                     growl.success('Get the rule By Id');
@@ -176,230 +177,55 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule','$ro
             });
         }
 
-        // function seprate(subcondition) {
-        //     var printTrees = '';
-        //     var andor = subcondition.allany == "all" ? " && " : " || "
-        //     for (var i in subcondition.conditions) {
-        //         var condition = subcondition.conditions[i];
-        //         if(condition.keys)
-        //         printTrees +=
-        //             '(' +
-        //             'product.' + condition.keys + ' ' +
-        //             $scope.fields[condition.operator].JS + ' ' +
-        //             '"' + condition.value + '"' + ' ' + //if DateTime then new Date, if string then
-        //             ')' + andor;
-        //         else{
-        //             printTrees +=
-        //             '(' +
-        //             'product.' + condition.key + ' ' +
-        //             $scope.fields[condition.operator].JS + ' ' +
-        //             '"' + condition.value + '"' + ' ' + //if DateTime then new Date, if string then
-        //             ')' + andor;
-        //         }
-        //     }
-        //     for (var i in subcondition.subconditions) {
-        //         var subcondition = subcondition.subconditions[i];
-        //         printTrees += '(' + seprate(subcondition) + ')' + andor;
-        //     }
-        //     //trim the last andor
-        //     if (printTrees.length > 4)
-        //         printTrees = printTrees.substr(0, printTrees.length - 4);
-        //     return printTrees;
-        // }
-        
-
-        // function testJSexpression(getProductObj){
-        //     for(var i = 0; i < )
-        // }
-        function checkCondition(condition){
-            var printTrees1 ='';
-             for(var j=0; j<condition.keys.length; j++){
-                //if(condition.keys[j].aggregator == undefined)
-                  if(j  == condition.keys.length-1)
-                   printTrees1 +=  condition.keys[j].field ;
-                 else printTrees1 +=  condition.keys[j].field + '.';
-                   
-             }
-             var finalExp= '('+$scope.operators[condition.operator].toJSExpression(printTrees1,condition.value) + ' ' + //if DateTime then new Date, if string then
-                    ')'
-                return finalExp;
+        function conditionToJSExpression(condition, index) {
+            var jsExpr = 'object.';
+            for (var j = index | 0; j < condition.keys.length; j++) {
+                if (condition.keys[j].aggregator) {
+                    var aggregator = $scope.aggregators[condition.keys[j].aggregator];
+                    jsExpr += condition.keys[j].field;
+                    return aggregator.toJSExpression(jsExpr, conditionToJSExpression(condition, j + 1));
+                }
+                else
+                    jsExpr += condition.keys[j].field + '.';
+            }
+            if(jsExpr.length > 0)
+                jsExpr = jsExpr.substr(0, jsExpr.length - 1);
+            jsExpr = '(' + $scope.operators[condition.operator].toJSExpression(jsExpr, condition.value) + ')';
+            return jsExpr;
         }
 
-        function separate(subcondition) {
-            var printTrees = '';
+        function subconditionToJSExpression(subcondition) {
+            var jsExpr = '';
             var andor = subcondition.allany == "all" ? " && " : " || "
             for (var i in subcondition.conditions) {
                 var condition = subcondition.conditions[i];
-                var getJSExpression = checkCondition(condition);
-                printTrees += getJSExpression + andor;
-               
+                jsExpr += conditionToJSExpression(condition) + andor;
+
             }
             for (var i in subcondition.subconditions) {
                 var subcondition = subcondition.subconditions[i];
-                printTrees += '(' + separate(subcondition) + ')' + andor;
+                jsExpr += '(' + subconditionToJSExpression(subcondition) + ')' + andor;
             }
             //trim the last andor
-            if (printTrees.length > 4)
-                printTrees = printTrees.substr(0, printTrees.length - 4);
-            return printTrees;
+            if (jsExpr.length > 4)
+                jsExpr = jsExpr.substr(0, jsExpr.length - 4);
+            return jsExpr;
         }
 
         function toJSExpression(expressions) {
-            var printTree = "function productMatchedExpression(product){"
-            printTree += 'return ' + '(' + separate(expressions[0]) + ');';
+            var jsExpr = "function productMatchedExpression(object){"
+            jsExpr += 'return ' + '(' + subconditionToJSExpression(expressions[0]) + ');';
+            jsExpr += "}";
+            console.log(jsExpr);
+            try{
+                eval(jsExpr);
+            } 
+            catch(err){
 
-            printTree += "}";
-            console.log(printTree);
-            return printTree;
+            }
+            return jsExpr;
         }
-
-
        
-            $scope.aggregators = {
-                all: {
-                    label: "all",
-                    name: "all",
-                    toJSExpression: function(keystring, valuestring){
-                        return keystring + " " + valuestring  
-                    }
-                },
-                 any: {
-                    label: "any",
-                    name: "any",
-                    toJSExpression: function(keystring, valuestring){
-                        return keystring + "any" + valuestring  
-                    }
-                },
-                atleast1: {
-                    label: "atleast 1",
-                    name: "atleast1",
-                    toJSExpression: function(keystring, valuestring){
-                        return keystring + "atleast1" + valuestring  
-                    }
-                },
-                exactly1: {
-                    label: "exactly 1",
-                    name: "exactly1",
-                    toJSExpression: function(keystring, valuestring){
-                        return keystring + "exactly1" + valuestring  
-                    }
-                }
-
-            }
-
-        function initializeConditions() {
-            $scope.operators = {
-                exists: {
-                    label: "exists",
-                    name: "exists",
-                    rhInputType: "checkbox",
-                    lhDataType: ["String","Number","Date","Boolean"],
-                    //JS:"",
-                   toJSExpression: function(keystring, valuestring){
-                            return ((valuestring ? '' : "!") + "("+ keystring + " === undefined || "  + keystring + "=== null)");                  
-                    }
-                },
-                empty: {
-                    label: "empty",
-                    name: "empty",
-                    rhInputType: "checkbox",
-                    lhDataType: ["String","Number","Date","Boolean"],
-                    //JS:"",
-                    toJSExpression: function(keystring, valuestring){
-                            return ((valuestring ? '' : "!") + "(" + keystring + "=== '' ||" + keystring + " === undefined || "  + keystring + "=== null)");                  
-                    }
-
-                },
-                equalTo: {
-                    label: "equal to",
-                    name: "equalTo",
-                    rhInputType: "data",
-                    lhDataType: ["String","Number","Date","Boolean"],
-                    //JS:"===",
-                    toJSExpression: function(keystring, valuestring){
-                            return keystring + "===\"" + valuestring +"\""
-                        }
-                },
-                notEqualTo: {
-                    label: "not equal to",
-                    name: "notEqualTo",
-                    rhInputType: "data",
-                    lhDataType: ["String","Number","Date","Boolean"],
-                    //JS:"!==",
-                    toJSExpression: function(keystring, valuestring){
-                            return keystring + "!==\"" + valuestring +"\""
-                        }
-                },
-                greaterThan: {
-                    label: "greater than",
-                    name: "greaterThan",
-                    rhInputType: "number",
-                    lhDataType: ["Number","Date"],
-                    //JS:">",
-                    toJSExpression: function(keystring, valuestring){
-                            return keystring + ">" + valuestring 
-                        }
-                },
-                greaterThanEqual: {
-                    label: "greater than equal",
-                    name: "greaterThanEqual",
-                    rhInputType: "number",
-                    lhDataType: ["Number","Date"],
-                    toJSExpression: function(keystring, valuestring){
-                            return keystring + "=>" + valuestring 
-                    }
-                },
-                lessThan: {
-                    label: "less than",
-                    name: "lessThan",
-                    rhInputType: "data",
-                    lhDataType: ["Number","Date"],
-                    toJSExpression: function(keystring, valuestring){
-                            return keystring + "<" + valuestring 
-                    }
-                },
-                lessThanEqual: {
-                    label: "less than equal",
-                    name: "lessThanEqual",
-                    rhInputType: "data",
-                    lhDataType: ["Number","Date"],
-                    toJSExpression: function(keystring, valuestring){
-                            return keystring + "<=" + valuestring 
-                    }
-                },
-                endswith: {
-                    label: "ends with",
-                    name: "endswith",
-                    rhInputType: "data",
-                    lhDataType: ["String"],
-                    toJSExpression: function(keystring, valuestring){
-                            //keystring.indexOf(valuestring) + valuestring.length == keystring.length;
-                            return keystring + ".indexOf(\"" + valuestring +"\"" + ") + valuestring.length == keystring.length";
-                    }
-                },
-                beginswith: {
-                    label: "begins with",
-                    name: "beginswith",
-                    rhInputType: "data",
-                    lhDataType: ["String"],
-                    toJSExpression: function(keystring, valuestring){
-                            //keystring.indexOf(valuestring) == 0;
-                            return keystring + ".indexOf(\"" + valuestring +"\"" + ") == 0";
-                    }
-                },
-                contains: {
-                    label: "contains",
-                    name: "contains",
-                    rhInputType: "data",
-                    lhDataType: ["String"],
-                    toJSExpression: function(keystring, valuestring){
-                        //keystring.indexOf(valuestring) >= 0;
-                            return keystring + ".indexOf(\"" + valuestring +"\"" + ") >= 0";
-                    }
-                }
-            }
-
-        }
         _scope.init();
     }
 ])
