@@ -38,7 +38,11 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule','$ro
         _scope.init = function() {
             $scope.staticJson();
             initializeConditions();
+            if($routeParams.id){
+                $scope.getRule($routeParams.id);
+            }
         }
+        $scope.getRouteId = $routeParams.id;
         $scope.add_new_rule = function() {
             $scope.changeView.ruleHomeShow = true;
             $scope.showButton = false;
@@ -143,6 +147,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule','$ro
                 if (data.statusCode != 403) {
                     $scope.ruleName=data.name;
                     $scope.expressions = JSON.parse(data.jsonExpression);
+                    $location.path('/edit/' + id);
                     growl.success('Get the rule By Id');
                 } else {
                     growl.error(data.message);
@@ -203,10 +208,13 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule','$ro
         // }
         
 
-
+        // function testJSexpression(getProductObj){
+        //     for(var i = 0; i < )
+        // }
         function checkCondition(condition){
             var printTrees1 ='';
              for(var j=0; j<condition.keys.length; j++){
+                //if(condition.keys[j].aggregator == undefined)
                   if(j  == condition.keys.length-1)
                    printTrees1 +=  condition.keys[j].field ;
                  else printTrees1 +=  condition.keys[j].field + '.';
@@ -236,7 +244,6 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule','$ro
             return printTrees;
         }
 
-
         function toJSExpression(expressions) {
             var printTree = "function productMatchedExpression(product){"
             printTree += 'return ' + '(' + separate(expressions[0]) + ');';
@@ -245,35 +252,37 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule','$ro
             console.log(printTree);
             return printTree;
         }
+
+
        
             $scope.aggregators = {
                 all: {
                     label: "all",
                     name: "all",
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + " all " + valuestring  
-                        }
+                        return keystring + " " + valuestring  
+                    }
                 },
                  any: {
                     label: "any",
                     name: "any",
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + "any" + valuestring  
-                        }
+                        return keystring + "any" + valuestring  
+                    }
                 },
                 atleast1: {
                     label: "atleast 1",
                     name: "atleast1",
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + "atleast1" + valuestring  
-                        }
+                        return keystring + "atleast1" + valuestring  
+                    }
                 },
                 exactly1: {
                     label: "exactly 1",
                     name: "exactly1",
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + "exactly1" + valuestring  
-                        }
+                        return keystring + "exactly1" + valuestring  
+                    }
                 }
 
             }
@@ -286,9 +295,9 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule','$ro
                     rhInputType: "checkbox",
                     lhDataType: ["String","Number","Date","Boolean"],
                     //JS:"",
-                    toJSExpression: function(keystring, valuestring){
-                            return keystring + "" + valuestring  
-                        }
+                   toJSExpression: function(keystring, valuestring){
+                            return ((valuestring ? '' : "!") + "("+ keystring + " === undefined || "  + keystring + "=== null)");                  
+                    }
                 },
                 empty: {
                     label: "empty",
@@ -297,8 +306,8 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule','$ro
                     lhDataType: ["String","Number","Date","Boolean"],
                     //JS:"",
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + " \"" + valuestring +"\""
-                        }
+                            return ((valuestring ? '' : "!") + "(" + keystring + "=== '' ||" + keystring + " === undefined || "  + keystring + "=== null)");                  
+                    }
 
                 },
                 equalTo: {
@@ -328,7 +337,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule','$ro
                     lhDataType: ["Number","Date"],
                     //JS:">",
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + ">\"" + valuestring +"\""
+                            return keystring + ">" + valuestring 
                         }
                 },
                 greaterThanEqual: {
@@ -337,7 +346,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule','$ro
                     rhInputType: "number",
                     lhDataType: ["Number","Date"],
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + "=>\"" + valuestring +"\""
+                            return keystring + "=>" + valuestring 
                     }
                 },
                 lessThan: {
@@ -346,7 +355,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule','$ro
                     rhInputType: "data",
                     lhDataType: ["Number","Date"],
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + "<\"" + valuestring +"\""
+                            return keystring + "<" + valuestring 
                     }
                 },
                 lessThanEqual: {
@@ -355,7 +364,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule','$ro
                     rhInputType: "data",
                     lhDataType: ["Number","Date"],
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + "<=\"" + valuestring +"\""
+                            return keystring + "<=" + valuestring 
                     }
                 },
                 endswith: {
@@ -364,7 +373,8 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule','$ro
                     rhInputType: "data",
                     lhDataType: ["String"],
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + "\"" + valuestring +"\""
+                            //keystring.indexOf(valuestring) + valuestring.length == keystring.length;
+                            return keystring + ".indexOf(\"" + valuestring +"\"" + ") + valuestring.length == keystring.length";
                     }
                 },
                 beginswith: {
@@ -373,7 +383,8 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule','$ro
                     rhInputType: "data",
                     lhDataType: ["String"],
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + "\"" + valuestring +"\""
+                            //keystring.indexOf(valuestring) == 0;
+                            return keystring + ".indexOf(\"" + valuestring +"\"" + ") == 0";
                     }
                 },
                 contains: {
@@ -382,7 +393,8 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule','$ro
                     rhInputType: "data",
                     lhDataType: ["String"],
                     toJSExpression: function(keystring, valuestring){
-                            return keystring + "in\"" + valuestring +"\""
+                        //keystring.indexOf(valuestring) >= 0;
+                            return keystring + ".indexOf(\"" + valuestring +"\"" + ") >= 0";
                     }
                 }
             }

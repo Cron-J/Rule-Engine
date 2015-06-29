@@ -48,11 +48,9 @@ exports.update = {
   handler: function (request, reply) {
     console.log('request',request.payload);
     Rule.findOneRule(request.params.id, function (err, result) {
-      console.log('result',result);
       if (!err) {
         updateHelper(request.payload, result);
         Rule.updateRule(result, function (err, saveData) {
-          console.log('saveData',saveData);
           if (!err) {
             return reply(saveData); // HTTP 201
           }
