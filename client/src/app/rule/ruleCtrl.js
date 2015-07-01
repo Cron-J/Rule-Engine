@@ -1,7 +1,6 @@
 'use strict'
-var evaluatedFunction;
-app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$routeParams','StaticDataService',
-    function($scope, $http, $location, growl, rule, $routeParams,StaticDataService) {
+app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$routeParams',
+    function($scope, $http, $location, growl, rule, $routeParams) {
 
         var _scope = {};
 
@@ -37,13 +36,12 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$r
         }
         _scope.init = function() {
             $scope.staticJson();
-            StaticDataService.Operators;
+            getOperators();
+            getAggregators();
             if ($routeParams.id) {
                 $scope.getRule($routeParams.id);
             }
         }
-        $scope.operators = StaticDataService.Operators;
-        $scope.aggregators = StaticDataService.Aggregators;
         $scope.getRouteId = $routeParams.id;
         $scope.add_new_rule = function() {
             $scope.changeView.ruleHomeShow = true;
@@ -65,6 +63,27 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$r
                 }).error(function(error) {});
         }
 
+        function getOperators(){
+            $http.get('/getOperators')
+                .success(function(data) {
+                    $scope.operators = data;
+                }).error(function(error) {});
+        }
+
+        function getAggregators(){
+            rule.getbyId({
+                url: 'getAggregators'
+            }).$promise.then(function(data) {
+                if (data.statusCode != 403) {
+                    $scope.aggregators = data;
+                } else {
+                    growl.error(data.message);
+                }
+            }).catch(function(error) {
+                growl.error('oops! something went wrong');
+            });
+        }
+
         function getAttribute(field, attributes) {
             for (var i = 0; i < attributes.length; i++) {
                 if (field === attributes[i].field)
@@ -75,6 +94,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$r
         $scope.subSchema = function(condition, index) {
             var keys = condition.keys;
             var subschema = $scope.schema;
+
             if (index == 0)
                 return subschema;
             for (var i = 0; i < keys.length && i < index; i++) {
@@ -105,8 +125,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$r
                 name: $scope.ruleName,
                 description: "Rule number " + Math.floor((Math.random() * 200)), //rule selection
                 jsonExpression: angular.toJson($scope.expressions),
-                status: 'live',
-                jsExpression: toJSExpression($scope.expressions)
+                status: 'live'
             }
 
             rule.save({
@@ -160,8 +179,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$r
 
         $scope.updateRule = function() {
             var Updateddata = {
-                jsonExpression: angular.toJson($scope.expressions), //rule update
-                jsExpression: toJSExpression($scope.expressions)
+                jsonExpression: angular.toJson($scope.expressions) //rule update
             };
             rule.update({
                 url: 'rule',
@@ -177,54 +195,31 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$r
             });
         }
 
-        function conditionToJSExpression(condition, index) {
-            var jsExpr = 'object.';
-            for (var j = index | 0; j < condition.keys.length; j++) {
-                if (condition.keys[j].aggregator) {
-                    var aggregator = $scope.aggregators[condition.keys[j].aggregator];
-                    jsExpr += condition.keys[j].field;
-                    return aggregator.toJSExpression(jsExpr, conditionToJSExpression(condition, j + 1));
+        $scope.getFilteredRule = function(expressions){
+            var data = {
+                jsonExpression: angular.toJson(expressions)
+            }
+            rule.saveObj({
+                url: 'getFilteredProduct'
+            }, data).$promise.then(function(data) {
+                if (data.statusCode != 403) {
+                    $scope.filteredProduct = data;
+                    growl.success('Get matched rule successfully');
+                    // $scope.ouputFilteredProduct=[];
+                    // for (var i = 0; i < filteredProduct.length; i++) {
+                    //     var key='key_'+i
+                    //    var obj = {}; obj[key] = filteredProduct[i];
+                    //    $scope.ouputFilteredProduct.push(obj)
+                    // }
+                } else {
+                    growl.error(data.message);
                 }
-                else
-                    jsExpr += condition.keys[j].field + '.';
-            }
-            if(jsExpr.length > 0)
-                jsExpr = jsExpr.substr(0, jsExpr.length - 1);
-            jsExpr = '(' + $scope.operators[condition.operator].toJSExpression(jsExpr, condition.value) + ')';
-            return jsExpr;
+            }).catch(function(error) {
+                growl.error('oops! something went wrong');
+            });
         }
 
-        function subconditionToJSExpression(subcondition) {
-            var jsExpr = '';
-            var andor = subcondition.allany == "all" ? " && " : " || "
-            for (var i in subcondition.conditions) {
-                var condition = subcondition.conditions[i];
-                jsExpr += conditionToJSExpression(condition) + andor;
-
-            }
-            for (var i in subcondition.subconditions) {
-                var subcondition = subcondition.subconditions[i];
-                jsExpr += '(' + subconditionToJSExpression(subcondition) + ')' + andor;
-            }
-            //trim the last andor
-            if (jsExpr.length > 4)
-                jsExpr = jsExpr.substr(0, jsExpr.length - 4);
-            return jsExpr;
-        }
-
-        function toJSExpression(expressions) {
-            var jsExpr = "function productMatchedExpression(object){"
-            jsExpr += 'return ' + '(' + subconditionToJSExpression(expressions[0]) + ');';
-            jsExpr += "}";
-            console.log(jsExpr);
-            try{
-                eval(jsExpr);
-            } 
-            catch(err){
-
-            }
-            return jsExpr;
-        }
+        
        
         _scope.init();
     }

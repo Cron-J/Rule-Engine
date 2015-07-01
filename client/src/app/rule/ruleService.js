@@ -3,6 +3,7 @@ app.factory('rule', ['$resource', function($resource) {
 		{
 			'update': { method: 'PUT' },
 			'save': { method: 'POST' },
+			'saveObj': { method: 'POST',isArray:true},
 			'get': { method: 'GET',isArray:true},
 			'getbyId': { method: 'GET'},
 			'delet': { method: 'DELETE' }

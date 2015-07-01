@@ -22,3 +22,13 @@
 .mb-left{
 	margin-left: 10px;
 }
+
+.custom-tb{
+  left: 348px;
+  top: 200px;
+  position: absolute;
+}
+
+.m-b-lg{
+	margin-bottom: 40px;
+}

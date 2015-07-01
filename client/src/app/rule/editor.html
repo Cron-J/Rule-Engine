@@ -62,12 +62,15 @@
     <div ng-hide="showrow &&!show" >
         <form name="rule_form" novalidate>
             <div class="row">
-                <div class="col-sm-3">
+                <div class="col-sm-3">{{filteredProduct}}
                     <input type="text" class="form-control" name="Rule_Name" placeholder="Rule Name" ng-model="ruleName" required>
                     <div class="error" ng-show="rule_form.$submitted || rule_form.Rule_Name.$touched">
                        <div ng-show="rule_form.Rule_Name.$error.required">Required Field</div>
                     </div>
                 </div>
+            </div>
+            <div class="row pull-right">
+             <button class="btn btn-primary pull-right" ng-click="getFilteredRule(expressions)">Run Rule</button>
             </div>
             <div class="row">
                 <h2>If</h2>
@@ -85,7 +88,13 @@
                 </div>
 
             </div>
-
+            <div class="row">
+              <table ng-repeat= "product in filteredProduct">
+                  <tr>
+                     <td>{{product}}</td> 
+                  </tr>
+              </table>
+            </div>
             <div class="row">
                 <h2>Then Action</h2>
             </div>

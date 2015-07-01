@@ -97,11 +97,13 @@
         },
         {
             "field": "isPunchout",
-            "index": null
+            "index": null,
+            "instance": "Boolean"
         },
         {
             "field": "isConfigurable",
-            "index": null
+            "index": null,
+            "instance": "Boolean"
         },
         {
             "field": "validFrom",
@@ -111,7 +113,7 @@
         {
             "field": "validTo",
             "index": null,
-             "instance": "Date"
+            "instance": "Date"
         },
         {
             "field": "classificationGroupAssociations",
@@ -181,7 +183,8 @@
                 },
                 {
                     "field": "channels",
-                    "index": null
+                    "index": null,
+                    "instance": "String"
                 }
             ]
         },
@@ -347,11 +350,13 @@
                 },
                 {
                     "field": "validFrom",
-                    "index": null
+                    "index": null,
+                    "instance": "Date"
                 },
                 {
                     "field": "validTo",
-                    "index": null
+                    "index": null,
+                    "instance": "Date"
                 },
                 {
                     "field": "unitOfMeasureId",
@@ -381,7 +386,8 @@
                 {
                     "field": "isPreferred",
                     "index": null,
-                    "isRequired": true
+                    "isRequired": true,
+                    "instance":"Boolean"
                 }
             ]
         },
@@ -400,7 +406,8 @@
                 },
                 {
                     "field": "descriptions",
-                    "index": null
+                    "index": null,
+                    "instance":"String"
                 },
                 {
                     "field": "typeId",
@@ -409,11 +416,13 @@
                 },
                 {
                     "field": "validFrom",
-                    "index": null
+                    "index": null,
+                    "instance":"Date"
                 },
                 {
                     "field": "validTo",
-                    "index": null
+                    "index": null,
+                    "instance":"Date"
                 },
                 {
                     "field": "quantity",
@@ -482,7 +491,8 @@
                 },
                 {
                     "field": "isMandatory",
-                    "index": null
+                    "index": null,
+                    "instance":"Boolean"
                 },
                 {
                     "field": "selectionGroupId",
@@ -491,7 +501,8 @@
                 },
                 {
                     "field": "isDefaultSelected",
-                    "index": null
+                    "index": null,
+                    "instance":"Boolean"
                 }
             ]
         },
@@ -530,11 +541,13 @@
                 },
                 {
                     "field": "validFrom",
-                    "index": null
+                    "index": null,
+                    "instance":"Date"
                 },
                 {
                     "field": "validTo",
-                    "index": null
+                    "index": null,
+                    "instance":"Date"
                 }
             ]
         },
@@ -553,31 +566,38 @@
                 },
                 {
                     "field": "attributes",
-                    "index": null
+                    "index": null,
+                    "instance": "String"
                 },
                 {
                     "field": "hasVariantClassificationGroupAssociations",
-                    "index": null
+                    "index": null,
+                    "instance":"Boolean"
                 },
                 {
                     "field": "hasVariantPrices",
-                    "index": null
+                    "index": null,
+                    "instance":"Boolean"
                 },
                 {
                     "field": "hasVariantDocAssociation",
-                    "index": null
+                    "index": null,
+                    "instance":"Boolean"
                 },
                 {
                     "field": "hasVariantProductRelation",
-                    "index": null
+                    "index": null,
+                    "instance":"Boolean"
                 },
                 {
                     "field": "hasVariantContractedProducts",
-                    "index": null
+                    "index": null,
+                    "instance":"Boolean"
                 },
                 {
                     "field": "hasVariantAttributeValues",
-                    "index": null
+                    "index": null,
+                    "instance":"Boolean"
                 }
             ]
         }

@@ -1,0 +1,195 @@
+ [{
+ 	"product":{
+    "salesUnitOfMeasureId": "ret",
+    "mfgProductId": "rety"
+    
+}},
+{
+ 	"product":{
+    "salesUnitOfMeasureId": "ret",
+    "mfgProductId": "rety",
+    "extProductId":"4567DE"
+    
+}},
+{
+ 	"product":{
+    "salesUnitOfMeasureId": "7986",
+    "productIdExtension": "6789",
+    "unitOfMeasureId": "5678",
+    "classificationGroupAssociations": [
+        {
+            "classificationId": "5679"
+        }
+    ]
+    
+}},
+{
+ 	"product":{
+    "salesUnitOfMeasureId": "7986",
+    "productIdExtension": "6789",
+    "unitOfMeasureId": "5678",
+    "supplierId": "6789",
+    "manufacturerName": "Redmi",
+    "classificationGroupAssociations": [
+        {
+            "classificationId": "5679",
+            "orderNo":6889
+        }
+    ],
+    "attributeValues": [
+        {
+            "value ": "76790"
+        }
+    ],
+    "contractedProducts": [
+        {
+            "discount": "67"
+        }
+    ]
+    
+}},
+{
+ 	"product":{
+    "salesUnitOfMeasureId": "7986",
+    "productIdExtension": "6789",
+    "unitOfMeasureId": "5678",
+    "supplierId": "6789",
+    "manufacturerName": "Redmi",
+    "classificationGroupAssociations": [
+        {
+            "classificationId": "5679",
+            "orderNo":6889
+        }
+    ],
+    "attributeValues": [
+        {
+            "value ": "76790"
+        }
+    ],
+    "contractedProducts": [
+        {
+            "discount": "67"
+        }
+    ]
+    
+}},
+{
+ 	"product":{
+    "salesUnitOfMeasureId": "7986",
+    "productIdExtension": "6789",
+    "unitOfMeasureId": "5678",
+    "supplierId": "6789",
+    "manufacturerName": "Redmi",
+    "classificationGroupAssociations": [
+        {
+            "classificationId": "5679",
+            "orderNo":6889
+        }
+    ],
+    "attributeValues": [
+        {
+            "value ": "76790"
+        }
+    ],
+    "contractedProducts": [
+        {
+            "discount": "67"
+        }
+    ]
+    
+}},
+{
+ 	"product":{
+    "salesUnitOfMeasureId": "7986",
+    "productIdExtension": "6789",
+    "unitOfMeasureId": "5678",
+    "supplierId": "6789",
+    "manufacturerName": "Redmi",
+    "classificationGroupAssociations": [
+        {
+            "classificationId": "5679",
+            "orderNo":6889
+        }
+    ],
+    "attributeValues": [
+        {
+            "value ": "76790"
+        }
+    ],
+    "contractedProducts": [
+        {
+            "discount": "67"
+        }
+    ]
+    
+}},
+{
+ 	"product":{
+    "salesUnitOfMeasureId": "7986",
+    "productIdExtension": "6789",
+    "unitOfMeasureId": "5678",
+    "supplierId": "6789",
+    "manufacturerName": "Redmi",
+    "classificationGroupAssociations": [
+        {
+            "classificationId": "5679"
+        }
+    ],
+    "attributeValues": [
+        {
+            "value ": "76790"
+        }
+    ],
+    "contractedProducts": [
+        {
+            "discount": "67"
+        }
+    ]
+    
+}},
+{   
+	"product":{
+    "validTo": "02/05/2015",
+    "validFrom": "02/02/2015",
+    "unitOfMeasureId": "6789",
+    "keywords": "true",
+    "salesUnitOfMeasureId": "TY678",
+    "extProductId": "4567DE",
+    "mfgProductName": "Apple",
+    "productIdExtension": "6789",
+    "supplierId": "6789",
+    "manufacturerName": "Redmi",
+    "prices": {
+        "variantId": "6789"
+    },
+    "classificationGroupAssociations": [
+        {
+            "classificationId": "6789"
+        }
+    ],
+    "attributeValues": [
+        {
+            "value ": "76790"
+        }
+    ],
+    "contractedProducts": [
+        {
+            "discount": "67"
+        }
+    ],
+    "productRelations": [
+        {
+            "udxNum2": "6789"
+        }
+    ],
+    "documents": [
+        {
+            "path": "www.google.com"
+        }
+    ],
+    "variants": [
+        {
+            "hasVariantAttributeValues": "true"
+        }
+    ]
+}}]
