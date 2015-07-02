@@ -62,7 +62,7 @@
     <div ng-hide="showrow &&!show" >
         <form name="rule_form" novalidate>
             <div class="row">
-                <div class="col-sm-3">{{filteredProduct}}
+                <div class="col-sm-3">
                     <input type="text" class="form-control" name="Rule_Name" placeholder="Rule Name" ng-model="ruleName" required>
                     <div class="error" ng-show="rule_form.$submitted || rule_form.Rule_Name.$touched">
                        <div ng-show="rule_form.Rule_Name.$error.required">Required Field</div>
@@ -89,9 +89,10 @@
 
             </div>
             <div class="row">
-              <table ng-repeat= "product in filteredProduct">
+              <table>
                   <tr>
-                     <td>{{product}}</td> 
+                     <td><json-formatter json="filteredProduct" open="5"></json-formatter>
+                    </td> 
                   </tr>
               </table>
             </div>

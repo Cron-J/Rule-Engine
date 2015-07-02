@@ -83,10 +83,6 @@ RuleSchema.statics.removeUser = function (removeData, callback) {
     removeData.remove();
 };
 
-RuleSchema.statics.getAllFilteredRule = function (query,callback) {
-    console.log('Query', query);
-    this.find(query, callback);
-};
 
 var rule = mongoose.model('rule', RuleSchema);
 

@@ -28,7 +28,11 @@
 	             lhDataType: ["String", "Number", "Date", "Boolean"],
 	             //JS:"===",
 	             toJSExpression: function(keystring, valuestring) {
-	                 return keystring + "===\"" + valuestring + "\""
+
+	             	if(typeof(valuestring) == 'number')
+	                 return keystring + "===" + valuestring 
+	             	else
+	             	return keystring + "===\"" + valuestring + "\""
 	             }
 	         },
 	         notEqualTo: {
@@ -114,50 +118,50 @@
                 label: "all",
                 name: "all",
                 toJSExpression: function(collectionstring, conditionstring) {
-                    return "(function(){" + 
-                        "var object;" +
+                    return "(function(object){" + 
                         "var collection = " + collectionstring + ";" + 
+                        "var object;" +
                         "for(var i = 0 ; i < collection.length; i++){" +
                             "object = collection[i];" +
                             "if(!" + conditionstring + ")" +
                                 "return false;" +
                         "}" +
                         "return true;" +
-                    "})()";
+                    "})(object)";
                 }
             },
             any: {
                 label: "any",
                 name: "any",
                 toJSExpression: function(collectionstring, conditionstring) {
-                     return "(function(){" + 
-                        "var object;" +
+                     return "(function(object){" + 
                         "var collection = " + collectionstring + ";" + 
+                        "var object;" +
                         "for(var i = 0 ; i < collection.length; i++){" +
                             "object = collection[i];" +
                             "if(!" + conditionstring + ")" +
                                 "return false;" +
                         "}" +
                         "return false;" +
-                    "})()";
+                    "})(object)";
                 }
             },
             exactly1: {
                 label: "exactly 1",
                 name: "exactly1",
                 toJSExpression: function(collectionstring, conditionstring) {
-                   return "(function(){" + 
+                   return "(function(object){" + 
                         "var n = 1" +
                         "var ctr = 0" +
-                        "var object;" +
                         "var collection = " + collectionstring + ";" + 
+                        "var object;" +
                         "for(var i = 0 ; i < collection.length; i++){" +
                             "object = collection[i];" +
                             "if(!" + conditionstring + ")" +
                                 "return false;" +
                         "}" +
                         "return ctr == n;" +
-                    "})()";
+                    "})(object)";
                 }
             }
 

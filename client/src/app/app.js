@@ -2,7 +2,7 @@
 
 /* defining the app */
 var app = angular
-	.module("demo", ['ngRoute','ngResource', 'angular-growl'])
+	.module("demo", ['ngRoute','ngResource', 'angular-growl','jsonFormatter'])
 	.config(function($routeProvider, growlProvider) {
 		growlProvider.globalTimeToLive(5000);
 	    $routeProvider

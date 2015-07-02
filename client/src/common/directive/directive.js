@@ -46,7 +46,7 @@ app.directive('customFields', function($compile) {
                                 break;
                             }
                             if (category.instance == "Boolean") {
-                                cont.append('<input type="checkbox"  ng-model="condition.value"/>');
+                                cont.append('<input type="checkbox"  ng-model="condition.value"/> True');
                                 $compile(cont)(scope);
                                 el.append(cont);
                                 break;
@@ -54,25 +54,25 @@ app.directive('customFields', function($compile) {
 
                         case 'checkbox':
                             if (category.instance == "String") {
-                                cont.append('<input type="checkbox"  ng-model="condition.value"/>');
+                                cont.append('<input type="checkbox"  ng-model="condition.value"/> True');
                                 $compile(cont)(scope);
                                 el.append(cont);
                                 break;
                             }
                             if (category.instance == "Number") {
-                                cont.append('<input type="checkbox" class="form-control" ng-model="condition.value"/>');
+                                cont.append('<input type="checkbox"  class="form-control" ng-model="condition.value"/> True');
                                 $compile(cont)(scope);
                                 el.append(cont);
                                 break;
                             }
                             if (category.instance == "Date") {
-                                cont.append('<input type="checkbox" class="form-control" datepicker-popup ng-model="dt" is-open="opened" min-date="minDate"  datepicker-options="dateOptions" date-disabled="disabled(date, mode)"/>');
+                                cont.append('<input type="checkbox" class="form-control" datepicker-popup ng-model="dt" is-open="opened" min-date="minDate"  datepicker-options="dateOptions" date-disabled="disabled(date, mode)"/> True');
                                 $compile(cont)(scope);
                                 el.append(cont);
                                 break;
                             }
                             if (category.instance == "Boolean") {
-                                cont.append('<input type="checkbox"  ng-model="condition.value"/>');
+                                cont.append('<input type="checkbox"  ng-model="condition.value"/> True');
                                 $compile(cont)(scope);
                                 el.append(cont);
                                 break;

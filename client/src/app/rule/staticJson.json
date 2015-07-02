@@ -288,7 +288,8 @@
                 },
                 {
                     "field": "statusDate",
-                    "index": null
+                    "index": null,
+                    "instance":"Date"
                 },
                 {
                     "field": "discount",

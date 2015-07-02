@@ -5,22 +5,22 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$r
         var _scope = {};
 
         function key(field) {
-            this.field = field,
-                this.aggregator = undefined
+            this.field = field;
+            this.aggregator = undefined;
         }
 
         function condition() {
-            this.keys = [new key()],
-                this.operator = '',
-                this.value = ''
+            this.keys = [new key()];
+            this.operator = '';
+            this.value = '';
         }
 
         function subcondition() {
-                this.allany = 'all',
-                    this.conditions = [new condition()],
-                    this.subconditions = []
-            }
-            // $scope.expressions = myExpression;
+            this.allany = 'all';
+            this.conditions = [new condition()];
+            this.subconditions = [];
+        }
+        // $scope.expressions = myExpression;
         $scope.expressions = [];
         $scope.addExpression = function(data) {
             data.conditions.push(new condition());
@@ -63,14 +63,14 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$r
                 }).error(function(error) {});
         }
 
-        function getOperators(){
+        function getOperators() {
             $http.get('/getOperators')
                 .success(function(data) {
                     $scope.operators = data;
                 }).error(function(error) {});
         }
 
-        function getAggregators(){
+        function getAggregators() {
             rule.getbyId({
                 url: 'getAggregators'
             }).$promise.then(function(data) {
@@ -195,7 +195,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$r
             });
         }
 
-        $scope.getFilteredRule = function(expressions){
+        $scope.getFilteredRule = function(expressions) {
             var data = {
                 jsonExpression: angular.toJson(expressions)
             }
@@ -204,13 +204,8 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$r
             }, data).$promise.then(function(data) {
                 if (data.statusCode != 403) {
                     $scope.filteredProduct = data;
+                    //$scope.filteredProduct = JSON.stringify(filteredProduct);
                     growl.success('Get matched rule successfully');
-                    // $scope.ouputFilteredProduct=[];
-                    // for (var i = 0; i < filteredProduct.length; i++) {
-                    //     var key='key_'+i
-                    //    var obj = {}; obj[key] = filteredProduct[i];
-                    //    $scope.ouputFilteredProduct.push(obj)
-                    // }
                 } else {
                     growl.error(data.message);
                 }
@@ -219,8 +214,8 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$r
             });
         }
 
-        
-       
+
+
         _scope.init();
     }
 ])

@@ -8,7 +8,9 @@
   "dependencies": {
     "angular": "~1.3.3",
     "angular-route": "~1.2.x",
-    "angular-resource": "~1.2.x"
+    "angular-resource": "~1.2.x",
+    "json-formatter": "~0.2.7",
+    "Git": "C:/Program Files (x86)/Git"
   },
   "resolutions": {
     "angular": "~1.3.3"

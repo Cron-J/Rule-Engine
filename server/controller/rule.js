@@ -5,7 +5,7 @@ var Joi = require('joi'),
     Rule = require('../model/rule').Rule,
     mongoose = require('mongoose'),
     Operator = require('../Utility/staticData'),
-    Product = require('../Utility/product.json');
+    Product = require('../model/product').Product;
 
 
 exports.getAll = {
@@ -44,6 +44,10 @@ exports.create = {
         });
     }
 };
+
+
+
+
 
 exports.update = {
     handler: function(request, reply) {
@@ -98,49 +102,33 @@ exports.removeAll = {
     }
 };
 
-// exports.filterRuleData = {
-//     handler: function(request, reply) {
-//         var result = request.payload;
-//         console.log('result',result.jsonExpression);
-//         var getFilteredProduct = [];
-//         var checkCondition = toJSFunction(result.jsonExpression);
-//         for (var i = 0; i < Product.length; i++) {
-//             var z = checkCondition(Product[i]);
-//             if (z === true)
-//                 getFilteredProduct.push(Product[i]);
-//         }
-//         if(getFilteredProduct.length>0)
-//         reply(getFilteredProduct);
-//         else{
-//           console.log("Data is not matched");
-//         }
-//     }
-// }
 
 function filterProduct(productCollection, criteriaFunction) {
-  console.log('criteriaFunction1',criteriaFunction);
-  var array =[];
-    for (var item in productCollection){
+    console.log('criteriaFunction1', criteriaFunction);
+    var array = [];
+    for (var item in productCollection) {
         if (criteriaFunction(productCollection[item])) array.push(productCollection[item]);
-}
-return array;
+    }
+    return array;
 }
 
-function filterCollectionFromMongodb(productCollection ,criteriaFunction) {
-  console.log('criteriaFunction',criteriaFunction);
+function filterCollectionFromMongodb(productCollection, criteriaFunction) {
     return filterProduct(productCollection, criteriaFunction);
 }
 
-exports. filterRuleData ={
+exports.filterRuleData = {
     handler: function(request, reply) {
-      var result = request.payload;
-      var checkCondition = toJSFunction(JSON.parse(result.jsonExpression));
-      console.log('checkCondition',checkCondition);
-        var filteredData = filterCollectionFromMongodb(Product,checkCondition);
-        reply(filteredData);
+        var result = request.payload;
+        var checkCondition = toJSFunction(JSON.parse(result.jsonExpression));
+        Product.findProduct(function(err,product){
+          if(!err){
+            var filteredData = filterCollectionFromMongodb(product, checkCondition);
+             reply(filteredData);
+          }
+          else
+            reply(Boom.badRequest("Could not delete rule"));
+        })      
     }
-    
-
 }
 
 function conditionToJSExpression(condition, index) {
@@ -181,12 +169,12 @@ function toJSFunction(expressions) {
     var jsExpr = "(function(object){"
     jsExpr += 'return ' + '(' + subconditionToJSExpression(expressions[0]) + ');';
     jsExpr += "})";
-    console.log('jsExpr',jsExpr);
+    console.log('jsExpr', jsExpr);
     try {
-         return eval(jsExpr);
-         //return jsExpression;
+        return eval(jsExpr);
+        //return jsExpression;
     } catch (err) {
-        console.log('err',err);
+        console.log('err', err);
     }
 }
 var updateHelper = function(requestData, originalData) {
