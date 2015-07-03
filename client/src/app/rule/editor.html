@@ -49,7 +49,7 @@
 </script>
 
 <div ng-controller="ruleCtrl" ng-init="editRule()">
-    <!-- <div class="row" ng-show="showrow" ng-hide="show">
+    <div class="row" ng-show="showrow" ng-hide="show">
         <div class="col-xs-4">
             <select class="form-control" ng-model="data" ng-options="s._id as s.name for s in allData" ng-change="getRule(data,showrow=false)" required>
                 <option value="">Select Rule</option>
@@ -58,15 +58,16 @@
         <div class="col-xs-4">
             <button class="btn btn-primary" ng-click="add_new_rule(subcondtion)">Add New Rule</button>
         </div>
-    </div> -->
+    </div>
     <div ng-hide="showrow &&!show" >
         <form name="rule_form" novalidate>
             <div class="row">
                 <div class="col-sm-3">
                     <input type="text" class="form-control" name="Rule_Name" placeholder="Rule Name" ng-model="ruleName" required>
-                    <div class="error" ng-show="rule_form.$submitted || rule_form.Rule_Name.$touched">
-                       <div ng-show="rule_form.Rule_Name.$error.required">Required Field</div>
-                    </div>
+                </div>
+                <div class="col-sm-5">
+                   <circle-spinner ng-show="loading"></circle-spinner>
+                   <div class="well" ng-show="filteredProduct"><json-formatter json="filteredProduct" open="2"></json-formatter></div>
                 </div>
             </div>
             <div class="row pull-right">
@@ -87,14 +88,6 @@
                     <button ng-if="getRouteId"  class="btn btn-primary pull-right" ng-click="updateRule()">Update Rule</button>
                 </div>
 
-            </div>
-            <div class="row">
-              <table>
-                  <tr>
-                     <td><json-formatter json="filteredProduct" open="5"></json-formatter>
-                    </td> 
-                  </tr>
-              </table>
             </div>
             <div class="row">
                 <h2>Then Action</h2>

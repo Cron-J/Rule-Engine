@@ -1,7 +1,6 @@
 'use strict'
 app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$routeParams',
     function($scope, $http, $location, growl, rule, $routeParams) {
-
         var _scope = {};
 
         function key(field) {
@@ -133,7 +132,6 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$r
             }, data).$promise.then(function(data) {
                 if (data.statusCode != 403) {
                     $scope.ruleId = data._id;
-                    //toJSExpression(angular.fromJson(data.jsonExpression));
                     growl.success('rule created succesfully');
                 } else {
                     growl.error(data.message);
@@ -167,7 +165,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$r
                 if (data.statusCode != 403) {
                     $scope.ruleName = data.name;
                     $scope.expressions = JSON.parse(data.jsonExpression);
-                    $location.path('/edit/' + id);
+                    //$location.path('/edit/' + id);
                     growl.success('Get the rule By Id');
                 } else {
                     growl.error(data.message);
@@ -195,23 +193,22 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$r
             });
         }
 
-        $scope.getFilteredRule = function(expressions) {
+        $scope.getFilteredRule = function(expressions) {;
             var data = {
                 jsonExpression: angular.toJson(expressions)
             }
-            rule.saveObj({
-                url: 'getFilteredProduct'
-            }, data).$promise.then(function(data) {
-                if (data.statusCode != 403) {
-                    $scope.filteredProduct = data;
-                    //$scope.filteredProduct = JSON.stringify(filteredProduct);
-                    growl.success('Get matched rule successfully');
-                } else {
-                    growl.error(data.message);
-                }
-            }).catch(function(error) {
-                growl.error('oops! something went wrong');
-            });
+            $scope.loading = true;
+            $http.post('getFilteredProduct',data)
+                .success(function(data) {
+                    if(data.length>0){
+                        $scope.filteredProduct = data;
+                        growl.success('Get matched rule successfully');
+                        $scope.loading = false;
+                    }
+               else 
+
+                    growl.error('Rule does not match');                   
+                }).error(function(error) {});            
         }
 
 
