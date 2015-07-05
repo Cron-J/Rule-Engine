@@ -73,7 +73,6 @@ exports.update = {
 exports.filterRuleData = {
     handler: function(request, reply) {
         var result = request.payload;
-        console.log('result.jsFunction',result);
         var criteriaFunction = eval(result.jsFunction);
         Product.findProduct(function(err, productCollection) {
             if (!err) {
