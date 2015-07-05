@@ -24,13 +24,13 @@
             <div ng-repeat="condition in subcondition.conditions">
                 <div class="form-inline" style="margin-bottom:10px;">
                     <div class="form-group" ng-repeat="key in condition.keys">
-                             <select class="form-control" ng-show="key.aggregator" ng-model="key.aggregator" ng-options="field.name as field.label for (name, field) in aggregators"></select>
+                             <select class="form-control" ng-show="key.aggregatorId" ng-model="key.aggregatorId" ng-options="field.id as field.label for (id, field) in aggregators"></select>
                             <select class="form-control" ng-model="key.field" ng-options="s.field as s.field for s in subSchema($parent.condition,$index)"  ng-change="onFieldChange($parent.condition,$index)" required>
                                 <option value="">choose one</option>
                             </select>
                     </div>
                     <div class="form-group mb-left" ng-show="condition.keys[condition.keys.length-1].field">
-                        <select class="form-control" ng-model="condition.operator" ng-options="operator.name as operator.label for (name, operator) in operators| operatorsFilter:condition.keys[condition.keys.length-1]:schema" required>
+                        <select class="form-control" ng-model="condition.operatorId" ng-options="operator.id as operator.label for (id, operator) in operators| operatorsFilter:condition.keys[condition.keys.length-1]:schema" required>
                             <option value="">choose operator</option>
                         </select>
                     </div>
@@ -48,10 +48,10 @@
     </div>
 </script>
 
-<div ng-controller="ruleCtrl" ng-init="editRule()">
+<div ng-controller="ruleCtrl" ng-init="getAllRule()">
     <div class="row" ng-show="showrow" ng-hide="show">
         <div class="col-xs-4">
-            <select class="form-control" ng-model="data" ng-options="s._id as s.name for s in allData" ng-change="getRule(data,showrow=false)" required>
+            <select class="form-control" ng-model="data" ng-options="s._id as s.name for s in allData" ng-change="getRuleById(data,showrow=false)" required>
                 <option value="">Select Rule</option>
             </select>
         </div>
@@ -65,10 +65,6 @@
                 <div class="col-sm-3">
                     <input type="text" class="form-control" name="Rule_Name" placeholder="Rule Name" ng-model="ruleName" required>
                 </div>
-                <div class="col-sm-5">
-                   <circle-spinner ng-show="loading"></circle-spinner>
-                   <div class="well" ng-show="filteredProduct"><json-formatter json="filteredProduct" open="2"></json-formatter></div>
-                </div>
             </div>
             <div class="row pull-right">
              <button class="btn btn-primary pull-right" ng-click="getFilteredRule(expressions)">Run Rule</button>
@@ -77,7 +73,7 @@
                 <h2>If</h2>
             </div>
             <div class="row left">
-                <div ng-repeat="subcondition in expressions" ng-include="'subcondtion'" ng-init="parent = expressions"></div>
+                <div ng-repeat="subcondition in rule.subconditions" ng-include="'subcondtion'" ng-init="parent = rule.subconditions"></div>
             </div>
 
             <div class="row">
@@ -101,6 +97,13 @@
             <div class="row left">
                 <li>Third Action</li>
             </div>
+            <div class="row">
+                <div class="col-sm-5">
+                   <circle-spinner ng-show="loading"></circle-spinner>
+                   <div class="custom-well"><json-formatter json="filteredProduct" open="2"></json-formatter></div>
+                </div>
+            </div>
+            
         </form>    
     </div>
 

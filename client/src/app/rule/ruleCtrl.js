@@ -1,31 +1,13 @@
 'use strict'
-app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$routeParams',
-    function($scope, $http, $location, growl, rule, $routeParams) {
+app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', '$routeParams', 'rule','operatorList','aggregatorList',
+    function($scope, $http, $location, growl, $routeParams, rule, operatorList, aggregatorList) {
         var _scope = {};
-
-        function key(field) {
-            this.field = field;
-            this.aggregator = undefined;
-        }
-
-        function condition() {
-            this.keys = [new key()];
-            this.operator = '';
-            this.value = '';
-        }
-
-        function subcondition() {
-            this.allany = 'all';
-            this.conditions = [new condition()];
-            this.subconditions = [];
-        }
-        // $scope.expressions = myExpression;
-        $scope.expressions = [];
+        $scope.rule = new Rule();
         $scope.addExpression = function(data) {
-            data.conditions.push(new condition());
+            data.conditions.push(new Condition());
         }
         $scope.addSubExpression = function(data) {
-            data.subconditions.push(new subcondition());
+            data.subconditions.push(new Subcondition());
         }
         $scope.deleteSubExpression = function(data, parent) {
             parent.parent.subconditions.splice(parent.parent.subconditions.indexOf(data), 1);
@@ -46,9 +28,8 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$r
             $scope.changeView.ruleHomeShow = true;
             $scope.showButton = false;
             $scope.show = true;
-            // $scope.changeView.ruleEditShow = false;
         }
-        $scope.editRule1 = function() {
+        $scope.editRule = function() {
             $scope.changeView.ruleHomeShow = true;
             $scope.showButton = true;
             $scope.showDetails = true;
@@ -58,29 +39,18 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$r
             $http.get('app/rule/staticJson.json')
                 .success(function(data) {
                     $scope.schema = data;
-                    $scope.expressions = [new subcondition()];
+                    $scope.rule.subconditions = [new Subcondition()];
                 }).error(function(error) {});
         }
 
         function getOperators() {
-            $http.get('/getOperators')
-                .success(function(data) {
-                    $scope.operators = data;
-                }).error(function(error) {});
+            $scope.operators = operatorList;
+            operators = operatorList;
         }
 
         function getAggregators() {
-            rule.getbyId({
-                url: 'getAggregators'
-            }).$promise.then(function(data) {
-                if (data.statusCode != 403) {
-                    $scope.aggregators = data;
-                } else {
-                    growl.error(data.message);
-                }
-            }).catch(function(error) {
-                growl.error('oops! something went wrong');
-            });
+           $scope.aggregators = aggregators;
+           aggregators = aggregatorList;
         }
 
         function getAttribute(field, attributes) {
@@ -108,23 +78,21 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$r
             var subschema = $scope.subSchema(condition, index + 1);
             if (subschema) {
                 if (index != 0) {
-                    keys[index].aggregator = $scope.aggregators.all.name;
+                    keys[index].aggregatorId = $scope.aggregators.all.id;
                 }
 
 
-                keys.push(new key());
+                keys.push(new Key());
             } else {
-                keys[index].aggregator = undefined;
+                keys[index].aggregatorId = undefined;
             }
         }
 
         $scope.submit = function() {
-            //recursiveFunction($scope.expressions[0]);
             var data = {
                 name: $scope.ruleName,
-                description: "Rule number " + Math.floor((Math.random() * 200)), //rule selection
-                jsonExpression: angular.toJson($scope.expressions),
-                status: 'live'
+                jsonExpression: angular.toJson($scope.rule),
+                jsFunction: $scope.rule.filterFunction()
             }
 
             rule.save({
@@ -142,7 +110,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$r
         }
 
 
-        $scope.editRule = function() { //get all rule
+        $scope.getAllRule = function() { //get all rule
             rule.get({
                 url: 'rule'
             }).$promise.then(function(data) {
@@ -156,7 +124,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$r
             });
         }
         var dataID;
-        $scope.getRule = function(id) { //getrule by id
+        $scope.getRuleById = function(id) { //getrule by id
             dataID = id;
             rule.getbyId({
                 url: 'rule',
@@ -164,7 +132,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$r
             }).$promise.then(function(data) {
                 if (data.statusCode != 403) {
                     $scope.ruleName = data.name;
-                    $scope.expressions = JSON.parse(data.jsonExpression);
+                    $scope.rule = JSON.parse(data.jsonExpression);
                     //$location.path('/edit/' + id);
                     growl.success('Get the rule By Id');
                 } else {
@@ -177,7 +145,8 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$r
 
         $scope.updateRule = function() {
             var Updateddata = {
-                jsonExpression: angular.toJson($scope.expressions) //rule update
+                jsonExpression: angular.toJson($scope.rule),
+                jsFunction:$scope.rule.filterFunction() //rule update
             };
             rule.update({
                 url: 'rule',
@@ -193,22 +162,21 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', 'rule', '$r
             });
         }
 
-        $scope.getFilteredRule = function(expressions) {;
+        $scope.getFilteredRule = function() {;
             var data = {
-                jsonExpression: angular.toJson(expressions)
+                jsFunction: $scope.rule.filterFunction()
             }
             $scope.loading = true;
-            $http.post('getFilteredProduct',data)
+            $http.post('getFilteredProduct', data)
                 .success(function(data) {
-                    if(data.length>0){
+                    if (data.length > 0) {
                         $scope.filteredProduct = data;
                         growl.success('Get matched rule successfully');
                         $scope.loading = false;
-                    }
-               else 
+                    } else
 
-                    growl.error('Rule does not match');                   
-                }).error(function(error) {});            
+                        growl.error('Rule does not match');
+                }).error(function(error) {});
         }
 
 

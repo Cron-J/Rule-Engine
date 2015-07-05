@@ -32,10 +32,8 @@ var RuleSchema = new Schema({
 
     jsonExpression: String,
 
-    jsExpression: String
+    jsFunction: String
 
-    //jsonExpression: String
-    //jsExpression: String
 });
 
 /**

@@ -11,7 +11,8 @@
     "hapi": "^8.2.0",
     "joi": "^5.1.0",
     "mongoose": "3.8.23",
-    "mongoose-validators": "^0.1.0"
+    "mongoose-validators": "^0.1.0",
+    "nodemon": "^1.3.7"
   },
   "keywords": [
     "node.js",

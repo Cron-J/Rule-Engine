@@ -4,7 +4,7 @@ app.directive('customFields', function($compile) {
         link: function(scope, el, attrs) {
             var cont = '<span></span>'
             cont = angular.element(cont);
-            scope.$watchGroup(['condition.operator', 'condition.keys[scope.condition.keys.length - 1].field'], function() {
+            scope.$watchGroup(['condition.operatorId', 'condition.keys[scope.condition.keys.length - 1].field'], function() {
                 cont.empty();
                 el.empty();
                 if (scope.condition.operator !== '') {
@@ -24,8 +24,7 @@ app.directive('customFields', function($compile) {
                         }
 
                     }
-                    //for(var i=0;i<scope.fields[scope.condition.operator].fieldType.length;i++){
-                    switch (scope.operators[scope.condition.operator].rhInputType) {
+                    switch (scope.operators[scope.condition.operatorId].valueType) {
                         case 'data':
                             if (category.instance == "String") {
                                 cont.append('<input type="text" class="form-control" ng-model="condition.value"/>');
@@ -40,7 +39,7 @@ app.directive('customFields', function($compile) {
                                 break;
                             }
                             if (category.instance == "Date") {
-                                cont.append('<input type="date" class="form-control" datepicker-popup ng-model="dt" is-open="opened" min-date="minDate"  datepicker-options="dateOptions" date-disabled="disabled(date, mode)"/>');
+                                cont.append('<input type="date" class="form-control" datepicker-popup ng-model="condition.value" is-open="opened" min-date="minDate"  datepicker-options="dateOptions" date-disabled="disabled(date, mode)"/>');
                                 $compile(cont)(scope);
                                 el.append(cont);
                                 break;
@@ -66,7 +65,7 @@ app.directive('customFields', function($compile) {
                                 break;
                             }
                             if (category.instance == "Date") {
-                                cont.append('<input type="checkbox" class="form-control" datepicker-popup ng-model="dt" is-open="opened" min-date="minDate"  datepicker-options="dateOptions" date-disabled="disabled(date, mode)"/> True');
+                                cont.append('<input type="checkbox" class="form-control" datepicker-popup ng-model="condition.value" is-open="opened" min-date="minDate"  datepicker-options="dateOptions" date-disabled="disabled(date, mode)"/> True');
                                 $compile(cont)(scope);
                                 el.append(cont);
                                 break;

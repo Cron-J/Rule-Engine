@@ -18,9 +18,9 @@ app.filter('operatorsFilter', function() {
 
             }
             for (var k in Objs) {
-                for (var i = 0; i < Objs[k].lhDataType.length; i++) {
+                for (var i = 0; i < Objs[k].keyTypes.length; i++) {
 
-                    if (Objs[k].lhDataType[i] == category.instance) {
+                    if (Objs[k].keyTypes[i] == category.instance) {
                         filteredObj[k] = Objs[k];
                     }
                 }
