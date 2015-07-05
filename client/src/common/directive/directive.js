@@ -24,6 +24,8 @@ app.directive('customFields', function($compile) {
                         }
 
                     }
+                    if(!scope.condition.operatorId)
+                        return;
                     switch (scope.operators[scope.condition.operatorId].valueType) {
                         case 'data':
                             if (category.instance == "String") {
