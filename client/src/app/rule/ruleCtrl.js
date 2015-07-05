@@ -174,8 +174,8 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', '$routePara
                         growl.success('Get matched rule successfully');
                         $scope.loading = false;
                     } else
-
-                        growl.error('Rule does not match');
+                        $scope.loading = false;
+                        growl.success('Rule does not matched');
                 }).error(function(error) {});
         }
 

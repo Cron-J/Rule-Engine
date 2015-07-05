@@ -28,7 +28,7 @@ app.factory('operatorList', function() {
             _super.call(this, "isEmpty", "is empty", "checkbox", ["String", "Number", "Date", "Boolean"]);
         }
         isEmptyOperator.prototype.toJSExpression = function(key, value) {
-            return "(({0}  === '')||({0} === undefined)||({0} === null)))".format(key, toDataString(value)); //TODO: value.toDataString();
+            return "(({0}  === '')||({0} === undefined)||({0} === null))".format(key, toDataString(value)); //TODO: value.toDataString();
         };
         return isEmptyOperator;
     })(Operator);
@@ -116,7 +116,7 @@ app.factory('operatorList', function() {
             _super.call(this, "endsWith", "ends with", "data", ["String"]);
         }
         endsWithOperator.prototype.toJSExpression = function(key, value) {
-            return "({0} (.indexOf({1})+{1}.length=={0}.length) {1})".format(key, toDataString(value));
+            return "({0}.indexOf({1}) + {0}.length)=={0}.length)".format(key, toDataString(value));
         };
         return endsWithOperator;
     })(Operator);
@@ -127,7 +127,7 @@ app.factory('operatorList', function() {
             _super.call(this, "beginsWith", "begins with", "data", ["String"]);
         }
         beginsWithOperator.prototype.toJSExpression = function(key, value) {
-            return "({0} (.indexOf({1})==0) {1})".format(key, toDataString(value));
+            return "({0}.indexOf({1})==0)".format(key, toDataString(value));
         };
         return beginsWithOperator;
     })(Operator);
@@ -138,7 +138,7 @@ app.factory('operatorList', function() {
             _super.call(this, "contains", "contains", "data", ["String"]);
         }
         containsOperator.prototype.toJSExpression = function(key, value) {
-            return "({0} (.indexOf({1})>=0) {1})".format(key, toDataString(value));
+            return "({0}.indexOf({1})>=0)".format(key, toDataString(value));
         };
         return containsOperator;
     })(Operator);
