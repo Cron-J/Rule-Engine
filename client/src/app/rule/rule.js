@@ -1,3 +1,5 @@
+var operators = {}, aggregators = {};//TODO: populate list of operators and aggregators
+
 var Action = (function() {
     function Action() {}
     Action.prototype.run = function(object) {
@@ -5,16 +7,23 @@ var Action = (function() {
     };
     return Action;
 })();
-
-var operators = {}
-var aggregators = {}
+/*
+* A selected attribute from schema eg: manufacturerName
+* Sequence of keys represents an operand eg: [product, manufacturerName] is product.manufactureName
+*/
 var Key = (function() {
     function Key() {
         this.field = undefined;
+        //aggreatorId is defined only in case of subdocuments
         this.aggregatorId = undefined;
     }
     return Key;
 })();
+/*
+* A condition  
+* (Key[] - Operator - Value)
+* eg: (product.ManufactureName - equals - "samsung")
+*/
 var Condition = (function() {
     function Condition() {
         this.keys = [];
@@ -22,12 +31,13 @@ var Condition = (function() {
         this.operatorId = undefined;
         this.value = undefined;
     }
+    //expression to evaluate if condition is true
     Condition.prototype.toJSExpression = function(index) {
         var jsExpr = "object",
             key;
         for (var i = index | 0; i < this.keys.length; i++) {
             key = this.keys[i];
-            jsExpr+= ".";
+            jsExpr += ".";
             jsExpr += "{0}".format(key.field);
             if (key.aggregatorId) {
                 return aggregators[key.aggregatorId].toJSExpression(jsExpr, this.toJSExpression(i + 1));
@@ -37,6 +47,13 @@ var Condition = (function() {
     };
     return Condition;
 })();
+/*
+* Set of conditions defined by:
+*   (All, Any) - Infer logical operator  
+*   Conditions[] - List of conditions
+*   Subconditions[] - List of other subconditions
+* TODO: Alternate name - ConditionSet
+*/
 var Subcondition = (function() {
     function Subcondition() {
         this.allany = "all";
@@ -44,6 +61,7 @@ var Subcondition = (function() {
         this.conditions.push(new Condition());
         this.subconditions = [];
     }
+    //expression to evaluate if subcondition (condition set) is true
     Subcondition.prototype.toJSExpression = function() {
         var jsExpr = "";
         var andor = this.allany == "all" ? " && " : " || ";
@@ -57,6 +75,7 @@ var Subcondition = (function() {
         jsExpr = jsExpr.length > 4 ? jsExpr.substr(0, jsExpr.length - 4) : jsExpr;
         return "({0})".format(jsExpr);
     };
+    //function to evaluate if subcondition (condition set) is true 
     Subcondition.prototype.toJSFunction = function() {
         var jsExpr = "" +
             "(function(object) {" +
@@ -66,6 +85,9 @@ var Subcondition = (function() {
     };
     return Subcondition;
 })();
+/*
+* Rule to execute list of actions when a condition set is true
+*/
 var Rule = (function() {
     function Rule(schemaId) {
         this.subconditions = [new Subcondition()];
@@ -73,6 +95,7 @@ var Rule = (function() {
         //example - "product"
         this.schemaId = schemaId;
     }
+    //filters the collection based on condition
     Rule.prototype.filter = function(collection) {
         var criteriaFn = this.condition.toJSFunction();
         var filteredCollection = [],
@@ -84,6 +107,7 @@ var Rule = (function() {
         }
         return filteredCollection;
     };
+    //runs the actions for filtered collection based on condition
     Rule.prototype.run = function(collection) {
         var filteredCollection = this.filter(collection),
             action, object;
@@ -95,9 +119,9 @@ var Rule = (function() {
             }
         }
     };
-    Rule.prototype.filterFunction = function(){
-       return this.subconditions[0].toJSFunction();
+    ////function to filter collection based on conditions
+    Rule.prototype.filterFunction = function() {
+        return this.subconditions[0].toJSFunction();
     }
     return Rule;
 })();
-

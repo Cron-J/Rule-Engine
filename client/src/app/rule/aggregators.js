@@ -1,15 +1,20 @@
 app.factory('aggregatorList', function() {
+    /*
+    * An aggregator base class 
+    * eg: any, all, exactly1
+    */
     var Aggregator = (function() {
         function Aggregator(id, label) {
             this.id = id;
             this.label = label;
         }
+        //expression to evaluate if the collection aggregate meets the condition
         Aggregator.prototype.toJSExpression = function(collectionKey, conditionExpr) {
-
             return "Not Implemented";
         };
         return Aggregator;
     })();
+
     var AllAggregator = (function(_super) {
         __extends(AllAggregator, _super);
 
@@ -24,8 +29,8 @@ app.factory('aggregatorList', function() {
                     "for (var i = 0; i < collection.length; i++){" +
                         "object = collection[i];" +
                         "if (!{1}) {" +
-                          "return false;" +
-                        "}" +
+                            "return false;" +
+                    "}" +
                     "}" +
                     "return true;" +
                 "})(object)";
@@ -33,6 +38,7 @@ app.factory('aggregatorList', function() {
         };
         return AllAggregator;
     })(Aggregator);
+
     var AnyAggregator = (function(_super) {
         __extends(AnyAggregator, _super);
 
@@ -42,12 +48,12 @@ app.factory('aggregatorList', function() {
         AnyAggregator.prototype.toJSExpression = function(collectionKey, conditionExpr) {
             var jsExpr = "" +
                 "(function(object){" +
-                "var collection =  {0};" +
-                "var object;" +
+                    "var collection =  {0};" +
+                    "var object;" +
                     "for(var i = 0 ; i < collection.length; i++){" +
                         "object = collection[i];" +
-                        "if(!{1})" +
-                            "return true;" +
+                            "if(!{1})" +
+                        "return true;" +
                     "}" +
                     "return false;" +
                 "})(object)";
@@ -55,6 +61,8 @@ app.factory('aggregatorList', function() {
         };
         return AnyAggregator;
     })(Aggregator);
+
+    //TOOD: change to exactly n
     var Exactly1Aggregator = (function(_super) {
         __extends(Exactly1Aggregator, _super);
 
@@ -64,16 +72,16 @@ app.factory('aggregatorList', function() {
         Exactly1Aggregator.prototype.toJSExpression = function(collectionKey, conditionExpr) {
             var jsExpr = "" +
                 "(function(object){" +
-                "var n = 1" +
-                "var ctr = 0" +
-                "var collection = {0}; " +
-                "var object;" +
+                    "var n = 1" +
+                    "var ctr = 0" +
+                    "var collection = {0}; " +
+                    "var object;" +
                     "for(var i = 0 ; i < collection.length; i++){" +
                         "object = collection[i];" +
                         "if(!{1})" +
-                        "return false;" +
+                            "return false;" +
                     "}" +
-                        "return ctr == n;" +
+                    "return ctr == n;" +
                 "})(object)";
             return jsExpr.format(collectionKey, conditionExpr);
         };
@@ -81,7 +89,7 @@ app.factory('aggregatorList', function() {
     })(Aggregator);
 
 
-        return {
+    return {
         "all": new AllAggregator(),
         "any": new AnyAggregator(),
         "exactly1": new Exactly1Aggregator()

@@ -24,7 +24,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', '$routePara
             }
         }
         $scope.getRouteId = $routeParams.id;
-        $scope.add_new_rule = function() {
+        $scope.addNewRule = function() {
             $scope.changeView.ruleHomeShow = true;
             $scope.showButton = false;
             $scope.show = true;

@@ -1,4 +1,8 @@
 app.factory('operatorList', function() {
+    /*
+    * An Operator base class 
+    * eg: isEmpty, isExists, contains, greaterThan, lessThan...
+    */
     var Operator = (function() {
         function Operator(id, label, valueType, keyTypes) {
             this.id = id;
@@ -6,11 +10,17 @@ app.factory('operatorList', function() {
             this.valueType = valueType;
             this.keyTypes = keyTypes;
         }
+        //expression to operate on key and value, boolean result
         Operator.prototype.toJSExpression = function(key, value) {
-            return "Not Implemented"; //TODO: value.toDataString()
-        };
+            return "Not Implemented"; 
+        }
+        //is the operator is allowed for given keyType
+        Operator.prototype.isAllowed = function(keyType) {
+            return this.keyTypes.indexOf(keyType) > 0;
+        }
         return Operator;
     })();
+
     var isEmptyOperator = (function(_super) {
         __extends(isEmptyOperator, _super);
 
@@ -29,7 +39,7 @@ app.factory('operatorList', function() {
             _super.call(this, "isExists", "is exists", "checkbox", ["String", "Number", "Date", "Boolean"]);
         }
         isExistsOperator.prototype.toJSExpression = function(key, value) {
-            return "(({0}  === '')||({0} === undefined))".format(key, toDataString(value)); 
+            return "(({0}  === '')||({0} === undefined))".format(key, toDataString(value));
         };
         return isExistsOperator;
     })(Operator);
@@ -40,7 +50,7 @@ app.factory('operatorList', function() {
             _super.call(this, "equalTo", "equal to", "data", ["String", "Number", "Date", "Boolean"]);
         }
         equalToOperator.prototype.toJSExpression = function(key, value) {
-            return "({0} == {1})".format(key, toDataString(value)); 
+            return "({0} == {1})".format(key, toDataString(value));
         };
         return equalToOperator;
     })(Operator);
@@ -51,7 +61,7 @@ app.factory('operatorList', function() {
             _super.call(this, "notEqualTo", "not equal to", "data", ["String", "Number", "Date", "Boolean"]);
         }
         notEqualToOperator.prototype.toJSExpression = function(key, value) {
-            return "({0} !== {1})".format(key, toDataString(value)); 
+            return "({0} !== {1})".format(key, toDataString(value));
         };
         return notEqualToOperator;
     })(Operator);
@@ -62,7 +72,7 @@ app.factory('operatorList', function() {
             _super.call(this, "greaterThan", "greater than", "data", ["Number", "Date"]);
         }
         greaterThanOperator.prototype.toJSExpression = function(key, value) {
-            return "({0} > {1})".format(key, toDataString(value)); 
+            return "({0} > {1})".format(key, toDataString(value));
         };
         return greaterThanOperator;
     })(Operator);
@@ -73,7 +83,7 @@ app.factory('operatorList', function() {
             _super.call(this, "greaterThanEqual", "greater than equal", "data", ["Number", "Date"]);
         }
         greaterThanEqualOperator.prototype.toJSExpression = function(key, value) {
-            return "({0} >= {1})".format(key, toDataString(value)); 
+            return "({0} >= {1})".format(key, toDataString(value));
         };
         return greaterThanEqualOperator;
     })(Operator);
@@ -84,7 +94,7 @@ app.factory('operatorList', function() {
             _super.call(this, "lessThan", "less than", "data", ["Number", "Date"]);
         }
         lessThanOperator.prototype.toJSExpression = function(key, value) {
-            return "({0} < {1})".format(key, toDataString(value)); 
+            return "({0} < {1})".format(key, toDataString(value));
         };
         return lessThanOperator;
     })(Operator);
@@ -95,7 +105,7 @@ app.factory('operatorList', function() {
             _super.call(this, "lessThanEqual", "less than equal", "data", ["Number", "Date"]);
         }
         lessThanEqualOperator.prototype.toJSExpression = function(key, value) {
-            return "({0} <= {1})".format(key, toDataString(value)); 
+            return "({0} <= {1})".format(key, toDataString(value));
         };
         return lessThanEqualOperator;
     })(Operator);
@@ -106,7 +116,7 @@ app.factory('operatorList', function() {
             _super.call(this, "endsWith", "ends with", "data", ["String"]);
         }
         endsWithOperator.prototype.toJSExpression = function(key, value) {
-            return "({0} (.indexOf({1})+{1}.length=={0}.length) {1})".format(key, toDataString(value)); 
+            return "({0} (.indexOf({1})+{1}.length=={0}.length) {1})".format(key, toDataString(value));
         };
         return endsWithOperator;
     })(Operator);
@@ -117,7 +127,7 @@ app.factory('operatorList', function() {
             _super.call(this, "beginsWith", "begins with", "data", ["String"]);
         }
         beginsWithOperator.prototype.toJSExpression = function(key, value) {
-            return "({0} (.indexOf({1})==0) {1})".format(key, toDataString(value)); 
+            return "({0} (.indexOf({1})==0) {1})".format(key, toDataString(value));
         };
         return beginsWithOperator;
     })(Operator);
@@ -128,13 +138,13 @@ app.factory('operatorList', function() {
             _super.call(this, "contains", "contains", "data", ["String"]);
         }
         containsOperator.prototype.toJSExpression = function(key, value) {
-            return "({0} (.indexOf({1})>=0) {1})".format(key, toDataString(value)); 
+            return "({0} (.indexOf({1})>=0) {1})".format(key, toDataString(value));
         };
         return containsOperator;
     })(Operator);
 
-    function toDataString(value){
-        switch(typeof value){
+    function toDataString(value) {
+        switch (typeof value) {
             case "string":
                 return '\"' + value + '\"';
                 break;
@@ -143,28 +153,28 @@ app.factory('operatorList', function() {
                 break;
             case "object":
                 if (value instanceof Date);
-                    return  'new Date({0})'.format(value.toString());
+                return 'new Date({0})'.format(value.toString());
                 break;
             case "boolean":
-                return ;
+                return;
                 break;
 
         }
     }
 
-    
-        return {
-        "isEmpty": new isEmptyOperator(), 
-        "isExists": new isExistsOperator(), 
-        "equalTo": new equalToOperator(), 
+
+    return {
+        "isEmpty": new isEmptyOperator(),
+        "isExists": new isExistsOperator(),
+        "equalTo": new equalToOperator(),
         "notEqualTo": new notEqualToOperator(),
-         "greaterThan":new greaterThanOperator(), 
-         "greaterThanEqual":new  greaterThanEqualOperator(), 
-         "lessThan":new lessThanOperator(), 
-         "lessThanEqual":new lessThanEqualOperator(), 
-         "endsWith":new endsWithOperator(), 
-         "beginsWith":new beginsWithOperator(), 
-         "contains":new containsOperator()
-        };
-    
+        "greaterThan": new greaterThanOperator(),
+        "greaterThanEqual": new greaterThanEqualOperator(),
+        "lessThan": new lessThanOperator(),
+        "lessThanEqual": new lessThanEqualOperator(),
+        "endsWith": new endsWithOperator(),
+        "beginsWith": new beginsWithOperator(),
+        "contains": new containsOperator()
+    };
+
 })
