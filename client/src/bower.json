@@ -10,7 +10,6 @@
     "angular-route": "~1.2.x",
     "angular-resource": "~1.2.x",
     "json-formatter": "~0.2.7",
-    "Git": "C:/Program Files (x86)/Git",
     "angular-block-ui": "~0.2.0",
     "angular-spinkit": "~0.3.3"
   },
