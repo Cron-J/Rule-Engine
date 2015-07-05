@@ -76,12 +76,13 @@ var Subcondition = (function() {
         return "({0})".format(jsExpr);
     };
     //function to evaluate if subcondition (condition set) is true 
-    Subcondition.prototype.toJSFunction = function() {
+    Subcondition.prototype.toJSFunction = function(schemaId) {
         var jsExpr = "" +
-            "(function(object) {" +
-            "return {0};" +
+            "(function(item) {" +
+                "var object = {\"{0}\": item};" + 
+                "return {1};" +
             "})";
-        return jsExpr.format(this.toJSExpression());
+        return jsExpr.format(schemaId, this.toJSExpression());
     };
     return Subcondition;
 })();
@@ -97,15 +98,8 @@ var Rule = (function() {
     }
     //filters the collection based on condition
     Rule.prototype.filter = function(collection) {
-        var criteriaFn = this.condition.toJSFunction();
-        var filteredCollection = [],
-            object;
-        for (var i = 0; i < collection.length; i++) {
-            object[this.schemaId] = collection[i];
-            if (criteriaFn(object))
-                filteredCollection.push(collection[i]);
-        }
-        return filteredCollection;
+        var criteriaFn = eval(this.subconditions[0].toJSFunction(this.schemaId));
+        return collection.filter(criteriaFn);
     };
     //runs the actions for filtered collection based on condition
     Rule.prototype.run = function(collection) {
@@ -121,7 +115,7 @@ var Rule = (function() {
     };
     ////function to filter collection based on conditions
     Rule.prototype.filterFunction = function() {
-        return this.subconditions[0].toJSFunction();
+        return this.subconditions[0].toJSFunction(this.schemaId);
     }
     return Rule;
 })();

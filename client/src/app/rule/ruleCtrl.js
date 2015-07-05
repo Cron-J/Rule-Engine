@@ -1,8 +1,11 @@
 'use strict'
 app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', '$routeParams', 'rule','operatorList','aggregatorList',
     function($scope, $http, $location, growl, $routeParams, rule, operatorList, aggregatorList) {
-        var _scope = {};
+        var _scope = {}, dataID;
         $scope.rule = new Rule();
+        $scope.getRouteId = $routeParams.id;
+
+        //TODO: shift inside subcondition class
         $scope.addExpression = function(data) {
             data.conditions.push(new Condition());
         }
@@ -15,15 +18,7 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', '$routePara
         $scope.deleteExpression = function(data, parent) {
             parent.splice(parent.indexOf(data), 1);
         }
-        _scope.init = function() {
-            $scope.staticJson();
-            getOperators();
-            getAggregators();
-            if ($routeParams.id) {
-                $scope.getRule($routeParams.id);
-            }
-        }
-        $scope.getRouteId = $routeParams.id;
+
         $scope.addNewRule = function() {
             $scope.changeView.ruleHomeShow = true;
             $scope.showButton = false;
@@ -34,32 +29,13 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', '$routePara
             $scope.showButton = true;
             $scope.showDetails = true;
         }
-
-        $scope.staticJson = function() {
+        $scope.getSchema = function() {
             $http.get('app/rule/staticJson.json')
                 .success(function(data) {
                     $scope.schema = data;
-                    $scope.rule.subconditions = [new Subcondition()];
+                    $scope.rule = new Rule($scope.schema[0].field);
                 }).error(function(error) {});
         }
-
-        function getOperators() {
-            $scope.operators = operatorList;
-            operators = operatorList;
-        }
-
-        function getAggregators() {
-           $scope.aggregators = aggregators;
-           aggregators = aggregatorList;
-        }
-
-        function getAttribute(field, attributes) {
-            for (var i = 0; i < attributes.length; i++) {
-                if (field === attributes[i].field)
-                    return attributes[i];
-            }
-        }
-
         $scope.subSchema = function(condition, index) {
             var keys = condition.keys;
             var subschema = $scope.schema;
@@ -71,23 +47,18 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', '$routePara
             }
             return subschema;
         }
-
         $scope.onFieldChange = function(condition, index) {
             var keys = condition.keys;
             keys.splice(index + 1, keys.length);
             var subschema = $scope.subSchema(condition, index + 1);
             if (subschema) {
-                if (index != 0) {
+                if (index != 0)
                     keys[index].aggregatorId = $scope.aggregators.all.id;
-                }
-
-
                 keys.push(new Key());
             } else {
                 keys[index].aggregatorId = undefined;
             }
         }
-
         $scope.submit = function() {
             var data = {
                 name: $scope.ruleName,
@@ -108,8 +79,6 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', '$routePara
                 growl.error('oops! something went wrong');
             });
         }
-
-
         $scope.getAllRule = function() { //get all rule
             rule.get({
                 url: 'rule'
@@ -123,7 +92,6 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', '$routePara
                 growl.error('oops! something went wrong');
             });
         }
-        var dataID;
         $scope.getRuleById = function(id) { //getrule by id
             dataID = id;
             rule.getbyId({
@@ -133,7 +101,6 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', '$routePara
                 if (data.statusCode != 403) {
                     $scope.ruleName = data.name;
                     $scope.rule = JSON.parse(data.jsonExpression);
-                    //$location.path('/edit/' + id);
                     growl.success('Get the rule By Id');
                 } else {
                     growl.error(data.message);
@@ -142,16 +109,15 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', '$routePara
                 growl.error('oops! something went wrong');
             });
         }
-
         $scope.updateRule = function() {
-            var Updateddata = {
+            var updateDdata = {
                 jsonExpression: angular.toJson($scope.rule),
                 jsFunction:$scope.rule.filterFunction() //rule update
             };
             rule.update({
                 url: 'rule',
                 id: dataID
-            }, Updateddata).$promise.then(function(data) {
+            }, updateDdata).$promise.then(function(data) {
                 if (data.statusCode != 403) {
                     growl.success('rule updated succesfully');
                 } else {
@@ -161,7 +127,6 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', '$routePara
                 growl.error('oops! something went wrong');
             });
         }
-
         $scope.getFilteredRule = function() {;
             var data = {
                 jsFunction: $scope.rule.filterFunction()
@@ -169,18 +134,37 @@ app.controller('ruleCtrl', ['$scope', '$http', '$location', 'growl', '$routePara
             $scope.loading = true;
             $http.post('getFilteredProduct', data)
                 .success(function(data) {
-                    if (data.length > 0) {
-                        $scope.filteredProduct = data;
-                        growl.success('Get matched rule successfully');
-                        $scope.loading = false;
-                    } else
-                        $scope.loading = false;
-                        growl.success('Rule does not matched');
-                }).error(function(error) {});
+                    $scope.filteredProduct = data;
+                    growl.success('{0} products matched.'.format(data.length));
+                    $scope.loading = false;
+                }).error(function(error) {
+                    $scope.loading = false;
+                });
         }
 
+        function getOperators() {
+            $scope.operators = operatorList;
+            operators = operatorList;
+        }
+        function getAggregators() {
+           $scope.aggregators = aggregators;
+           aggregators = aggregatorList;
+        }
+        function getAttribute(field, attributes) {
+            for (var i = 0; i < attributes.length; i++) {
+                if (field === attributes[i].field)
+                    return attributes[i];
+            }
+        }
 
-
+        _scope.init = function() {
+            $scope.getSchema();
+            getOperators();
+            getAggregators();
+            if ($routeParams.id) {
+                $scope.getRule($routeParams.id);
+            }
+        }
         _scope.init();
     }
 ])

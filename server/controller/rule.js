@@ -78,13 +78,13 @@ exports.filterRuleData = {
             if (!err) {
                 var filteredCollection = [];
                 for (var item in productCollection) {
-                    if (criteriaFunction(productCollection[item])) 
-                     filteredCollection.push(productCollection[item]);
+                    if (criteriaFunction(productCollection[item]))
+                        filteredCollection.push(productCollection[item]);
                 }
                 reply(filteredCollection);
 
             } else
-                reply(Boom.badRequest("Could not find product"));
+                reply(Boom.badRequest("error running rule"));
         })
     }
 }
