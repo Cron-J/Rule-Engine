@@ -1,29 +1,30 @@
-Rule Engine
-========================
+# Classification-Attribute
 
-The purpose of this app is to make a rule engine for rule editor, expression editor and action editor.
+## Features:
 
+1. Isomorphic Flux using:
+ - [alt](https://github.com/goatslacker/alt) for Flux implementation
+ - [iso](https://github.com/goatslacker/iso) to help with bootstrapping data for isomorphic Flux
+ - [react-router](https://github.com/rackt/react-router)
+2. Stores storing data using [ImmutableJS](https://github.com/facebook/immutable-js) data structures
+3. [Css Modules](https://github.com/webpack/css-loader#css-modules)
+4. Webpack [config file](https://github.com/choonkending/react-webpack-node/blob/master/webpack.config.js)
+5. [React Bootstrap](http://react-bootstrap.github.io/)
+6. Express server
+7. Sequalize for Postgres
 
-### Install an app
+## Mission
 
-Run the following command in root directory of an app in command prompt.
+The aim of this repo is to incorporate the best practices to building a non-trivial apps with Reactjs and Node.
 
-###### *Install node packages*
+## Instructions(for development)
 
-server/ node install
+1. `npm install`
+2. `npm run buildDev`
+3. `node server/index.js`
 
-###### *Install bower components*
+### Development build
 
-client/src/ bower install
+We use [react-hot-loader](https://github.com/gaearon/react-hot-loader), which is about the greatest thing that has ever happened. No browser refreshes needed.
 
-### Run an app
-
-###### *Run Server*
-
-Run the following command in root directory of an app in command prompt.
-
-server/ node server.js
-
-You can see the port number in command prompt after sucessfull run
-
-You can change the settings in server/config/config.js file.
+1. `npm run dev` to build with webpack and start the server. We use webpack-dev-server as a proxy server to serve assets. Changes made are not saved to disk, as that is not what webpack-dev-server is for. However, `npm run watchDev` IF you want to reload the page and see the change in the server-rendered React.

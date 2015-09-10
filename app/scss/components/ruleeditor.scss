@@ -1,0 +1,64 @@
+ul.treeRoot {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+  position: relative;
+}
+
+li.treeChild {
+  list-style-type: none;
+  border-left: 2px solid #3f8846;
+  border-left-style: dotted;
+  margin-left: 1em;
+}
+
+li.treeChild div.treeChildDiv {
+  padding-left: 1em;
+  padding-bottom: 1em;
+  padding-top: 0.2em;
+  position: relative;
+}
+
+li.treeChild div.treeChildDiv::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -2px;
+  bottom: 50%;
+  width: 0.75em;
+  border: 2px solid #3f8846;
+  border-bottom-style: dotted;
+  border-left-style: dotted;
+  border-top: 0 none transparent;
+  border-right: 0 none transparent;
+}
+.buttonclick {
+  cursor: pointer;
+}
+.buttonclick a {
+  text-decoration: none;
+}
+.buttonclick a:hover {
+  text-decoration: none;
+}
+.buttonclick a:active {
+  text-decoration: none;
+}
+.buttonclick a:link {
+  text-decoration: none;
+}
+ul.treeRoot > li.treeChild:last-child {
+  border-left: 2px solid transparent;
+}
+ul ul.treeRoot > li.treeChild:last-child {
+   border-left: 2px solid #3f8846;
+   border-left-style: dotted;
+ }
+.variable {
+  padding-left: 0.3em;
+  padding-right: 0.3em;
+}
+
+.expression {
+  padding-left: 0.3em;
+}
