@@ -8,7 +8,7 @@ export class Constant {
     this.type = '';
     this.value = '';
     // to do test case
-    this.type = 'text';
+    this.type = 'String';
     this.value = 'akash';
   }
 }
@@ -21,9 +21,19 @@ export class Variable {
 }
 // Operator holds a operator type similar to > , < , = etc..
 export class Operator {
-  constructor(id, label) {
+  constructor(id, label, valueType, keyTypes) {
     this.id = id;
     this.label = label;
+    this.valueType = valueType;
+    this.keyTypes = keyTypes;
+  }
+  // expression to operate on key and value, boolean result
+  toJSExpression(key, value) {
+    return 'Not Implemented' + value;
+  }
+  // is the operator is allowed for given keyType
+  isAllowed(keyType) {
+    return this.keyTypes.indexOf(keyType) > 0;
   }
 }
 // Expression have variable which holds a TYPE variable or a TYPE constant
@@ -59,7 +69,7 @@ export class Condition {
 }
 // Function class used to perform a function action based on type.
 // to do.
-class Function {
+class FunctionClass {
   constructor(name) {
     this.label = name;
   }
@@ -68,7 +78,7 @@ class Function {
 // to do.
 export class Action {
   constructor(name) {
-    this.function = new Function(name);
+    this.function = new FunctionClass(name);
     this.parameters = {};
   }
 }

@@ -48,7 +48,7 @@ export default class ExpressionComponent extends React.Component{
   }
   propertyChangedIsVariable(key, value) {
     this.props.expression[key] = value;
-    this.props.expression.variable = Object.keys(this.props.expression.variable).length === 0 ? value ? new Variable() : new Constant() : this.props.expression.variable;
+    this.props.expression.variable = value ? new Variable() : new Constant();
     this.notifyChange(this.props.expressionType);
   }
   propertyChanged(key, value) {

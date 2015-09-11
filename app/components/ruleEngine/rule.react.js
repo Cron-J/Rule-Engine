@@ -73,7 +73,7 @@ class RuleComponent extends React.Component {
     this.propertyChanged('actions', this.state.actions);
   }
   propertyChanged(key, value) {
-    console.log('set state update', value);
+    //console.log('set state update', value);
     this.setState({key, value});
   };
 

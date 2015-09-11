@@ -42,7 +42,7 @@ export default class ConditionComponent extends React.Component {
           <ul className={style.treeRoot}>
             {
               this.props.condition.simpleconditions.map((simplecondition, i) => {
-                console.log('i', i);
+                // console.log('i', i);
                 return (<li key={i} className={style.treeChild}>
                   <div className="row">
                     <div className="col-md-10">
@@ -91,7 +91,7 @@ export default class ConditionComponent extends React.Component {
   }
   addSimpleCondition() {
     this.props.condition.simpleconditions.push(new SimpleCondition());
-    console.log(this.props.condition);
+    //console.log(this.props.condition);
     this.notifyChange();
   }
   propertyChanged(key, value, id) {
