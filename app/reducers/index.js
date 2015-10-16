@@ -18,13 +18,14 @@ if (!String.prototype.format) {
 
 /****************** End of Common functions **********************************************/
 /****************** Catch the actions here ****************************************/
-function getRules(state,action){
-  action.data.then(function(success){
-    state.rules = success;
-  },function(error){
-    console.log(error);
-  })
-}
+//function getRules(state,action){
+//  console.log('getrules called in reduces');
+//  action.data.then(function(success){
+//    state.rules = success;
+//  },function(error){
+//    console.log(error);
+//  })
+//}
 
 const initialState = {
   rule : new grammar.Rule(),
@@ -35,6 +36,12 @@ var App = createReducer(initialState,{
     //console.log('Edit rule set state ------------------------->',action);
     let rule = action.payload.response.rule;
     rule.updaterule = true;
+    return {
+      ...state,
+      rule : action.payload.response.rule
+    }
+  },
+  [types.UPDATERULESUCCESS](state,action){
     return {
       ...state,
       rule : action.payload.response.rule
@@ -54,7 +61,7 @@ var App = createReducer(initialState,{
     }
   },
   [types.GETRULES](state,action){
-    //console.log('action called');
+    console.log('action called');
     return {
       ...state
     }

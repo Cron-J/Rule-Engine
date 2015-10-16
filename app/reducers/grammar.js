@@ -16,8 +16,8 @@
  *             <variable> ::= <Variable> | <AnyAllCondition>
  *         <Constant> ::= <type><value>
  */
-
 // <constant> ::= <type><value>
+
 export class Constant {
     constructor() {
         this.type = '';
@@ -30,9 +30,12 @@ export class Constant {
 // <Variable> ::= <key> <variable>
 // <variable> ::= <Variable> | <AnyAllCondition>
 export class Variable {
-    constructor(key) {
+    constructor(key,type = 'Variable') {
         this.key = key ? key : '';
         this.variable = {};
+        this.type = type;
+        // type true for variable and false for allanycondition
+        this.isCollection = false;
     }
 }
 // Operator holds a operator type similar to > , < , = etc..
@@ -106,18 +109,13 @@ export class AnyAllCondition {
         this.on = ''; //applies on 'All' , 'Any' , 'AlleastOne'
         this.conditions = [];
         // default single condition init
-        //this.addCondition();
+        this.addCondition();
     }
     addCondition() {
         this.conditions.push(new Condition());
     }
     toJSExpression() {
-        var jsExpr = "" +
-            "(function(item) {" +
-            "var object = {\"{0}\": item};" +
-            "return {1};" +
-            "})";
-        return jsExpr.format(1,232);
+
     }
 }
 // Function class used to perform a function action based on type.
@@ -146,8 +144,12 @@ export class Rule {
         // this.addAction('send Email');
     }
     toJSExpression() {
-        //console.log(this.condition.toJSExpression());
-        //console.log(this.AnyAllCondition);
+        var jsExpr = "(function(item) {" +
+            "var object = {\"{0}\": item};" +
+            "return {1};" +
+            "})";
+        console.log(jsExpr.format(1,232));
+        //return this.AnyAllCondition.toJSExpression();
     }
     addAction(param) {
         this.actions.push(new Action(param));

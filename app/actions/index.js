@@ -10,7 +10,6 @@ export function EditRule(rule) {
 }
 // Get rules list;
 export function GetRules() {
-  //console.log('api call to http://localhost:4000/api/ruleengine/getrules');
   return {types: [types.GETRULES, types.GETRULESSUCCESS, types.GETRULESFAILURE],
     payload: {response:api.getrules().then(response => response)}}
 }

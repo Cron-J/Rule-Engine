@@ -3,35 +3,56 @@
  */
 // import Rule from 'rule.js';
 import React from 'react';
-import {Variable} from '../reducers/grammar.js';
+import {Variable,AnyAllCondition} from '../reducers/grammar.js';
 import Select from 'react-select';
+import {AggregatorStore} from '../reducers/SchemaStore.js';
+import AnyAllConditionComponent from './AnyAllCondition.react.js';
 // import style from '../scss/components/ruleeditor.scss';
 
 export default class VariableComponent extends React.Component{
   constructor(props) {
     super(props);
     this.processComponent();
+    console.log('store in aggredkajkf;lad',new AggregatorStore());
   };
   componentWillReceiveProps(nxtprops) {
     this.props = nxtprops;
     this.processComponent();
   }
+  //if key is selected render next child component
   renderChildVariable(key) {
     let object = this.props.objectschema;
     //console.log(object,'after operator selection')
+    let isVariable = this.props.variable;
     this.attributes = object[key];
+    // if attributes have instance render empty
     if (this.attributes && this.attributes.instance) {
       this.renderVariable = <span></span>;
-    }else if (this.attributes) {
+    }else if (this.attributes && isVariable && isVariable.variable && isVariable.variable.isCollection === false) {
+      // if isCollection is false render variable
       this.renderVariable = <VariableComponent key={key} variable={this.props.variable.variable} onPropertyChange={this.propertyChanged.bind(this)} objectschema={this.attributes}/>;
+    }else if(this.attributes && isVariable && isVariable.variable && isVariable.variable.isCollection && isVariable.variable.type === 'AnyAllCondition'){
+      // if isCollection is true and Child is AnyAllCondition render variable with aggregators
+      this.renderVariable = <VariableComponent key={key} variable={this.props.variable.variable} onPropertyChange={this.propertyChanged.bind(this)} objectschema={this.attributes}/>
+    }else if(isVariable && isVariable.variable && isVariable.isCollection && isVariable.type === 'AnyAllCondition'){
+      // if isCollection is true and Child is AnyAllCondition render variable with AnyAllCondition
+      this.renderVariable = <AnyAllConditionComponent anyallcondition={this.props.variable.variable} schema={this.props.objectschema} onPropertyChange={this.propertyChanged.bind(this)}></AnyAllConditionComponent>
     }
   }
+  // sets this.options with keys
   processComponent() {
     this.options = [];
     let objectkeys = this.props.objectschema;
+    let variable = this.props.variable;
+    if(variable.isCollection && variable.type === 'AnyAllCondition'){
+      // overide with aggregators;
+      objectkeys = new AggregatorStore();
+    }
     for (let i in objectkeys) {
-      if (objectkeys.hasOwnProperty(i)) {
-        this.options.push({value : i, label: i});
+      if (objectkeys.hasOwnProperty(i) && !objectkeys[i].instance && typeof objectkeys[i] === 'object') {
+        this.options.push({value : [i,'>>'], label:[i ,' >>'] });
+      }else{
+        this.options.push({value : [i], label:i} );
       }
     }
     // on select  assign new varialbe component
@@ -46,7 +67,7 @@ export default class VariableComponent extends React.Component{
             <span ref="variableobject">
               <Select
                   name="form-field-name"
-                  value={this.props.variable.key} value={this.props.variable.key}
+                  value={this.props.variable.key}
                   options={this.options}
                   onChange={this.handleChangeSelect.bind(this)}
               />
@@ -58,7 +79,6 @@ export default class VariableComponent extends React.Component{
       this.variableComponentRender = (<span><Select
           name="form-field-name"
           className="form-control input-sm"
-          value="one"
           options={this.options}
           onChange={this.logChange.bind(this)} allowClear="false"
       /></span>);
@@ -75,12 +95,36 @@ export default class VariableComponent extends React.Component{
     React.unmountComponentAtNode(mountNode);
   }
   handleChangeSelect(event) {
-    let key = event;
-    //let key = event.target.value;
-    this.props.variable.key = key;
-    // this.InitComponentUnmount();
-    this.props.variable.variable = new Variable(undefined);
-    this.renderChildVariable(key);
+    this.Operation = function(keys){
+      this.checkForAggregator = function(key) {
+        let aggregatorlist = new AggregatorStore();
+        for(let i in aggregatorlist){
+          if(i === key){
+            return true;
+          }
+        }
+        return false;
+      };
+      let variable = this.props.variable;
+      if(keys[1] === '>>'){
+          variable.isCollection = true;
+          variable.variable = new Variable(undefined,'AnyAllCondition');
+          variable.variable.isCollection = true;
+      }else if(keys[0]){
+          // if aggregator store anyallcondition
+          if(this.checkForAggregator(keys[0])){
+            variable.variable = new AnyAllCondition();
+          }else{
+            variable.isCollection = false;
+            variable.variable = new Variable(undefined);
+          }
+      }
+    };
+    let keys = event;
+    this.props.variable.key = keys[0];
+    //variable ::= <Variable> | <AnyAllCondition>
+    this.Operation(keys);
+    this.renderChildVariable(keys[0]);
     this.notifyChange();
   }
   propertyChanged(key, value) {

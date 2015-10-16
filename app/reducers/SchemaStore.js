@@ -1,3 +1,8 @@
+export class AggregatorStore {
+    constructor(){
+        return {atleastOne : 'atleastOne', forAll: 'forAll', anyOf : 'anyOf', exactlyOne: 'exactlyOne'};
+    }
+}
 class SchemaStore {
   constructor() {
     this.schema = {'product': {
