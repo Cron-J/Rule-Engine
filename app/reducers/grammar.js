@@ -16,14 +16,22 @@
  *             <variable> ::= <Variable> | <AnyAllCondition>
  *         <Constant> ::= <type><value>
  */
-// <constant> ::= <type><value>
-
+/*
+ * <Variable> ::= <type> {key} <variable>
+  *     <variable> ::= <Variable> | <AnyAllCondition>
+ * <type> ::= {collection}{string}{boolean}{date}
+ *
+ *
+ */
 export class Constant {
     constructor() {
         this.type = '';
         this.value = '';
         // to do test case
         this.type = 'String';
+    }
+    toJSExpression() {
+        return this.value;
     }
 }
 // Variable holds a key and a type of its own for example key.key.key.key as product.attributesvalues.attribute.classificationid.
@@ -36,6 +44,14 @@ export class Variable {
         this.type = type;
         // type true for variable and false for allanycondition
         this.isCollection = false;
+        this.toJSExpression = (object)=> {
+            if(this.isCollection && this.variable && this.type ==='AnyAllCondition'){
+                return this.variable.toJSExpression(object);
+            }else if(this.type === 'Variable' && this.key){
+                return '{0}.'.format(object) + this.key + this.variable.toJSExpression();
+            }
+            return '';
+        }
     }
 }
 // Operator holds a operator type similar to > , < , = etc..
@@ -49,7 +65,7 @@ export class Operator {
     }
     // expression to operate on key and value, boolean result
     toJSExpression(key, value) {
-        return 'Not Implemented' + value;
+        return this.id;
     }
     // is the operator is allowed for given keyType
     isAllowed(keyType) {
@@ -61,8 +77,11 @@ export class Operator {
 // <Expression> ::= <variable> <isVariable>
 class Expression {
     constructor() {
-        this.variable = {};
+        this.variable = new Variable();
         this.isVariable = true;
+    }
+    toJSExpression(object) {
+        return this.variable.toJSExpression(object);
     }
 }
 // SimpleCondition is an expressions resolve to true or false 1. (a = b)  2.(a > b)
@@ -74,6 +93,23 @@ export class SimpleCondition {
         this.rhsexpression = new Expression();
         this.operator = new Operator();
     }
+    toJSExpression(object) {
+        let operator;
+        let jsExpr = this.lhsexpression.toJSExpression(object);
+        if(this.operator.label && this.operator.id){
+            switch(this.operator.id){
+                case 'equalTo':operator = '===';break;
+                case 'notEqualTo':operator = '!==';break;
+                case 'greaterThan':operator = '>';break;
+                case 'greaterThanEqual':operator = '>=';break;
+                case 'lessThan':operator = '<';break;
+                case 'lessThanEqual':operator = '<=';break;
+                default: operator = '';break;
+            }
+           return  jsExpr + operator + this.rhsexpression.toJSExpression(object);
+        }
+        return jsExpr;
+    }
 }
 // Condition specifies and, or on list of simpleconditions and also holds list of itselfs(for subconditions).
 // Condition resolves to true or false;
@@ -81,24 +117,18 @@ export class SimpleCondition {
 export class Condition {
     constructor(type) {
         if(type) {
-            var anyallcondition = new AnyAllCondition();
-            anyallcondition.addCondition();
-            this.AnyAllCondition = anyallcondition;
+            this.AnyAllCondition = new AnyAllCondition();
         }else {
             this.SimpleCondition = new SimpleCondition();
         }
     }
-    toJSExpression() {
-
-    }
-    toSquel() {
-        if(this.SimpleCondition){
-            return this.SimpleCondition.toSquel();
+    toJSExpression(object) {
+        if(this.AnyAllCondition){
+            return this.AnyAllCondition.toJSExpression(object);
+        }else{
+            return this.SimpleCondition.toJSExpression(object);
         }
     }
-    // addSimpleCondition = function addSimpleCondition() {
-    //   this.simpleconditions.push(new SimpleCondition());
-    // }
 }
 // AnyAllCondition holds list of conditions
 //AnyallCondition = on ,
@@ -114,8 +144,18 @@ export class AnyAllCondition {
     addCondition() {
         this.conditions.push(new Condition());
     }
-    toJSExpression() {
-
+    toJSExpression(object) {
+        let operation;
+        switch(this.on){
+            case 'Any' : operation = '||';break;
+            case 'All' : operation = '&&';break;
+            default : operation = '&&';break;
+        }
+        let jsExpr = this.conditions[0].toJSExpression(object);
+        for(let i=1;i<this.conditions.length;i++){
+            jsExpr += operation + this.conditions[i].toJSExpression(object);
+        }
+        return '('+jsExpr+')';
     }
 }
 // Function class used to perform a function action based on type.
@@ -140,15 +180,17 @@ export class Rule {
         this.AnyAllCondition = new AnyAllCondition();
         this.actions = [];
         this.name = '';
+        // example schemaId = product
+        this.schemaId = 'product';
         // todo for the test actions
         // this.addAction('send Email');
     }
     toJSExpression() {
-        var jsExpr = "(function(item) {" +
-            "var object = {\"{0}\": item};" +
+        var jsExpr = "function(item) {" +
+            "var {0}= item;"+
             "return {1};" +
-            "})";
-        console.log(jsExpr.format(1,232));
+            "}";
+        console.log(jsExpr.format(this.schemaId,this.AnyAllCondition.toJSExpression(this.schemaId)));
         //return this.AnyAllCondition.toJSExpression();
     }
     addAction(param) {

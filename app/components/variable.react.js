@@ -7,6 +7,7 @@ import {Variable,AnyAllCondition} from '../reducers/grammar.js';
 import Select from 'react-select';
 import {AggregatorStore} from '../reducers/SchemaStore.js';
 import AnyAllConditionComponent from './AnyAllCondition.react.js';
+import _ from 'lodash';
 // import style from '../scss/components/ruleeditor.scss';
 
 export default class VariableComponent extends React.Component{
@@ -34,7 +35,7 @@ export default class VariableComponent extends React.Component{
     }else if(this.attributes && isVariable && isVariable.variable && isVariable.variable.isCollection && isVariable.variable.type === 'AnyAllCondition'){
       // if isCollection is true and Child is AnyAllCondition render variable with aggregators
       this.renderVariable = <VariableComponent key={key} variable={this.props.variable.variable} onPropertyChange={this.propertyChanged.bind(this)} objectschema={this.attributes}/>
-    }else if(isVariable && isVariable.variable && isVariable.isCollection && isVariable.type === 'AnyAllCondition'){
+    }else if(isVariable && isVariable.variable && isVariable.isCollection && isVariable.type === 'AnyAllCondition' && _.isEmpty(isVariable.variable) !== true){
       // if isCollection is true and Child is AnyAllCondition render variable with AnyAllCondition
       this.renderVariable = <AnyAllConditionComponent anyallcondition={this.props.variable.variable} schema={this.props.objectschema} onPropertyChange={this.propertyChanged.bind(this)}></AnyAllConditionComponent>
     }
@@ -66,7 +67,7 @@ export default class VariableComponent extends React.Component{
           <span ref="variable" className="variable">
             <span ref="variableobject">
               <Select
-                  name="form-field-name"
+                  name="form-field-name" noResultsText = "No properties found"
                   value={this.props.variable.key}
                   options={this.options}
                   onChange={this.handleChangeSelect.bind(this)}
@@ -76,12 +77,14 @@ export default class VariableComponent extends React.Component{
           </span>
       );
     }else {
-      this.variableComponentRender = (<span><Select
-          name="form-field-name"
+      this.variableComponentRender = (<span ref="variable" className="variable">
+        <span ref="variableobject">
+        <Select
+          name="form-field-name" noResultsText = "No properties found"
           className="form-control input-sm"
           options={this.options}
           onChange={this.logChange.bind(this)} allowClear="false"
-      /></span>);
+      /></span></span>);
     }
     return (
         this.variableComponentRender
