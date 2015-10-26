@@ -6,7 +6,7 @@ module.exports = function(sequelize, DataTypes) {
     * @description tenant class contains the details of tenant
   */
   
-  var Tenant = sequelize.define("Tenant", {
+  var tenant = sequelize.define("tenant", {
     tenantId: DataTypes.STRING,
     /** name must be string and required field */
     name: {
@@ -40,10 +40,10 @@ module.exports = function(sequelize, DataTypes) {
   {
     classMethods: {
       associate: function(models) {
-        Tenant.hasMany(models.Classification)
+        tenant.hasMany(models.classification)
       }
     }
   });
 
-  return Tenant;
+  return tenant;
 };

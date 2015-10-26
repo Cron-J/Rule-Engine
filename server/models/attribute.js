@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = function(sequelize, DataTypes) {
-  var Attribute = sequelize.define("Attribute", {
+  var attribute = sequelize.define("attribute", {
     /** 
       Attribute ID. It can only contain alphanumeric characters (letters A-Z, numbers 0-9), hyphens ( - ), underscores ( _ ),
       is the required and unique field and maximum 50 characters.
@@ -112,13 +112,13 @@ module.exports = function(sequelize, DataTypes) {
   {
     classMethods: {
       associate: function(models) {
-        Attribute.belongsTo(models.AttributeSection);
-        Attribute.hasMany(models.ClassGrpToAttribute);
-        Attribute.hasMany(models.AttributeLongDescription , { onDelete: 'cascade' , onUpdate: 'cascade'});
-        Attribute.hasMany(models.AttributeShortDescription , { onDelete: 'cascade' , onUpdate: 'cascade'});
+        attribute.belongsTo(models.attributesection);
+        attribute.hasMany(models.classgrptoattribute);
+        attribute.hasMany(models.attributelongdescription , { onDelete: 'cascade' , onUpdate: 'cascade'});
+        attribute.hasMany(models.attributeshortdescription , { onDelete: 'cascade' , onUpdate: 'cascade'});
       }
     }
   });
 
-  return Attribute;
+  return attribute;
 };

@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = function(sequelize, DataTypes) {
-  var AttributeSection = sequelize.define("AttributeSection", {
+  var attributesection = sequelize.define("attributesection", {
     /**
       Attribute Section ID. It can only contain alphanumeric characters (letters A-Z, numbers 0-9), hyphens ( - )
       and underscores ( _ ) and is the required field and unique field and maximum 50 characters.
@@ -25,7 +25,7 @@ module.exports = function(sequelize, DataTypes) {
         },
         isUnique: function (value, next) {
           var myId = this.id;
-          AttributeSection.find({where:{attributeSectionId: value}}).then(function(data) {
+          attributesection.find({where:{attributeSectionId: value}}).then(function(data) {
             if(data && data.attributeSectionId && data.id != myId) {
               return next('Attribute Section Id should be unique');
             }
@@ -46,12 +46,12 @@ module.exports = function(sequelize, DataTypes) {
   {
     classMethods: {
       associate: function(models) {
-        AttributeSection.hasMany(models.Attribute);
-        AttributeSection.hasMany(models.AttributeSectionName, { onDelete: 'cascade' , onUpdate: 'cascade'});
-        AttributeSection.hasMany(models.AttributeSectionDescription, { onDelete: 'cascade' , onUpdate: 'cascade'});
+        attributesection.hasMany(models.attribute);
+        attributesection.hasMany(models.attributesectionname, { onDelete: 'cascade' , onUpdate: 'cascade'});
+        attributesection.hasMany(models.attributesectiondescription, { onDelete: 'cascade' , onUpdate: 'cascade'});
       }
     }
   });
 
-  return AttributeSection;
+  return attributesection;
 };

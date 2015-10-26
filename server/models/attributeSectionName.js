@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = function(sequelize, DataTypes){
-	var AttributeSectionName = sequelize.define("AttributeSectionName",{
+	var attributesectionname = sequelize.define("attributesectionname",{
 		language: DataTypes.STRING,
 		/**
             name. It can only contain alphanumeric characters (letters A-Z, numbers 0-9), hyphens ( - ) and underscores ( _ )
@@ -19,10 +19,10 @@ module.exports = function(sequelize, DataTypes){
 	},{
 		classMethods: {
 			associate: function(models){
-				AttributeSectionName.belongsTo(models.AttributeSection);
+				attributesectionname.belongsTo(models.attributesection);
 			}
 		}
 	});
 
-	return AttributeSectionName;
+	return attributesectionname;
 }

@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = function(sequelize, DataTypes) {
-  var ClassgrpShortDescription = sequelize.define("ClassgrpShortDescription", {
+  var classgrpshortdescription = sequelize.define("classgrpshortdescription", {
     language: DataTypes.STRING,
     description: DataTypes.STRING,
     createdBy: {type: DataTypes.STRING, defaultValue: 'jcadmin'},
@@ -10,10 +10,10 @@ module.exports = function(sequelize, DataTypes) {
   {
     classMethods: {
       associate: function(models) {
-        ClassgrpShortDescription.belongsTo(models.ClassificationGroup);
+        classgrpshortdescription.belongsTo(models.classificationgroup);
         }
     }
   });
 
-  return ClassgrpShortDescription;
+  return classgrpshortdescription;
 };

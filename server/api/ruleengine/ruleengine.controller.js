@@ -44,3 +44,25 @@ exports.getrules = function(req,res) {
         res.status(200).json(rules);
     }).catch(function(error){res.status(500).json(error)});
 };
+
+exports.getSchema = function(req,res) {
+    console.log('getting schema of postgres schema');
+    var PostgresSchema = require('pg-json-schema-export');
+    var connection = {
+        user: 'postgres',
+        password: 'cronj',
+        host: 'localhost',
+        port: 5432,
+        database: 'classification_attributes'
+    };
+    PostgresSchema.toJSON(connection, 'public')
+        .then(function (schemas) {
+            // handle json object
+            console.log('schema of postgres',schemas);
+            res.status(200).json(schemas);
+        })
+    .catch(function (error) {
+        // handle error
+            console.log(error);
+            res.status(500).json('failed to retrieve schema',error);    });
+};

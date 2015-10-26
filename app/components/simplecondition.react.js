@@ -6,6 +6,7 @@ import ExpressionComponent from './expression.react.js';
 import OperatorComponent from './operator.react.js';
 import Operatorslist from '../reducers/Operatorslist.js';
 import SchemaStore from '../reducers/SchemaStore.js';
+import Select from 'react-select';
 
 export default class SimpleConditionComponent extends React.Component{
   constructor(props) {
@@ -15,19 +16,23 @@ export default class SimpleConditionComponent extends React.Component{
   };
   componentWillReceiveProps(nxtprops) {
     this.props = nxtprops;
+    this.operators = new Operatorslist();
     this.filteroperators();
   }
   renderOperator() {
     if (this.operatorslist.length) {
-      this.Operatorcomponent = (<select className="form-control input-sm" onChange={this.handleOperatorChange.bind(this)} defaultValue={this.props.simplecondition.operator.label}><option>choose operator</option>
-        {
-            this.operatorslist.map((operator, id) => {
-              return (<option key={id} value={operator.id}>
-                {operator.label}
-              </option>);
-            })
-            }
-      </select>);
+      let options = [];
+      for(let i=0;i<this.operatorslist.length;i++){
+        options.push({value : this.operatorslist[i].id, label:this.operatorslist[i].id} );
+      }
+      this.Operatorcomponent = (<Select
+          name="form-field-name" noResultsText = "No properties found"
+          value={this.props.simplecondition.operator.label}
+          placeholder="select operator"
+          options={options}
+          onChange={this.handleOperatorChange.bind(this)}
+      />);
+
     }else {
       this.Operatorcomponent = <span></span>;
     }
@@ -49,7 +54,7 @@ export default class SimpleConditionComponent extends React.Component{
     );
   }
   handleOperatorChange(event) {
-    let key = event.target.value;
+    let key = event;
     this.propertyChanged('operator', this.operators[key]);
   }
   filteroperators() {

@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = function(sequelize, DataTypes){
-	var AttributeSectionDescription = sequelize.define("AttributeSectionDescription",{
+	var attributesectiondescription = sequelize.define("attributesectiondescription",{
 		language: {
 				type: DataTypes.STRING
 		},
@@ -22,10 +22,10 @@ module.exports = function(sequelize, DataTypes){
 	,{
 		classMethods: {
 			associate: function(models){
-				AttributeSectionDescription.belongsTo(models.AttributeSection);
+				attributesectiondescription.belongsTo(models.attributesection);
 			},
 		}
 	});
 
-	return AttributeSectionDescription;
+	return attributesectiondescription;
 }

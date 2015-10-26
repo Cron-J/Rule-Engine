@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = function(sequelize, DataTypes) {
-  var ClassificationGroup = sequelize.define("ClassificationGroup", {
+  var ClassificationGroup = sequelize.define("classificationgroup", {
     /**
       Hierarchy Code. It should be string and maximum 100 characters.
     */
@@ -93,10 +93,10 @@ module.exports = function(sequelize, DataTypes) {
   {
     classMethods: {
       associate: function(models) {
-      	ClassificationGroup.hasOne(models.ClassificationGroup);
-        ClassificationGroup.hasMany(models.ClassGrpToAttribute);
-        ClassificationGroup.hasMany(models.ClassgrpLongDescription , { onDelete: 'cascade' , onUpdate: 'cascade'});
-        ClassificationGroup.hasMany(models.ClassgrpShortDescription , { onDelete: 'cascade' , onUpdate: 'cascade'});
+      	ClassificationGroup.hasOne(models.classificationgroup);
+        ClassificationGroup.hasMany(models.classgrptoattribute);
+        ClassificationGroup.hasMany(models.classgrplongdescription , { onDelete: 'cascade' , onUpdate: 'cascade'});
+        ClassificationGroup.hasMany(models.classgrpshortdescription , { onDelete: 'cascade' , onUpdate: 'cascade'});
       }
     }
   }

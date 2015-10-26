@@ -10,6 +10,7 @@ import { bindActionCreators} from 'redux';
 
 class initState{
   constructor(){
+    //showrule for managing views edit and new rule.
     this.showrule = false;
     this.editrules = true;
   }

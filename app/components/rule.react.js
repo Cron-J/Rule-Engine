@@ -2,7 +2,7 @@
  * Created by Eswer on 9/2/2015.
  */
 import React from 'react';
-import Rule from '../reducers/grammar.js';
+import {Rule,AnyAllCondition} from '../reducers/grammar.js';
 import _ from 'lodash';
 import {Action} from '../reducers/grammar.js';
 // import Action from './action.react.js';
@@ -39,7 +39,7 @@ class RuleComponent extends React.Component {
               <button className="btn btn-default margintop20" type="submit" onClick={this.runRule.bind(this)}>Run Rule</button>
             </div>
             <div className="row col-sm-12">
-              <AnyAllConditionComponent anyallcondition={this.state.AnyAllCondition} schema={this.schema.product} onPropertyChange={this.propertyChanged.bind(this)}></AnyAllConditionComponent>
+              <AnyAllConditionComponent anyallcondition={this.state.AnyAllCondition} schema={this.schema[this.state.schemaId]} onPropertyChange={this.propertyChanged.bind(this)}></AnyAllConditionComponent>
             </div>
             <div className="row col-sm-12">
               <h2> Then
@@ -78,6 +78,7 @@ class RuleComponent extends React.Component {
 
   }
   runRule() {
+    console.log(this.state.AnyAllCondition instanceof AnyAllCondition);
     this.state.toJSExpression();
   }
   saveRule() {

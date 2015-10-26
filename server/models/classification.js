@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = function(sequelize, DataTypes) {
-  var Classification = sequelize.define("Classification", {
+  var Classification = sequelize.define("classification", {
     /**
       Classification ID. It can only contain alphanumeric characters (letters A-Z, numbers 0-9), hyphens ( - ), underscores ( _ ),
       is the required and unique field and maximum 30 characters.
@@ -124,10 +124,10 @@ module.exports = function(sequelize, DataTypes) {
   {
     classMethods: {
       associate: function(models) {
-        Classification.hasOne(models.ClassificationGroup);
-        Classification.hasMany(models.ClassificationLongDescription , { onDelete: 'cascade' , onUpdate: 'cascade'});
-        Classification.hasMany(models.ClassificationShortDescription , { onDelete: 'cascade' , onUpdate: 'cascade'});
-        Classification.belongsTo(models.Tenant);
+        Classification.hasOne(models.classificationgroup);
+        Classification.hasMany(models.classificationlongdescription , { onDelete: 'cascade' , onUpdate: 'cascade'});
+        Classification.hasMany(models.classificationshortdescription , { onDelete: 'cascade' , onUpdate: 'cascade'});
+        Classification.belongsTo(models.tenant);
       }
     }
   }

@@ -1,6 +1,26 @@
 export class AggregatorStore {
     constructor(){
-        return {atleastOne : 'atleastOne', forAll: 'forAll', anyOf : 'anyOf', exactlyOne: 'exactlyOne'};
+        return {
+        'more than one' : {
+            value : 'more than one',func : '' +
+            'var object;var count;' +
+        'for (var i = 0; i < collection.length; i++){' +
+        'object = collection[i];' +
+        'if (!{0}) {' +
+        'return false;' +
+        '}' +
+        '}' +
+        'return true;'
+        },
+        'for all':{value : 'for all',func : ''+
+        'var object;' +
+        'for (var i = 0; i < collection.length; i++){' +
+        'object = collection[i];' +
+        'if (!{0}) {' +
+        'return false;' +
+        '}' +
+        '}' +
+        'return true;'}, 'exactly one': {value:'exactly one',func : ''}, 'exactly for' : {value:'exactly for',func : ''}, 'at least one' : {value:'at least one',func :''}};
     }
 }
 class SchemaStore {
@@ -98,6 +118,7 @@ class SchemaStore {
             "index": null,
             "instance": "Date"
         },
+
         "classificationGroupAssociations": {
             "variantId": {
                 "index": null,
@@ -123,7 +144,7 @@ class SchemaStore {
                 "index": null,
                 "instance": "String"
             },
-            "attribute": {
+            "attributeId": {
                 "index": null,
                 "isRequired": true,
                 "instance": "String"

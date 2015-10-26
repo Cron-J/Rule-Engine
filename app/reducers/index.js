@@ -3,20 +3,6 @@ import { combineReducers } from 'redux';
 import squel from 'squel';
 import { createReducer } from 'redux-create-reducer';
 import * as grammar from './grammar';
-/****************** Common functions **********************************************/
-if (!String.prototype.format) {
-  String.prototype.format = function() {
-    var args = arguments;
-    return this.replace(/{(\d+)}/g, function(match, number) {
-      return typeof args[number] != 'undefined'
-          ? args[number]
-          : match
-          ;
-    });
-  };
-}
-
-/****************** End of Common functions **********************************************/
 /****************** Catch the actions here ****************************************/
 //function getRules(state,action){
 //  console.log('getrules called in reduces');
@@ -27,6 +13,21 @@ if (!String.prototype.format) {
 //  })
 //}
 
+console.log();
+let revive = function(object){
+  if(object && object.type){
+    let JSfunctionstring = 'new grammar.'+object.type+'(object)';
+    object = eval(JSfunctionstring);
+  }
+  for(let i in object){
+    if(typeof object[i] === 'object'){
+      let type = object[i].type;
+      object[i] = revive(object[i]);
+    }
+  }
+  return object;
+};
+
 const initialState = {
   rule : new grammar.Rule(),
   rules : []
@@ -34,11 +35,11 @@ const initialState = {
 var App = createReducer(initialState,{
   [types.EDITRULE](state,action){
     //console.log('Edit rule set state ------------------------->',action);
-    let rule = action.payload.response.rule;
-    rule.updaterule = true;
+    let revivedrule = revive(action.payload.response.rule);
+    revivedrule.updaterule = true;
     return {
       ...state,
-      rule : action.payload.response.rule
+      rule : revivedrule
     }
   },
   [types.UPDATERULESUCCESS](state,action){
@@ -61,7 +62,7 @@ var App = createReducer(initialState,{
     }
   },
   [types.GETRULES](state,action){
-    console.log('action called');
+    //console.log('action called');
     return {
       ...state
     }

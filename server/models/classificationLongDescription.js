@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = function(sequelize, DataTypes) {
-  var ClassificationLongDescription = sequelize.define("ClassificationLongDescription", {
+  var classificationlongdescription = sequelize.define("classificationlongdescription", {
     language: DataTypes.STRING,
     /**
       Long Description can only contain alphanumeric characters (letters A-Z, numbers 0-9), hyphens ( - ), underscores ( _ ), 
@@ -24,10 +24,10 @@ module.exports = function(sequelize, DataTypes) {
   {
     classMethods: {
       associate: function(models) {
-        ClassificationLongDescription.belongsTo(models.Classification);
+        classificationlongdescription.belongsTo(models.classification);
         }
     }
   });
 
-  return ClassificationLongDescription;
+  return classificationlongdescription;
 };

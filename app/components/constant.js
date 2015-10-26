@@ -3,6 +3,7 @@
  */
 // import Rule from 'rule.js';
 import React from 'react';
+import _ from 'lodash';
 
 export default class ConstantComponent extends React.Component{
   constructor(props) {
@@ -23,7 +24,7 @@ export default class ConstantComponent extends React.Component{
     );
   }
   buildConstantComponent(onselectedType) {
-    let type = this.props.constant.type ? this.props.constant.type : onselectedType;
+    let type = this.props.constant.key ? this.props.constant.key : onselectedType;
     this.selectBox = (<span></span>);
     switch (type) {
       case 'String' : this.renderComponent = (
@@ -55,7 +56,7 @@ export default class ConstantComponent extends React.Component{
       this.optionslist.push(<option key={id} value={type === listtype} value={listtype}>{listtype}</option>);
     });
     this.selectBox = (
-        <select className="form-control input-sm" onChange={this.handleChangeSelect.bind(this)}>
+        <select className="form-control input-sm" defaultValue={this.props.constant.key} onChange={this.handleChangeSelect.bind(this)}>
         {this.optionslist}
         </select>
     );
@@ -66,19 +67,23 @@ export default class ConstantComponent extends React.Component{
     if (key === 'Boolean') {
       value = event.target.checked;
     }
-    this.props.constant.type = key;
+    this.props.constant.key = key;
     this.props.constant.value = value;
     // this.InitComponentUnmount();
     this.notifyChange();
   }
-  handleChangeInput(event) {
-    let value = event.target.value;
-    if (this.props.constant.type === 'Boolean') {
-      value = event.target.checked;
-    }
+  callbacker = function (value) {
     this.props.constant.value = value;
     this.notifyChange();
-  }
+  };
+  inputupdate = _.debounce(this.callbacker,1000);
+  handleChangeInput = function(event) {
+    if(event.target.type === 'checkbox'){
+      this.inputupdate(event.target.checked);
+    }else{
+      this.inputupdate(event.target.value);
+    }
+  };
   propertyChanged(key, value) {
     this.props.constant[key] = value;
     this.notifyChange();

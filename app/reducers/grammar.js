@@ -3,32 +3,47 @@
  */
 /****************** Start of Grammar Definitions in rule-engine *******************/
 /*Grammar
- *<Rule> ::= <AnyAllCondition> {Action} <name>
- * <AnyAllCondition> ::= <on> | {Condition}
- * <Condition> ::= <AnyAllCondition> | <SimpleCondition>
- *  <SimpleCondition> ::= <lhsexpression> <Operator> <rhsexpression>
+ *<Rule> ::= <AnyAllCondition> {Action} <name> {type}
+ * <AnyAllCondition> ::= <on> | {Condition} {type}
+ * <Condition> ::= <AnyAllCondition> | <SimpleCondition> {type}
+ *  <SimpleCondition> ::= <lhsexpression> <Operator> <rhsexpression> {type}
  *     <lhsexpression> ::= <Expression>
  *     <rhsexpression> ::= <Expression>
- *     <Operator> ::= <id><label><valueType><keyType>
- *     <Expression> ::= <variable> <isVariable>
- *         variable ::= <Variable> | <Constant>
- *         <Variable> ::= <key> <variable>
+ *     <Operator> ::= <id><label><valueType><keyType> {type}
+ *     <Expression> ::= <variable> <isVariable> {type}
+ *         variable ::= <Variable> | <Constant> {type}
+ *         <Variable> ::= <key> <variable> {type}
  *             <variable> ::= <Variable> | <AnyAllCondition>
- *         <Constant> ::= <type><value>
+ *         <Constant> ::= <key><value> {type}
  */
-/*
- * <Variable> ::= <type> {key} <variable>
-  *     <variable> ::= <Variable> | <AnyAllCondition>
- * <type> ::= {collection}{string}{boolean}{date}
- *
- *
- */
-export class Constant {
-    constructor() {
-        this.type = '';
-        this.value = '';
-        // to do test case
-        this.type = 'String';
+/****************** End of Grammar Definitions in rule-engine *******************/
+/****************** Start of Class Definitions in rule-engine *******************/
+export class BaseRule {
+    // Acts as an abstract class for ducktyping
+    constructor(){
+        this.type = 'BaseRule';
+    }
+    toJSExpression() {
+
+    }
+}
+
+import {AggregatorStore} from './SchemaStore.js';
+var aggregatorslist = new AggregatorStore();
+
+export class Constant extends BaseRule{
+    constructor(object) {
+        super();
+        if(object && typeof object === 'object'){
+            this.key = object.key;
+            this.value = object.value;
+        }
+        else{
+            this.key = '';
+            this.value = '';
+            // to do test case
+            this.key = 'String';
+        }this.type = 'Constant';
     }
     toJSExpression() {
         return this.value;
@@ -37,31 +52,55 @@ export class Constant {
 // Variable holds a key and a type of its own for example key.key.key.key as product.attributesvalues.attribute.classificationid.
 // <Variable> ::= <key> <variable>
 // <variable> ::= <Variable> | <AnyAllCondition>
-export class Variable {
+export class Variable extends BaseRule{
     constructor(key,type = 'Variable') {
-        this.key = key ? key : '';
-        this.variable = {};
-        this.type = type;
-        // type true for variable and false for allanycondition
-        this.isCollection = false;
-        this.toJSExpression = (object)=> {
-            if(this.isCollection && this.variable && this.type ==='AnyAllCondition'){
-                return this.variable.toJSExpression(object);
-            }else if(this.type === 'Variable' && this.key){
-                return '{0}.'.format(object) + this.key + this.variable.toJSExpression();
-            }
-            return '';
+        super();
+        if(key && typeof key === 'object'){
+            this.key = key.key;
+            this.variable = key.variable;
+            this.variabletype = key.variabletype;
+            this.isCollection = key.isCollection;
+        }else{
+            this.key = key ? key : '';
+            this.variable = {};
+            this.variabletype = type;
+            this.isCollection = false;
         }
+        this.type = 'Variable';
+    }
+    toJSExpression(object){
+        //console.log(this.variable);
+        if(this.isCollection && this.variable && this.variabletype ==='AnyAllCondition'){
+            var aggregatortype  = this.key;
+            let aggregatorfunc = (aggregatorslist[aggregatortype]).func;
+            return aggregatorfunc.format(this.variable.toJSExpression('object'));
+        }else if(this.isCollection && this.variable && this.variabletype==='Variable'){
+            var obj = '{0}.{1} '.format(object,this.key);
+            return '(function(object){ var collection = object;'+this.variable.toJSExpression(object)+')('+obj+')';
+        }
+        else if(!this.isCollection && this.variabletype === 'Variable' && this.key){
+            return '{0}.'.format(object) + this.key + this.variable.toJSExpression();
+        }
+        return '';
     }
 }
 // Operator holds a operator type similar to > , < , = etc..
 // <Operator> ::= <id><label><valueType><keyType>
-export class Operator {
+export class Operator extends BaseRule{
     constructor(id, label, valueType, keyTypes) {
-        this.id = id;
-        this.label = label;
-        this.valueType = valueType;
-        this.keyTypes = keyTypes;
+        super();
+        if(id && typeof id === 'object'){
+            this.id = id.id;
+            this.label = id.label;
+            this.valueType = id.valueType;
+            this.keyTypes = id.keyTypes;
+        }else{
+            this.id = id;
+            this.label = label;
+            this.valueType = valueType;
+            this.keyTypes = keyTypes;
+        }
+        this.type = 'Operator';
     }
     // expression to operate on key and value, boolean result
     toJSExpression(key, value) {
@@ -75,10 +114,17 @@ export class Operator {
 // Expression have variable which holds a TYPE variable or a TYPE constant
 // variable type is determined by isVariable
 // <Expression> ::= <variable> <isVariable>
-class Expression {
-    constructor() {
-        this.variable = new Variable();
-        this.isVariable = true;
+export class Expression extends BaseRule{
+    constructor(object) {
+        super();
+        if(object && typeof object === 'object'){
+            this.variable = object.variable;
+            this.isVariable = object.isVariable;
+        }else{
+            this.variable = new Variable();
+            this.isVariable = true;
+        }
+        this.type = 'Expression';
     }
     toJSExpression(object) {
         return this.variable.toJSExpression(object);
@@ -87,11 +133,19 @@ class Expression {
 // SimpleCondition is an expressions resolve to true or false 1. (a = b)  2.(a > b)
 // SimpleCondition holds leftexpression operator rightexpression
 // <SimpleCondition> ::= <lhsexpression> <operator> <rhsexpression>
-export class SimpleCondition {
-    constructor() {
-        this.lhsexpression = new Expression();
-        this.rhsexpression = new Expression();
-        this.operator = new Operator();
+export class SimpleCondition extends BaseRule{
+    constructor(object) {
+        super();
+        if(object && typeof object === 'object'){
+            this.lhsexpression = object.lhsexpression;
+            this.rhsexpression = object.rhsexpression;
+            this.operator = object.operator;
+        }else{
+            this.lhsexpression = new Expression();
+            this.rhsexpression = new Expression();
+            this.operator = new Operator();
+        }
+        this.type = 'SimpleCondition';
     }
     toJSExpression(object) {
         let operator;
@@ -106,7 +160,7 @@ export class SimpleCondition {
                 case 'lessThanEqual':operator = '<=';break;
                 default: operator = '';break;
             }
-           return  jsExpr + operator + this.rhsexpression.toJSExpression(object);
+           return  jsExpr +' '+ operator +' '+ this.rhsexpression.toJSExpression(object);
         }
         return jsExpr;
     }
@@ -114,13 +168,19 @@ export class SimpleCondition {
 // Condition specifies and, or on list of simpleconditions and also holds list of itselfs(for subconditions).
 // Condition resolves to true or false;
 // <Condition> ::= <AnyAllCondition> | <SimpleCondition>
-export class Condition {
+export class Condition extends BaseRule{
     constructor(type) {
-        if(type) {
-            this.AnyAllCondition = new AnyAllCondition();
-        }else {
-            this.SimpleCondition = new SimpleCondition();
+        super();
+        if(typeof type === 'object'){
+           type.AnyAllCondition ? this.AnyAllCondition = type.AnyAllCondition: this.SimpleCondition = type.SimpleCondition;
+        }else{
+            if(type) {
+                this.AnyAllCondition = new AnyAllCondition();
+            }else {
+                this.SimpleCondition = new SimpleCondition();
+            }
         }
+        this.type = 'Condition';
     }
     toJSExpression(object) {
         if(this.AnyAllCondition){
@@ -133,13 +193,21 @@ export class Condition {
 // AnyAllCondition holds list of conditions
 //AnyallCondition = on ,
 // <AnyAllCondition> ::= <on> | {Conditions}
-export class AnyAllCondition {
+export class AnyAllCondition extends BaseRule{
     /** @namespace this.conditions */
-    constructor() {
-        this.on = ''; //applies on 'All' , 'Any' , 'AlleastOne'
-        this.conditions = [];
-        // default single condition init
-        this.addCondition();
+    constructor(object) {
+        super();
+        if(object && typeof object === 'object'){
+            this.on = object.on; //applies on 'All' , 'Any' , 'AlleastOne'
+            this.conditions = object.conditions;
+            this.type = 'AnyAllCondition';
+        }else{
+            this.on = ''; //applies on 'All' , 'Any' , 'AlleastOne'
+            this.conditions = [];
+            // default single condition init
+            this.addCondition();
+            this.type = 'AnyAllCondition';
+        }
     }
     addCondition() {
         this.conditions.push(new Condition());
@@ -147,9 +215,9 @@ export class AnyAllCondition {
     toJSExpression(object) {
         let operation;
         switch(this.on){
-            case 'Any' : operation = '||';break;
-            case 'All' : operation = '&&';break;
-            default : operation = '&&';break;
+            case 'Any' : operation = ' || ';break;
+            case 'All' : operation = ' && ';break;
+            default : operation = ' && ';break;
         }
         let jsExpr = this.conditions[0].toJSExpression(object);
         for(let i=1;i<this.conditions.length;i++){
@@ -160,26 +228,32 @@ export class AnyAllCondition {
 }
 // Function class used to perform a function action based on type.
 // to do.
-class FunctionClass {
+class Function extends BaseRule{
     constructor(name) {
+        super();
         this.label = name;
+        this.type = 'Function';
     }
 }
 // Action class had the function and params to determine the type and action to be performed
 // to do.
-export class Action {
+export class Action extends BaseRule{
     constructor(name) {
+        super();
         this.function = new FunctionClass(name);
         this.parameters = {};
+        this.type = 'Action';
     }
 }
 // Rule holds condition and a list of actions.
 // <Rule> ::= <AnyAllCondition> {Action} <name>
-export class Rule {
-    constructor() {
-        this.AnyAllCondition = new AnyAllCondition();
-        this.actions = [];
-        this.name = '';
+export class Rule extends BaseRule{
+    constructor(object) {
+        super();
+        this.AnyAllCondition = object ? object.AnyAllCondition : new AnyAllCondition();
+        this.actions = object ? object.actions : [];
+        this.name = object ? object.name : '';
+        this.type = 'Rule';
         // example schemaId = product
         this.schemaId = 'product';
         // todo for the test actions
@@ -197,4 +271,4 @@ export class Rule {
         this.actions.push(new Action(param));
     }
 }
-/****************** End of Grammar Definitions in rule-engine *********************/
+/****************** End of Class Definitions in rule-engine *********************/

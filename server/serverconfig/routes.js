@@ -11,6 +11,7 @@ module.exports = function(app, passport) {
   app.use('/api/classification', require('../api/classification'));
   app.use('/api/classificationgroup', require('../api/classification_group'));
   app.use('/api/ruleengine',require('../api/ruleengine'));
+  app.use('/api/pgschema',require('../api/ruleengine'));
   // ------------------------------------
   // View Rendering
   // ------------------------------------

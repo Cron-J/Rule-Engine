@@ -71,6 +71,9 @@ ul ul.treeRoot > li.treeChild:last-child {
 .margintop20 {
   margin-top: 20px;
 }
+.margintop20 .Select {
+  width : 60%;
+}
 .Select {
   position: relative;
   width: 25%;

@@ -1,17 +1,17 @@
 "use strict";
 
 module.exports = function(sequelize, DataTypes){
-	var ClassGrpToAttribute = sequelize.define("ClassGrpToAttribute",{
+	var classgrptoattribute = sequelize.define("classgrptoattribute",{
 		sortNo: DataTypes.INTEGER,
 		grpId: DataTypes.STRING
 	},{
 		classMethods: {
 			associate: function(models){
-				ClassGrpToAttribute.belongsTo(models.Attribute);
-				ClassGrpToAttribute.belongsTo(models.ClassificationGroup);
+				classgrptoattribute.belongsTo(models.attribute);
+				classgrptoattribute.belongsTo(models.classificationgroup);
 			}
 		}
 	});
 
-	return ClassGrpToAttribute;
+	return classgrptoattribute;
 }

@@ -14,7 +14,6 @@ export default class VariableComponent extends React.Component{
   constructor(props) {
     super(props);
     this.processComponent();
-    console.log('store in aggredkajkf;lad',new AggregatorStore());
   };
   componentWillReceiveProps(nxtprops) {
     this.props = nxtprops;
@@ -25,17 +24,18 @@ export default class VariableComponent extends React.Component{
     let object = this.props.objectschema;
     //console.log(object,'after operator selection')
     let isVariable = this.props.variable;
-    this.attributes = object[key];
+    let attributes = object[key];
+    (attributes instanceof Array)? this.attributes = attributes[0] :this.attributes = attributes;
     // if attributes have instance render empty
     if (this.attributes && this.attributes.instance) {
       this.renderVariable = <span></span>;
     }else if (this.attributes && isVariable && isVariable.variable && isVariable.variable.isCollection === false) {
       // if isCollection is false render variable
       this.renderVariable = <VariableComponent key={key} variable={this.props.variable.variable} onPropertyChange={this.propertyChanged.bind(this)} objectschema={this.attributes}/>;
-    }else if(this.attributes && isVariable && isVariable.variable && isVariable.variable.isCollection && isVariable.variable.type === 'AnyAllCondition'){
+    }else if(this.attributes && isVariable && isVariable.variable && isVariable.variable.isCollection && isVariable.variable.variabletype === 'AnyAllCondition'){
       // if isCollection is true and Child is AnyAllCondition render variable with aggregators
       this.renderVariable = <VariableComponent key={key} variable={this.props.variable.variable} onPropertyChange={this.propertyChanged.bind(this)} objectschema={this.attributes}/>
-    }else if(isVariable && isVariable.variable && isVariable.isCollection && isVariable.type === 'AnyAllCondition' && _.isEmpty(isVariable.variable) !== true){
+    }else if(isVariable && isVariable.variable && isVariable.isCollection && isVariable.variabletype === 'AnyAllCondition' && _.isEmpty(isVariable.variable) !== true){
       // if isCollection is true and Child is AnyAllCondition render variable with AnyAllCondition
       this.renderVariable = <AnyAllConditionComponent anyallcondition={this.props.variable.variable} schema={this.props.objectschema} onPropertyChange={this.propertyChanged.bind(this)}></AnyAllConditionComponent>
     }
@@ -45,12 +45,12 @@ export default class VariableComponent extends React.Component{
     this.options = [];
     let objectkeys = this.props.objectschema;
     let variable = this.props.variable;
-    if(variable.isCollection && variable.type === 'AnyAllCondition'){
+    if(variable.isCollection && variable.variabletype === 'AnyAllCondition'){
       // overide with aggregators;
       objectkeys = new AggregatorStore();
     }
     for (let i in objectkeys) {
-      if (objectkeys.hasOwnProperty(i) && !objectkeys[i].instance && typeof objectkeys[i] === 'object') {
+      if (objectkeys.hasOwnProperty(i) && !objectkeys[i].instance && typeof objectkeys[i] === 'object' && objectkeys[i].func === undefined) {
         this.options.push({value : [i,'>>'], label:[i ,' >>'] });
       }else{
         this.options.push({value : [i], label:i} );
@@ -130,8 +130,12 @@ export default class VariableComponent extends React.Component{
     this.renderChildVariable(keys[0]);
     this.notifyChange();
   }
-  propertyChanged(key, value) {
-    this.props.variable[key] = value;
+  propertyChanged(key, value , anyallcondition) {
+    if(anyallcondition){
+      this.props.variable['variable'] = value;
+    }else{
+      this.props.variable[key] = value;
+    }
     this.notifyChange();
   };
   notifyChange() {
