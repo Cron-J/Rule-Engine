@@ -19,8 +19,12 @@ export default class ExpressionComponent extends React.Component{
   componentWillReceiveProps(nxtprops){
     this.props = nxtprops;
   }
+//<ButtonGroup bsSize="xsmall" vertical>
+//<Button onClick={this.propertyChangedIsVariable.bind(this, 'isVariable', true)} active={this.props.expression.isVariable === true}>Variable</Button>
+//<Button onClick={this.propertyChangedIsVariable.bind(this, 'isVariable', false)} active={this.props.expression.isVariable === false}>Constant</Button>
+//</ButtonGroup>
   render() {
-    this.variable = (<VariableComponent variable={this.props.expression.variable} objectschema={this.props.schema} onPropertyChange={this.propertyChanged.bind(this)}/>);
+    this.variable = (<VariableComponent variable={this.props.expression.variable} objectschema={this.props.schema} onPropertyChange={this.propertyChanged.bind(this)} expressiontype={this.setIsVariable.bind(this)}/>);
     this.constant = (
       <span>
         <ConstantComponent constant={this.props.expression.variable} onPropertyChange={this.propertyChanged.bind(this)}/>
@@ -29,13 +33,14 @@ export default class ExpressionComponent extends React.Component{
     this.expressionRender = this.props.expression.isVariable ? this.variable : this.constant;
     return (
       <span>
-        <ButtonGroup bsSize="xsmall" vertical>
-          <Button onClick={this.propertyChangedIsVariable.bind(this, 'isVariable', true)} active={this.props.expression.isVariable === true}>Variable</Button>
-          <Button onClick={this.propertyChangedIsVariable.bind(this, 'isVariable', false)} active={this.props.expression.isVariable === false}>Constant</Button>
-        </ButtonGroup>
         {this.expressionRender}
       </span>
     );
+  }
+  setIsVariable(constantType){
+    this.props.expression.isVariable = false;
+    this.props.expression.variable = new Constant(constantType);
+    this.notifyChange(this.props.expressionType);
   }
   propertyChangedIsVariable(key, value) {
     this.props.expression[key] = value;

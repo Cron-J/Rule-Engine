@@ -39,11 +39,10 @@ export class Constant extends BaseRule{
             this.value = object.value;
         }
         else{
-            this.key = '';
+            this.key = object;
             this.value = '';
-            // to do test case
-            this.key = 'String';
-        }this.type = 'Constant';
+        }
+        this.type = 'Constant';
     }
     toJSExpression() {
         return this.value;
@@ -74,11 +73,11 @@ export class Variable extends BaseRule{
             var aggregatortype  = this.key;
             let aggregatorfunc = (aggregatorslist[aggregatortype]).func;
             return aggregatorfunc.format(this.variable.toJSExpression('object'));
-        }else if(this.isCollection && this.variable && this.variabletype==='Variable'){
+        }else if(this.isCollection && this.variable && this.variabletype==='Variable' && this.variable.toJSExpression){
             var obj = '{0}.{1} '.format(object,this.key);
             return '(function(object){ var collection = object;'+this.variable.toJSExpression(object)+')('+obj+')';
         }
-        else if(!this.isCollection && this.variabletype === 'Variable' && this.key){
+        else if(!this.isCollection && this.variabletype === 'Variable' && this.key && this.variable.toJSExpression){
             return '{0}.'.format(object) + this.key + this.variable.toJSExpression();
         }
         return '';
@@ -158,6 +157,7 @@ export class SimpleCondition extends BaseRule{
                 case 'greaterThanEqual':operator = '>=';break;
                 case 'lessThan':operator = '<';break;
                 case 'lessThanEqual':operator = '<=';break;
+                case 'endsWith':operator = 'endsWith';break;
                 default: operator = '';break;
             }
            return  jsExpr +' '+ operator +' '+ this.rhsexpression.toJSExpression(object);
@@ -250,7 +250,7 @@ export class Action extends BaseRule{
 export class Rule extends BaseRule{
     constructor(object) {
         super();
-        this.AnyAllCondition = object ? object.AnyAllCondition : new AnyAllCondition();
+        this.condition = object ? object.AnyAllCondition ? object.AnyAllCondition : object.condition : new AnyAllCondition();
         this.actions = object ? object.actions : [];
         this.name = object ? object.name : '';
         this.type = 'Rule';
@@ -264,7 +264,7 @@ export class Rule extends BaseRule{
             "var {0}= item;"+
             "return {1};" +
             "}";
-        console.log(jsExpr.format(this.schemaId,this.AnyAllCondition.toJSExpression(this.schemaId)));
+        console.log(jsExpr.format(this.schemaId,this.condition.toJSExpression(this.schemaId)));
         //return this.AnyAllCondition.toJSExpression();
     }
     addAction(param) {

@@ -15,10 +15,10 @@ export default class ConstantComponent extends React.Component{
     this.props = nxtprops;
     this.buildConstantComponent();
   };
+  //{this.selectBox}
   render() {
     return (
       <span>
-      {this.selectBox}
       {this.renderComponent}
       </span>
     );
@@ -35,7 +35,7 @@ export default class ConstantComponent extends React.Component{
       break;
       case 'Boolean' : this.renderComponent = (
           <span>
-            <input className="form-control input-sm" onChange={this.handleChangeInput.bind(this)} checked={this.props.constant.value === true} type="checkbox"/>
+            <input onChange={this.handleChangeInput.bind(this)} checked={this.props.constant.value === true} type="checkbox"/>
           </span>
       );
       break;
@@ -79,7 +79,8 @@ export default class ConstantComponent extends React.Component{
   inputupdate = _.debounce(this.callbacker,1000);
   handleChangeInput = function(event) {
     if(event.target.type === 'checkbox'){
-      this.inputupdate(event.target.checked);
+      this.props.constant.value = event.target.checked;
+      this.notifyChange();
     }else{
       this.inputupdate(event.target.value);
     }

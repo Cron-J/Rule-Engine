@@ -6,7 +6,7 @@ import ExpressionComponent from './expression.react.js';
 import OperatorComponent from './operator.react.js';
 import Operatorslist from '../reducers/Operatorslist.js';
 import SchemaStore from '../reducers/SchemaStore.js';
-import Select from 'react-select';
+import LabelToSelect from '../common/labelToSelect.react.js';
 
 export default class SimpleConditionComponent extends React.Component{
   constructor(props) {
@@ -19,23 +19,12 @@ export default class SimpleConditionComponent extends React.Component{
     this.operators = new Operatorslist();
     this.filteroperators();
   }
-  renderOperator() {
-    if (this.operatorslist.length) {
-      let options = [];
-      for(let i=0;i<this.operatorslist.length;i++){
-        options.push({value : this.operatorslist[i].id, label:this.operatorslist[i].id} );
-      }
-      this.Operatorcomponent = (<Select
-          name="form-field-name" noResultsText = "No properties found"
-          value={this.props.simplecondition.operator.label}
-          placeholder="select operator"
-          options={options}
-          onChange={this.handleOperatorChange.bind(this)}
-      />);
-
-    }else {
-      this.Operatorcomponent = <span></span>;
-    }
+  toggleSelect(event,showlabel){
+    let list = this.refs.variableobject;
+    let label = this.refs.label;
+    label.className = showlabel === true ? 'variablelabel':'hidden';
+    list.className = showlabel === true ? 'hidden' : 'variableobject';
+    this.refs.selectBox.focus();
   }
   renderRightExpression(instance) {
     if (instance && this.props.simplecondition.operator && this.props.simplecondition.operator.label) {
@@ -45,6 +34,21 @@ export default class SimpleConditionComponent extends React.Component{
     }
   }
   render() {
+    if (this.operatorslist.length) {
+      let options = [];
+      for(let i=0;i<this.operatorslist.length;i++){
+        options.push({value : this.operatorslist[i].id, label:this.operatorslist[i].id} );
+      }
+      if(this.props.simplecondition.operator){
+        this.Operatorcomponent = (<span ref="constant">
+          <LabelToSelect label={this.props.simplecondition.operator.label} options={options} onPropertyChange={this.handleOperatorChange.bind(this)} />
+        </span>);
+      }else{
+        console.log('error in getting operator',this.props.simplecondition.operator)
+      }
+    }else {
+      this.Operatorcomponent = <span></span>;
+    }
     return (
       <div className="form-inline">
         <ExpressionComponent schema={this.props.schema} className="expression" expression={this.props.simplecondition.lhsexpression} expressionType="lhsexpression" onPropertyChange={this.propertyChanged.bind(this)}/>
@@ -55,6 +59,7 @@ export default class SimpleConditionComponent extends React.Component{
   }
   handleOperatorChange(event) {
     let key = event;
+    //this.toggleSelect(null,true);
     this.propertyChanged('operator', this.operators[key]);
   }
   filteroperators() {
@@ -76,7 +81,6 @@ export default class SimpleConditionComponent extends React.Component{
           }
         }
       }
-      this.renderOperator(this.operatorslist);
     };
     let expression = this.props.simplecondition.lhsexpression;
     if (expression.isVariable && this.props.schema && expression.variable) {

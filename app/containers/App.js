@@ -72,9 +72,8 @@ class App extends Component {
     //console.log(rules);
   }
   NewRule(){
-    this.setState({editrules : false,
-    showrule : true});
     this.props.CreateRule();
+    this.setState({editrules : false, showrule : true});
   }
   Back(){
     this.setState({editrules : true,

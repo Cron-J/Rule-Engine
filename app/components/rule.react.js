@@ -39,7 +39,7 @@ class RuleComponent extends React.Component {
               <button className="btn btn-default margintop20" type="submit" onClick={this.runRule.bind(this)}>Run Rule</button>
             </div>
             <div className="row col-sm-12">
-              <AnyAllConditionComponent anyallcondition={this.state.AnyAllCondition} schema={this.schema[this.state.schemaId]} onPropertyChange={this.propertyChanged.bind(this)}></AnyAllConditionComponent>
+              <AnyAllConditionComponent anyallcondition={this.state.condition} schema={this.schema[this.state.schemaId]} onPropertyChange={this.propertyChanged.bind(this)}></AnyAllConditionComponent>
             </div>
             <div className="row col-sm-12">
               <h2> Then
@@ -78,7 +78,7 @@ class RuleComponent extends React.Component {
 
   }
   runRule() {
-    console.log(this.state.AnyAllCondition instanceof AnyAllCondition);
+    console.log(this.state.condition instanceof AnyAllCondition);
     this.state.toJSExpression();
   }
   saveRule() {

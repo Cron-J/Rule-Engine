@@ -36,7 +36,7 @@ class isEmptyOperator extends Operator {
 }
 class isExistsOperator extends Operator{
   constructor() {
-    super('isExists', 'is exists', 'checkbox', ['String', 'Number', 'Date', 'Boolean']);
+    super('exits', 'exits', 'checkbox', ['String', 'Number', 'Date', 'Boolean']);
   }
 
   toJSExpression(key, value) {
@@ -123,7 +123,7 @@ class containsOperator extends Operator {
 export default class Operatorslist {
   constructor() {
     this.isEmpty = new isEmptyOperator();
-    this.isExists = new isExistsOperator();
+    this.exits = new isExistsOperator();
     this.equalTo = new equalToOperator();
     this.notEqualTo = new notEqualToOperator();
     this.greaterThan = new greaterThanOperator();

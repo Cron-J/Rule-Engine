@@ -58,7 +58,26 @@ ul ul.treeRoot > li.treeChild:last-child {
   padding-left: 0.3em;
   padding-right: 0.3em;
 }
+.variablelabel {
+  margin : 0.4em;
+  padding: 0.3em;
+  cursor: pointer;
+  display: inline-block;
+}
+.variablelabel:hover{
+  background-color: #f1ce9e;
+  border-radius: 0.3em;
+  margin : 0.4em;
+  padding: 0.3em;
+  cursor: pointer;
+  display: inline-block;
+}
+.variableobject{
 
+}
+.hidden{
+  display: none;
+}
 .expression {
   padding-left: 0.3em;
 }
