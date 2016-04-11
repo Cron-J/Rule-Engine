@@ -240,7 +240,8 @@ class Function extends BaseRule{
 export class Action extends BaseRule{
     constructor(name) {
         super();
-        this.function = new FunctionClass(name);
+        // this.function = new FunctionClass(name);
+        this.Function = null;
         this.parameters = {};
         this.type = 'Action';
     }

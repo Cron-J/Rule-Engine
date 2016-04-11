@@ -16,6 +16,9 @@ const store = configureStore();
 
 export default class Root extends Component {
   render() {
+    // <DebugPanel top right bottom>
+    //   <DevTools store={store} monitor={LogMonitor} />
+    // </DebugPanel>
     return(
       <div>
         <Provider store={store}>
@@ -23,11 +26,6 @@ export default class Root extends Component {
             <Route path="/" component={App}></Route>
           </Router>
         </Provider>
-        <DebugPanel top right bottom>
-          <DevTools store={store} monitor={LogMonitor} />
-        </DebugPanel>
-
-
       </div>
     );
   }

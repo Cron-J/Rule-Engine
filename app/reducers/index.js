@@ -1,6 +1,5 @@
 import * as types from '../constants/ActionTypes';
 import { combineReducers } from 'redux';
-import squel from 'squel';
 import { createReducer } from 'redux-create-reducer';
 import * as grammar from './grammar';
 /****************** Catch the actions here ****************************************/

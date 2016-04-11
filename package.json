@@ -49,10 +49,10 @@
     "redux-create-reducer": "^1.0.0",
     "redux-history-transitions": "^0.4.2",
     "redux-react-router-transitions": "^0.3.0",
-    "request-promise": "^0.4.3",
+    "request": "2.65.0",
+    "request-promise": "0.4.3",
     "sequelize": "^3.9.0",
     "serve-static": "^1.10.0",
-    "squel": "^4.2.0",
     "thunkify": "^2.1.2",
     "tls": "0.0.1",
     "yargs": "^3.18.0"

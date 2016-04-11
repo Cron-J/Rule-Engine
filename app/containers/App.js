@@ -156,6 +156,8 @@ App.contextTypes = {
 function mapStateToProps(state) {
   return {
     state: state,
+    rule: state.App.rule,
+    rules: state.App.rules,
     errorMessage: state.errorMessage
   };
 }

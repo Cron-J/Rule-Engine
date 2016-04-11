@@ -12,7 +12,7 @@ const webpackConfig = {
   devtool : 'source-map',
   entry   : {
     app : [
-      paths.src('entry-points/client')
+      paths.src('index.js')
     ]
   },
   output : {

@@ -22,7 +22,7 @@ class RuleComponent extends React.Component {
   componentWillReceiveProps(nxtprops) {
     this.props = nxtprops;
     //console.log(this.props);
-    this.state =  this.props.rule.state.App.rule;
+    this.setState({...this.props.rule.state.App.rule});
   };
   render() {
     if(this.state.actions){
@@ -109,11 +109,13 @@ class RuleComponent extends React.Component {
   }
   modifyRuleName(event) {
     let name = event.target.value;
-    this.state.name = name;
+    this.setState({...this.state, name: name});
     this.notifyChange();
   }
   propertyChanged(key, value) {
-    this.state[key] = value;
+    let change = this.state;
+    change[key] = value;
+    this.setState({...change});
     this.notifyChange();
   };
   notifyChange() {
@@ -124,4 +126,3 @@ class RuleComponent extends React.Component {
 RuleComponent.propTypes = {
   rule: React.PropTypes.object
 };
-
