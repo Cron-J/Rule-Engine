@@ -9,7 +9,7 @@ const webpackConfig = {
   target  : 'node',
   entry   : {
     app : [
-      paths.src('entry-points/server')
+      paths.src('server')
     ]
   },
   output : {

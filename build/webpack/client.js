@@ -12,7 +12,7 @@ const webpackConfig = {
   devtool : 'source-map',
   entry   : {
     app : [
-      paths.src('index.js')
+      paths.src('index')
     ]
   },
   output : {
@@ -49,7 +49,7 @@ const webpackConfig = {
     loaders : [
       {
         test : /\.(js|jsx)$/,
-        include :  paths.project(config.get('dir_src')),
+        include :  [paths.project(config.get('dir_src'))],
         loaders : ['babel?optional[]=runtime']
       },
       { test: /\.json$/, loader: "json-loader" },
@@ -134,8 +134,8 @@ if (
   webpackConfig.module.preLoaders = [
     {
       test : /\.(js|jsx)$/,
-      loaders : ['eslint-loader'],
-      include : paths.project(config.get('dir_src'))
+      loaders : [], //'eslint-loader'
+      include : [paths.project(config.get('dir_src'))]
     }
   ];
 }
