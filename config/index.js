@@ -16,6 +16,7 @@ config.set('dir_dist', 'dist');
 
 config.set('server_host',   process.env.NODE_ENV == 'development' ? 'localhost' : '52.76.103.243');
 config.set('server_port',  process.env.PORT || 4002);
+config.set('server_protocol', 'http');
 config.set('webpack_port', 3002);
 
 config.set('vendor_dependencies', [
@@ -51,7 +52,8 @@ config.set('globals', {
   '__DEV__'      : config.get('env') === 'development',
   '__PROD__'     : config.get('env') === 'production',
   '__DEBUG__'    : config.get('env') === 'development' && !argv.no_debug,
-  '__DEBUG_NW__' : !!argv.nw
+  '__DEBUG_NW__' : !!argv.nw,
+    'SERVER_ADDR'  : JSON.stringify(config.get('server_protocol') + '://' + config.get('server_host') + ':' + config.get('server_port') + '/')
 });
 
 // ------------------------------------
