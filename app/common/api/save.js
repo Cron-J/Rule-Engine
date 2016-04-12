@@ -11,7 +11,7 @@ const utils = {
      */
     newrule: (rule) => {
         return request({
-            url: 'http://localhost:4000/api/ruleengine/createnewrule',
+            url: SERVER_ADDR + 'api/ruleengine/createnewrule',
             method: 'POST',
             body: rule,
             json: true
@@ -26,7 +26,7 @@ const utils = {
         let ruledata = rule;
         delete ruledata.updaterule;
         return request({
-            url: 'http://localhost:4000/api/ruleengine/updaterule',
+            url: SERVER_ADDR + 'api/ruleengine/updaterule',
             method: 'POST',
             body: rule,
             json: true
@@ -38,7 +38,7 @@ const utils = {
      */
     getrules: (rule) => {
         return request({
-            url: 'http://localhost:4000/api/ruleengine/getrules',
+            url: SERVER_ADDR + 'api/ruleengine/getrules',
             method: 'GET',
             body: rule,
             json: true
