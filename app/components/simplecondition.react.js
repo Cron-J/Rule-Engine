@@ -6,7 +6,7 @@ import ExpressionComponent from './expression.react.js';
 import OperatorComponent from './operator.react.js';
 import Operatorslist from '../reducers/Operatorslist.js';
 import SchemaStore from '../reducers/SchemaStore.js';
-import LabelToSelect from '../common/labelToSelect.react.js';
+import LabelToSelect from '../common/labelToselect.react.js';
 
 export default class SimpleConditionComponent extends React.Component{
   constructor(props) {
@@ -108,4 +108,3 @@ SimpleConditionComponent.propTypes = {
   onPropertyChange: React.PropTypes.func,
   id: React.PropTypes.number
 };
-

@@ -48,7 +48,7 @@ import {Variable,AnyAllCondition} from '../reducers/grammar.js';
 import Select from 'react-select';
 import {AggregatorStore} from '../reducers/SchemaStore.js';
 import AnyAllConditionComponent from './AnyAllCondition.react.js';
-import LabelToSelect from '../common/labelToSelect.react.js';
+import LabelToSelect from '../common/labelToselect.react.js';
 import _ from 'lodash';
 // import style from '../scss/components/ruleeditor.scss';
 
@@ -193,4 +193,3 @@ VariableComponent.propTypes = {
   objectschema: React.PropTypes.object,
   onPropertyChange: React.PropTypes.func
 };
-
